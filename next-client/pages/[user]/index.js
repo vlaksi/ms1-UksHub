@@ -1,10 +1,15 @@
 import { useRouter } from 'next/router';
+import UserLanding from '../../common/components/organisms/userLanding/UserLanding';
 
-const UserProfile = () => {
+const User = () => {
 	const router = useRouter();
 	const { user } = router.query;
 
-	return <p>User: {user}</p>;
+	return (
+		<>
+			<UserLanding username={user} />
+		</>
+	);
 };
 
-export default UserProfile;
+export default User;
