@@ -1,14 +1,15 @@
 import { useRouter } from 'next/router';
+import UserRepository from './../../../common/components/organisms/userRepository/UserRepository';
 
-const UserRepository = () => {
+const UserRepositoryLanding = () => {
 	const router = useRouter();
 	const { user, repository } = router.query;
 
 	return (
 		<>
-			<p>User: {user}</p> <p>Repository: {repository}</p>
+			<UserRepository username={user} repositoryName={repository} />
 		</>
 	);
 };
 
-export default UserRepository;
+export default UserRepositoryLanding;

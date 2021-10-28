@@ -19,8 +19,8 @@ const UserLanding = ({ username }) => {
 						<Tab eventKey="profile" title="Overview">
 							<UserOverview />
 						</Tab>
-						<Tab eventKey="home" title="Repositories">
-							<UserRepositories />
+						<Tab eventKey="repositories" title="Repositories">
+							<UserRepositories username={username} />
 						</Tab>
 					</Tabs>
 				</Col>
