@@ -17,7 +17,7 @@ const UserLanding = ({ username }) => {
 						className="mb-3"
 					>
 						<Tab eventKey="profile" title="Overview">
-							<UserOverview />
+							<UserOverview username={username} />
 						</Tab>
 						<Tab eventKey="repositories" title="Repositories">
 							<UserRepositories username={username} />
