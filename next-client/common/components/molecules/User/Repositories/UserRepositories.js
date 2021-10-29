@@ -15,7 +15,11 @@ const UserRepositories = ({ username }) => {
 		<>
 			{repositories.map((repository) => {
 				return (
-					<RepositoryListItem username={username} name={repository.name} />
+					<RepositoryListItem
+						key={repository.name}
+						username={username}
+						name={repository.name}
+					/>
 				);
 			})}
 		</>

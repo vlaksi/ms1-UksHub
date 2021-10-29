@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Button, Dropdown } from 'react-bootstrap';
+import { Card, Button, Dropdown, Row, Col } from 'react-bootstrap';
 
 const branches = [
 	{
@@ -29,6 +29,7 @@ const RepositoryCode = () => {
 							{branches.map((branch) => {
 								return (
 									<Dropdown.Item
+										key={branch.branchName}
 										onClick={() => {
 											setBranchName(branch.branchName);
 										}}
