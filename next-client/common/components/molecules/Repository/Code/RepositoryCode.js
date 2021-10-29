@@ -1,47 +1,51 @@
 import { useState } from 'react';
 import { Card, Button, Dropdown, Row, Col, ListGroup } from 'react-bootstrap';
 
+const backendFolder = {
+	name: 'django-backend',
+	files: [
+		{
+			name: 'main.py',
+		},
+		{
+			name: 'startup.py',
+		},
+	],
+};
+
+const contentFolder = {
+	name: 'content',
+	files: [
+		{
+			name: 'model',
+			files: [
+				{
+					name: 'some-image.jpg',
+				},
+			],
+		},
+	],
+};
+
+const folders = [backendFolder];
+
 const branches = [
 	{
 		branchName: 'main',
+		folders: folders,
 	},
 	{
 		branchName: 'develop',
+		folders: folders,
 	},
 	{
 		branchName: 'feature/yyy',
-	},
-];
-
-const folders = [
-	{
-		name: 'content',
-		files: [
-			{
-				name: 'model',
-				files: [
-					{
-						name: 'some-image.jpg',
-					},
-				],
-			},
-		],
-	},
-	{
-		name: 'django-backend',
-		files: [
-			{
-				name: 'main.py',
-			},
-			{
-				name: 'startup.py',
-			},
-		],
+		folders: [contentFolder, ...folders],
 	},
 ];
 
 const RepositoryCode = () => {
-	const [branchName, setBranchName] = useState(branches[0].branchName);
+	const [activeBranch, setActiveBranch] = useState(branches[0]);
 
 	return (
 		<>
@@ -49,7 +53,7 @@ const RepositoryCode = () => {
 				<Card.Header>
 					<Dropdown>
 						<Dropdown.Toggle variant="dark" id="dropdown-basic">
-							{branchName}
+							{activeBranch.branchName}
 						</Dropdown.Toggle>
 
 						<Dropdown.Menu>
@@ -58,7 +62,7 @@ const RepositoryCode = () => {
 									<Dropdown.Item
 										key={branch.branchName}
 										onClick={() => {
-											setBranchName(branch.branchName);
+											setActiveBranch(branch);
 										}}
 									>
 										{branch.branchName}
@@ -70,7 +74,7 @@ const RepositoryCode = () => {
 				</Card.Header>
 				<Card.Body>
 					<ListGroup>
-						{folders.map((folder) => {
+						{activeBranch.folders.map((folder) => {
 							return (
 								<ListGroup.Item key={folder.name}>{folder.name}</ListGroup.Item>
 							);
