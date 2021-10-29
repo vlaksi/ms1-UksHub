@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Button, Dropdown, Row, Col } from 'react-bootstrap';
+import { Card, Button, Dropdown, Row, Col, ListGroup } from 'react-bootstrap';
 
 const branches = [
 	{
@@ -10,6 +10,33 @@ const branches = [
 	},
 	{
 		branchName: 'feature/yyy',
+	},
+];
+
+const folders = [
+	{
+		name: 'content',
+		files: [
+			{
+				name: 'model',
+				files: [
+					{
+						name: 'some-image.jpg',
+					},
+				],
+			},
+		],
+	},
+	{
+		name: 'django-backend',
+		files: [
+			{
+				name: 'main.py',
+			},
+			{
+				name: 'startup.py',
+			},
+		],
 	},
 ];
 
@@ -42,11 +69,13 @@ const RepositoryCode = () => {
 					</Dropdown>
 				</Card.Header>
 				<Card.Body>
-					<Card.Title>Special title treatment</Card.Title>
-					<Card.Text>
-						With supporting text below as a natural lead-in to additional
-						content.
-					</Card.Text>
+					<ListGroup>
+						{folders.map((folder) => {
+							return (
+								<ListGroup.Item key={folder.name}>{folder.name}</ListGroup.Item>
+							);
+						})}
+					</ListGroup>
 				</Card.Body>
 				<Card.Footer className="text-muted">2 days ago</Card.Footer>
 			</Card>
