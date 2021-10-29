@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import UserLanding from '../../common/components/organisms/userLanding/UserLanding';
+import UserLanding from '../../common/components/organisms/UserLanding/UserLanding';
 
 const User = () => {
 	const router = useRouter();

@@ -1,4 +1,4 @@
-import Layout from '../common/components/molecules/layout/Layout';
+import Layout from '../common/components/molecules/Layout/Layout';
 import '../styles/global.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
