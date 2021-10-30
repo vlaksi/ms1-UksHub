@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-	Card,
-	Button,
-	Dropdown,
-	Row,
-	Col,
-	ListGroup,
-	Badge,
-} from 'react-bootstrap';
+import { Card, Dropdown, ListGroup } from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
 
 const backendFolder = {
@@ -95,7 +87,6 @@ const RepositoryCode = () => {
 									action
 									key={folder.name}
 									onClick={() => {
-										// alert(folder.name);
 										setActiveFolders(folder.folders);
 									}}
 								>
