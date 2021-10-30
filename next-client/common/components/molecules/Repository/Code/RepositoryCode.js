@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { Card, Button, Dropdown, Row, Col, ListGroup } from 'react-bootstrap';
+import {
+	Card,
+	Button,
+	Dropdown,
+	Row,
+	Col,
+	ListGroup,
+	Badge,
+} from 'react-bootstrap';
+import { BsFillFolderFill } from 'react-icons/bs';
 
 const backendFolder = {
 	name: 'django-backend',
@@ -44,8 +53,13 @@ const branches = [
 	},
 ];
 
+// TODO: 1. Render folders with icon
+// 2. Render files with icon
+// 3. Enable click on folder which
+
 const RepositoryCode = () => {
 	const [activeBranch, setActiveBranch] = useState(branches[0]);
+	const [activeFolders, setActiveFolders] = useState(branches[0].folders);
 
 	return (
 		<>
@@ -63,6 +77,7 @@ const RepositoryCode = () => {
 										key={branch.branchName}
 										onClick={() => {
 											setActiveBranch(branch);
+											setActiveFolders(branch.folders);
 										}}
 									>
 										{branch.branchName}
@@ -74,9 +89,18 @@ const RepositoryCode = () => {
 				</Card.Header>
 				<Card.Body>
 					<ListGroup>
-						{activeBranch.folders.map((folder) => {
+						{activeFolders?.map((folder) => {
 							return (
-								<ListGroup.Item key={folder.name}>{folder.name}</ListGroup.Item>
+								<ListGroup.Item
+									action
+									key={folder.name}
+									onClick={() => {
+										// alert(folder.name);
+										setActiveFolders(folder.folders);
+									}}
+								>
+									<BsFillFolderFill /> {folder.name}
+								</ListGroup.Item>
 							);
 						})}
 					</ListGroup>
