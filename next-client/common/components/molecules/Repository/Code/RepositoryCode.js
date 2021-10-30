@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, Dropdown, ListGroup, Row } from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
-import { AiOutlineFile } from 'react-icons/ai';
+import { AiFillChrome, AiFillHome, AiOutlineFile } from 'react-icons/ai';
 import styles from './RepositoryCode.module.scss';
 
 const backendFolder = {
@@ -22,6 +22,16 @@ const contentFolder = {
 	folders: [
 		{
 			name: 'model',
+			folders: [
+				{
+					name: 'c4',
+					files: [],
+				},
+				{
+					name: 'class-diagram',
+					files: [],
+				},
+			],
 			files: [
 				{
 					name: 'some-image.jpg',
@@ -70,37 +80,59 @@ const RepositoryCode = () => {
 			<Card>
 				<Card.Header>
 					<div className={styles.repositoryHeader}>
-						<Dropdown>
-							<Dropdown.Toggle variant="dark" id="dropdown-basic">
-								{activeBranch.branchName}
-							</Dropdown.Toggle>
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'baseline',
+							}}
+						>
+							<Dropdown>
+								<Dropdown.Toggle variant="dark" id="dropdown-basic">
+									{activeBranch.branchName}
+								</Dropdown.Toggle>
 
-							<Dropdown.Menu>
-								{branches.map((branch) => {
+								<Dropdown.Menu>
+									{branches.map((branch) => {
+										return (
+											<Dropdown.Item
+												key={branch.branchName}
+												onClick={() => {
+													setActiveBranch(branch);
+													setActiveFolders(branch.folders);
+													setActiveFiles(branch.files);
+													setActiveFilesPath([]);
+												}}
+											>
+												{branch.branchName}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+							<div className={styles.filesPath}>
+								{activeFilesPath.map((activePath, idx) => {
 									return (
-										<Dropdown.Item
-											key={branch.branchName}
-											onClick={() => {
-												setActiveBranch(branch);
-												setActiveFolders(branch.folders);
-												setActiveFiles(branch.files);
-												setActiveFilesPath([]);
-											}}
-										>
-											{branch.branchName}
-										</Dropdown.Item>
+										<p key={activePath}>
+											{idx === 0 ? '' : '/'} {activePath}
+										</p>
 									);
 								})}
-							</Dropdown.Menu>
-						</Dropdown>
-						<div className={styles.filesPath}>
-							{activeFilesPath.map((activePath, idx) => {
-								return (
-									<p key={activePath}>
-										{idx === 0 ? '' : '/'} {activePath}
-									</p>
-								);
-							})}
+							</div>
+						</div>
+						<div>
+							<AiFillHome
+								onClick={() => {
+									setActiveFolders(activeBranch.folders);
+									setActiveFiles(activeBranch.files);
+									setActiveFilesPath([]);
+								}}
+								style={{
+									cursor: 'pointer',
+									marginRight: '10px',
+									height: '20px',
+									width: '20px',
+								}}
+							/>
 						</div>
 					</div>
 				</Card.Header>
