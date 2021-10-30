@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Card, Dropdown, ListGroup } from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
+import { AiOutlineFile } from 'react-icons/ai';
 
 const backendFolder = {
 	name: 'django-backend',
+	folders: [],
 	files: [
 		{
 			name: 'main.py',
@@ -16,7 +18,7 @@ const backendFolder = {
 
 const contentFolder = {
 	name: 'content',
-	files: [
+	folders: [
 		{
 			name: 'model',
 			files: [
@@ -26,7 +28,17 @@ const contentFolder = {
 			],
 		},
 	],
+	files: [],
 };
+
+const files = [
+	{
+		name: 'index.html',
+	},
+	{
+		name: 'README.md',
+	},
+];
 
 const folders = [backendFolder];
 
@@ -34,6 +46,7 @@ const branches = [
 	{
 		branchName: 'main',
 		folders: folders,
+		files: files,
 	},
 	{
 		branchName: 'develop',
@@ -45,13 +58,12 @@ const branches = [
 	},
 ];
 
-// TODO: 1. Render folders with icon
-// 2. Render files with icon
 // 3. Enable click on folder which
 
 const RepositoryCode = () => {
 	const [activeBranch, setActiveBranch] = useState(branches[0]);
 	const [activeFolders, setActiveFolders] = useState(branches[0].folders);
+	const [activeFiles, setActiveFiles] = useState(branches[0].files);
 
 	return (
 		<>
@@ -70,6 +82,7 @@ const RepositoryCode = () => {
 										onClick={() => {
 											setActiveBranch(branch);
 											setActiveFolders(branch.folders);
+											setActiveFiles(branch.files);
 										}}
 									>
 										{branch.branchName}
@@ -91,6 +104,19 @@ const RepositoryCode = () => {
 									}}
 								>
 									<BsFillFolderFill /> {folder.name}
+								</ListGroup.Item>
+							);
+						})}
+						{activeFiles?.map((file) => {
+							return (
+								<ListGroup.Item
+									action
+									key={file.name}
+									onClick={() => {
+										setActiveFolders(file.folders);
+									}}
+								>
+									<AiOutlineFile /> {file.name}
 								</ListGroup.Item>
 							);
 						})}
