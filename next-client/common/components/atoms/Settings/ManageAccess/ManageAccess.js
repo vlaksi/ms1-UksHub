@@ -57,7 +57,7 @@ const ManageAccess = () => {
 
 									<div>
 										<MdEdit
-											style={{ marginRight: '8px', cursor: 'pointer' }}
+											style={{ marginRight: '15px', cursor: 'pointer' }}
 											onClick={() => {
 												alert('TODO: Edit modal with change role option');
 											}}

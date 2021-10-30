@@ -1,4 +1,5 @@
 import { Tab, Col, ListGroup, Row } from 'react-bootstrap';
+import BranchesSettings from '../../../atoms/Settings/BranchesSettings/BranchesSettings';
 import ManageAccess from '../../../atoms/Settings/ManageAccess/ManageAccess';
 import SettingsOptions from '../../../atoms/Settings/Options/SettingsOptions';
 
@@ -29,7 +30,7 @@ const RepositorySettings = () => {
 								<ManageAccess />
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link3">
-								<h5> hi from branches </h5>
+								<BranchesSettings />
 							</Tab.Pane>
 						</Tab.Content>
 					</Col>

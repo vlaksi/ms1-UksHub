@@ -56,7 +56,7 @@ const folders = [backendFolder];
 const branches = [
 	{
 		branchName: 'main',
-		folders: folders,
+		folders: [contentFolder, ...folders],
 		files: files,
 	},
 	{
@@ -65,7 +65,7 @@ const branches = [
 	},
 	{
 		branchName: 'feature/yyy',
-		folders: [contentFolder, ...folders],
+		folders: folders,
 	},
 ];
 
