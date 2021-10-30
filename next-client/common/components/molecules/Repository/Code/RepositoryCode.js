@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, Dropdown, ListGroup, Row } from 'react-bootstrap';
+import { Card, Dropdown, ListGroup } from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
-import { AiFillChrome, AiFillHome, AiOutlineFile } from 'react-icons/ai';
+import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
 import styles from './RepositoryCode.module.scss';
 
 const backendFolder = {
