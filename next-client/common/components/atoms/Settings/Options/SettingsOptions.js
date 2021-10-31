@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, FormControl, InputGroup, Button, Modal } from 'react-bootstrap';
+import SearchBar from '../../Search/SearchBar';
 
 const SettingsOptions = () => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -28,6 +29,17 @@ const SettingsOptions = () => {
 							Rename
 						</Button>
 					</InputGroup>
+					<SearchBar
+						placeholder="Test"
+						data={[
+							{
+								title: 'Adan',
+							},
+							{
+								title: 'UksHub',
+							},
+						]}
+					/>
 				</Card.Body>
 			</Card>
 			<br />

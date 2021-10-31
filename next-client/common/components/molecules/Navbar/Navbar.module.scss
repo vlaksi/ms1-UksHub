@@ -10,6 +10,10 @@
 }
 
 .customNavbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
 	a {
 		text-decoration: none;
 		color: #747574;
@@ -17,5 +21,13 @@
 	h5 {
 		padding: 5px 5px;
 		margin: 10px;
+	}
+	.searchWithLogo {
+		display: flex;
+		align-items: center;
+	}
+
+	.links {
+		display: flex;
 	}
 }
