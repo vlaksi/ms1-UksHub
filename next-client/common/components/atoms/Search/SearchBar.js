@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import styles from './SearchBar.module.scss';
+import { BsFillFolderFill } from 'react-icons/bs';
+import { FaUserCircle } from 'react-icons/fa';
+import { MdSyncProblem } from 'react-icons/md';
+import Link from 'next/link';
 
 function SearchBar({ placeholder, data }) {
 	const [filteredData, setFilteredData] = useState([]);
@@ -33,14 +37,23 @@ function SearchBar({ placeholder, data }) {
 				<div className={styles.dataResult}>
 					{filteredData.slice(0, 15).map((value, key) => {
 						return (
-							<a
-								key={value.title}
-								className={styles.dataItem}
-								href={value.link}
-								target="_blank"
-							>
-								<p>{value.title} </p>
-							</a>
+							<Link key={value.title} href={`/${value.route}`}>
+								<a className={styles.dataItem} target="_blank">
+									{value.type === 'repository' && (
+										<BsFillFolderFill style={{ marginLeft: '10px' }} />
+									)}
+
+									{value.type === 'user' && (
+										<FaUserCircle style={{ marginLeft: '10px' }} />
+									)}
+
+									{value.type === 'issue' && (
+										<MdSyncProblem style={{ marginLeft: '10px' }} />
+									)}
+
+									<p>{value.title} </p>
+								</a>
+							</Link>
 						);
 					})}
 				</div>
