@@ -1,73 +1,9 @@
 import { useState } from 'react';
-import { Card, Dropdown, ListGroup, Row } from 'react-bootstrap';
+import { Card, Dropdown, ListGroup } from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
-import { AiFillChrome, AiFillHome, AiOutlineFile } from 'react-icons/ai';
+import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
 import styles from './RepositoryCode.module.scss';
-
-const backendFolder = {
-	name: 'django-backend',
-	folders: [],
-	files: [
-		{
-			name: 'main.py',
-		},
-		{
-			name: 'startup.py',
-		},
-	],
-};
-
-const contentFolder = {
-	name: 'content',
-	folders: [
-		{
-			name: 'model',
-			folders: [
-				{
-					name: 'c4',
-					files: [],
-				},
-				{
-					name: 'class-diagram',
-					files: [],
-				},
-			],
-			files: [
-				{
-					name: 'some-image.jpg',
-				},
-			],
-		},
-	],
-	files: [],
-};
-
-const files = [
-	{
-		name: 'index.html',
-	},
-	{
-		name: 'README.md',
-	},
-];
-
-const folders = [backendFolder];
-
-const branches = [
-	{
-		branchName: 'main',
-		folders: folders,
-		files: files,
-	},
-	{
-		branchName: 'develop',
-		folders: folders,
-	},
-	{
-		branchName: 'feature/yyy',
-		folders: [contentFolder, ...folders],
-	},
-];
+import { branches } from '../../../../mocks/repository';
 
 const RepositoryCode = () => {
 	const [activeBranch, setActiveBranch] = useState(branches[0]);
