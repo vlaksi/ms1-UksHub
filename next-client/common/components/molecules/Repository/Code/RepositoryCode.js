@@ -1,91 +1,76 @@
 import { useState } from 'react';
-import {
-	Card,
-	Button,
-	Dropdown,
-	Row,
-	Col,
-	ListGroup,
-	Badge,
-} from 'react-bootstrap';
+import { Card, Dropdown, ListGroup } from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
-
-const backendFolder = {
-	name: 'django-backend',
-	files: [
-		{
-			name: 'main.py',
-		},
-		{
-			name: 'startup.py',
-		},
-	],
-};
-
-const contentFolder = {
-	name: 'content',
-	files: [
-		{
-			name: 'model',
-			files: [
-				{
-					name: 'some-image.jpg',
-				},
-			],
-		},
-	],
-};
-
-const folders = [backendFolder];
-
-const branches = [
-	{
-		branchName: 'main',
-		folders: folders,
-	},
-	{
-		branchName: 'develop',
-		folders: folders,
-	},
-	{
-		branchName: 'feature/yyy',
-		folders: [contentFolder, ...folders],
-	},
-];
-
-// TODO: 1. Render folders with icon
-// 2. Render files with icon
-// 3. Enable click on folder which
+import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
+import styles from './RepositoryCode.module.scss';
+import { branches } from '../../../../mocks/repository';
 
 const RepositoryCode = () => {
 	const [activeBranch, setActiveBranch] = useState(branches[0]);
 	const [activeFolders, setActiveFolders] = useState(branches[0].folders);
+	const [activeFiles, setActiveFiles] = useState(branches[0].files);
+	const [activeFilesPath, setActiveFilesPath] = useState([]);
 
 	return (
 		<>
 			<Card>
 				<Card.Header>
-					<Dropdown>
-						<Dropdown.Toggle variant="dark" id="dropdown-basic">
-							{activeBranch.branchName}
-						</Dropdown.Toggle>
+					<div className={styles.repositoryHeader}>
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'baseline',
+							}}
+						>
+							<Dropdown>
+								<Dropdown.Toggle variant="dark" id="dropdown-basic">
+									{activeBranch.branchName}
+								</Dropdown.Toggle>
 
-						<Dropdown.Menu>
-							{branches.map((branch) => {
-								return (
-									<Dropdown.Item
-										key={branch.branchName}
-										onClick={() => {
-											setActiveBranch(branch);
-											setActiveFolders(branch.folders);
-										}}
-									>
-										{branch.branchName}
-									</Dropdown.Item>
-								);
-							})}
-						</Dropdown.Menu>
-					</Dropdown>
+								<Dropdown.Menu>
+									{branches.map((branch) => {
+										return (
+											<Dropdown.Item
+												key={branch.branchName}
+												onClick={() => {
+													setActiveBranch(branch);
+													setActiveFolders(branch.folders);
+													setActiveFiles(branch.files);
+													setActiveFilesPath([]);
+												}}
+											>
+												{branch.branchName}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+							<div className={styles.filesPath}>
+								{activeFilesPath.map((activePath, idx) => {
+									return (
+										<p key={activePath}>
+											{idx === 0 ? '' : '/'} {activePath}
+										</p>
+									);
+								})}
+							</div>
+						</div>
+						<div>
+							<AiFillHome
+								onClick={() => {
+									setActiveFolders(activeBranch.folders);
+									setActiveFiles(activeBranch.files);
+									setActiveFilesPath([]);
+								}}
+								style={{
+									cursor: 'pointer',
+									marginRight: '10px',
+									height: '20px',
+									width: '20px',
+								}}
+							/>
+						</div>
+					</div>
 				</Card.Header>
 				<Card.Body>
 					<ListGroup>
@@ -95,17 +80,38 @@ const RepositoryCode = () => {
 									action
 									key={folder.name}
 									onClick={() => {
-										// alert(folder.name);
 										setActiveFolders(folder.folders);
+										setActiveFiles(folder.files);
+										setActiveFilesPath([...activeFilesPath, folder.name]);
 									}}
 								>
-									<BsFillFolderFill /> {folder.name}
+									<div style={{ display: 'flex', alignItems: 'center' }}>
+										<BsFillFolderFill style={{ marginRight: '8px' }} />
+										{folder.name}
+									</div>
+								</ListGroup.Item>
+							);
+						})}
+						{activeFiles?.map((file) => {
+							return (
+								<ListGroup.Item
+									action
+									key={file.name}
+									onClick={() => {
+										alert(file.name);
+									}}
+								>
+									<div style={{ display: 'flex', alignItems: 'center' }}>
+										<AiOutlineFile style={{ marginRight: '8px' }} /> {file.name}
+									</div>
 								</ListGroup.Item>
 							);
 						})}
 					</ListGroup>
 				</Card.Body>
-				<Card.Footer className="text-muted">2 days ago</Card.Footer>
+				<Card.Footer className="text-muted">
+					<div className={styles.repositoryFooter}>2 days ago</div>
+				</Card.Footer>
 			</Card>
 		</>
 	);

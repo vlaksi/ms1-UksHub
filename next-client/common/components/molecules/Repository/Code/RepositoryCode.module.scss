@@ -1,0 +1,20 @@
+.repositoryHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.filesPath {
+	display: flex;
+	margin-left: 1em;
+	p {
+		font-size: 14px;
+		font-weight: 600;
+	}
+}
+
+.repositoryFooter {
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+}

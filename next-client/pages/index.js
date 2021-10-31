@@ -1,13 +1,6 @@
-import Head from 'next/head';
-
 export default function Home() {
 	return (
 		<div className="container" style={{ marginBottom: '20vh' }}>
-			<Head>
-				<title>ms1~UksHub</title>
-				<link rel="icon" href="/logo.png" />
-			</Head>
-
 			<main>
 				<h1 className="title">
 					Welcome to <a href="https://github.com/vlaksi/ms1-UksHub">UksHub</a>
