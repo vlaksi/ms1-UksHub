@@ -1,6 +1,11 @@
-import { Card, FormControl, InputGroup, Button } from 'react-bootstrap';
+import { useState } from 'react';
+import { Card, ListGroup, Badge } from 'react-bootstrap';
+import { BiTransfer } from 'react-icons/bi';
 
 const BranchesSettings = () => {
+	// TODO: Get a name of default branch
+	const [defaultBranch, setDefaultBranch] = useState('main');
+
 	return (
 		<>
 			<Card border="light" style={{ width: '100%' }}>
@@ -11,7 +16,23 @@ const BranchesSettings = () => {
 						repository, against which all pull requests and code commits are
 						automatically made, unless you specify a different branch
 					</Card.Text>
-					{/* TODO: Add a section for default branch & icon to trigger modal with changing options */}
+					<ListGroup>
+						<ListGroup.Item
+							style={{
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+							}}
+						>
+							<Badge bg="secondary"> {defaultBranch} </Badge>
+							<BiTransfer
+								style={{ marginRight: '5px', cursor: 'pointer' }}
+								onClick={() => {
+									alert('TODO: Switch branch modal');
+								}}
+							/>
+						</ListGroup.Item>
+					</ListGroup>
 				</Card.Body>
 			</Card>
 			<br />

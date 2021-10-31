@@ -5,7 +5,7 @@ import {
 	Button,
 	ListGroup,
 } from 'react-bootstrap';
-import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
+import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
 
 const collaborators = [
