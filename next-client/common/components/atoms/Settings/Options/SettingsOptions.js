@@ -29,17 +29,6 @@ const SettingsOptions = () => {
 							Rename
 						</Button>
 					</InputGroup>
-					<SearchBar
-						placeholder="Test"
-						data={[
-							{
-								title: 'Adan',
-							},
-							{
-								title: 'UksHub',
-							},
-						]}
-					/>
 				</Card.Body>
 			</Card>
 			<br />
