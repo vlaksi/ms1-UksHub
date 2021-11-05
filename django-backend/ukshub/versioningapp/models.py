@@ -6,8 +6,8 @@ class File(models.Model):
     creation_date= models.DateTimeField('date of creation')
 
 class Folder(models.Model):
-    parent_directory = models.ForeignKey('self', on_delete=models.CASCADE, related_name='parent_folder')
-    sub_directories = models.ManyToManyField('self')
+    parent_directory = models.ForeignKey('self', on_delete=models.CASCADE, related_name='parent_folder', blank=True)
+    sub_directories = models.ManyToManyField('self', blank=True)
     files = models.ManyToManyField(File)
     name= models.CharField(max_length=200)
     last_change= models.DateTimeField('last change')
