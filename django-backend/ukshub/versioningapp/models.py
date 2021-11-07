@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from useractivityapp.models import Action,Comment
 
 class File(models.Model):  
     name= models.CharField(max_length=200)
@@ -17,9 +19,11 @@ class Folder(models.Model):
         return 'Name of object: ' + self.name
     
 class Commit(models.Model):
+    autor = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name='created_commits')
     files = models.ManyToManyField(File)
     message = models.CharField(max_length=200)
     creation_date = models.DateTimeField('date of creation')
+    comments = models.ManyToManyField(Comment,blank=True, related_name='commit')
     def __str__(self):
         return 'Name of object: ' + self.message
 
@@ -34,6 +38,9 @@ class Branch(models.Model):
         return 'Name of object: ' + self.name
 
 class Repository(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    members = models.ManyToManyField(User, blank=True, related_name='member_of_repositorys')
+    actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
     branches = models.ManyToManyField(Branch, blank=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
