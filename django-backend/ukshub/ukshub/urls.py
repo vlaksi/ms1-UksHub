@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('useractivity/', include('useractivityapp.urls'), name='useractivityapp'),
     path('versioning/', include('versioningapp.urls'), name='versioning'),
+    path('progresstrack/', include('progresstrackapp.urls'), name='progresstrack'),
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
 ]
