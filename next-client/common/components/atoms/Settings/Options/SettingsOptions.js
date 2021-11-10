@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { Card, FormControl, InputGroup, Button, Modal } from 'react-bootstrap';
-import SearchBar from '../../Search/SearchBar';
 
-const SettingsOptions = () => {
+const SettingsOptions = ({ repositoryId }) => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [newRepositoryName, setNewRepositoryName] = useState('');
+
+	const handleRepositoryNameChanging = (newName) => {
+		setNewRepositoryName(newName);
+	};
 
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
@@ -15,17 +19,23 @@ const SettingsOptions = () => {
 					<Card.Title>Repository name</Card.Title>
 					<InputGroup className="mb-3 mt-3">
 						<FormControl
-							placeholder="Repository name"
+							placeholder="New repository name"
 							aria-label="Repository name"
 							aria-describedby="basic-addon2"
+							onChange={(e) => {
+								handleRepositoryNameChanging(e.target.value);
+							}}
 						/>
 						<Button
 							variant="success"
 							id="button-addon2"
 							onClick={() => {
-								alert('TODO: API call to rename repository');
+								alert(
+									`TODO: API call to rename repository ${repositoryId} with name ${newRepositoryName}`
+								);
 							}}
 						>
+							{/* TODO: User /versioning/repositorys/{id} PATCH, and change name attribute */}
 							Rename
 						</Button>
 					</InputGroup>
@@ -72,6 +82,7 @@ const SettingsOptions = () => {
 							alert('TODO: Add an API to delete this repository');
 						}}
 					>
+						{/* TODO: User /versioning/repositorys/{id} DELETE */}
 						Delete
 					</Button>
 					<Button variant="danger" onClick={handleDeleteModalClose}>
