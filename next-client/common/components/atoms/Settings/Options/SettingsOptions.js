@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, FormControl, InputGroup, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -10,17 +10,18 @@ const SettingsOptions = ({ repositoryId }) => {
 		setNewRepositoryName(newName);
 	};
 
-	useEffect(async () => {
+	const updateRepositoryName = () => {
 		axios
 			.request({
-				url: '/versioning/repositorys/',
-				method: 'get',
+				url: `/versioning/repositorys/${repositoryId}`,
+				method: 'patch',
 				baseURL: 'http://127.0.0.1:8000/',
 				auth: {
 					username: 'vaksi', // This is the client_id
 					password: 'root', // This is the client_secret
 				},
 				data: {
+					name: newRepositoryName,
 					grant_type: 'client_credentials',
 					scope: 'public',
 				},
@@ -28,7 +29,7 @@ const SettingsOptions = ({ repositoryId }) => {
 			.then((respose) => {
 				console.log(respose);
 			});
-	}, []);
+	};
 
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
@@ -51,12 +52,9 @@ const SettingsOptions = ({ repositoryId }) => {
 							variant="success"
 							id="button-addon2"
 							onClick={() => {
-								alert(
-									`TODO: API call to rename repository ${repositoryId} with name ${newRepositoryName}`
-								);
+								updateRepositoryName();
 							}}
 						>
-							{/* TODO: User /versioning/repositorys/{id} PATCH, and change name attribute */}
 							Rename
 						</Button>
 					</InputGroup>
