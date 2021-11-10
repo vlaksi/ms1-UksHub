@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, FormControl, InputGroup, Button, Modal } from 'react-bootstrap';
+import axios from 'axios';
 
 const SettingsOptions = ({ repositoryId }) => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -8,6 +9,26 @@ const SettingsOptions = ({ repositoryId }) => {
 	const handleRepositoryNameChanging = (newName) => {
 		setNewRepositoryName(newName);
 	};
+
+	useEffect(async () => {
+		axios
+			.request({
+				url: '/versioning/repositorys/',
+				method: 'get',
+				baseURL: 'http://127.0.0.1:8000/',
+				auth: {
+					username: 'vaksi', // This is the client_id
+					password: 'root', // This is the client_secret
+				},
+				data: {
+					grant_type: 'client_credentials',
+					scope: 'public',
+				},
+			})
+			.then((respose) => {
+				console.log(respose);
+			});
+	}, []);
 
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
