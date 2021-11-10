@@ -31,6 +31,26 @@ const SettingsOptions = ({ repositoryId }) => {
 			});
 	};
 
+	const deleteRepository = () => {
+		axios
+			.request({
+				url: `/versioning/repositorys/${repositoryId}`,
+				method: 'delete',
+				baseURL: 'http://127.0.0.1:8000/',
+				auth: {
+					username: 'vaksi', // This is the client_id
+					password: 'root', // This is the client_secret
+				},
+				data: {
+					grant_type: 'client_credentials',
+					scope: 'public',
+				},
+			})
+			.then((respose) => {
+				console.log(respose);
+			});
+	};
+
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
 	return (
@@ -98,10 +118,9 @@ const SettingsOptions = ({ repositoryId }) => {
 						variant="success"
 						onClick={() => {
 							handleDeleteModalClose();
-							alert('TODO: Add an API to delete this repository');
+							deleteRepository();
 						}}
 					>
-						{/* TODO: User /versioning/repositorys/{id} DELETE */}
 						Delete
 					</Button>
 					<Button variant="danger" onClick={handleDeleteModalClose}>
