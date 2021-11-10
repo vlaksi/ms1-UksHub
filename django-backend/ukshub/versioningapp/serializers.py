@@ -5,9 +5,8 @@ from .models import Branch, Commit, File, Folder, Repository
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
-        fields = [ "pk", "author", "members", "actions" , "branches", "name", "description"]
+        fields = [ "pk", "author", "members", "actions" , "name", "description"]
         extra_kwargs = {
-             "branches": {"required": False},
              "members": {"required": False},
              "actions": {"required": False},
         }
@@ -15,8 +14,9 @@ class RepositorySerializer(serializers.ModelSerializer):
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
-        fields = [ "pk", "child_branchs", "parent_branch", "files" , "folders", "name", "commits"]
+        fields = [ "pk", "repository", "child_branchs", "parent_branch", "files" , "folders", "name", "commits"]
         extra_kwargs = {
+             "repository": {"required": False},
              "child_branchs": {"required": False},
              "parent_branch": {"required": False},
              "files": {"required": False},
