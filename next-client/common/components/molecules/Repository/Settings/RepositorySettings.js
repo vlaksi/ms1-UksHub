@@ -25,6 +25,7 @@ const RepositorySettings = () => {
 						<Tab.Content>
 							<Tab.Pane eventKey="#link1">
 								<SettingsOptions />
+								{/* TODO: Pass repository ID here, cause of the edit and deletion  */}
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link2">
 								<ManageAccess />
