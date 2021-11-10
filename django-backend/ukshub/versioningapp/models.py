@@ -27,7 +27,17 @@ class Commit(models.Model):
     def __str__(self):
         return 'Name of object: ' + self.message
 
+class Repository(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    members = models.ManyToManyField(User, blank=True, related_name='member_of_repositorys')
+    actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=200)
+    def __str__(self):
+        return 'Name of object: ' + self.name
+
 class Branch(models.Model):
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=True)
     child_branchs = models.ManyToManyField('self', blank=True)
     parent_branch = models.ForeignKey('self', on_delete=models.CASCADE,blank=True, null=True)
     files = models.ManyToManyField(File,blank=True)
@@ -36,15 +46,4 @@ class Branch(models.Model):
     commits = models.ManyToManyField(Commit, blank=True)
     def __str__(self):
         return 'Name of object: ' + self.name
-
-class Repository(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    members = models.ManyToManyField(User, blank=True, related_name='member_of_repositorys')
-    actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
-    branches = models.ManyToManyField(Branch, blank=True)
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
-    def __str__(self):
-        return 'Name of object: ' + self.name
-
 

@@ -1,9 +1,55 @@
 import { useState } from 'react';
 import { Card, FormControl, InputGroup, Button, Modal } from 'react-bootstrap';
-import SearchBar from '../../Search/SearchBar';
+import axios from 'axios';
 
-const SettingsOptions = () => {
+const SettingsOptions = ({ repositoryId }) => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [newRepositoryName, setNewRepositoryName] = useState('');
+
+	const handleRepositoryNameChanging = (newName) => {
+		setNewRepositoryName(newName);
+	};
+
+	const updateRepositoryName = () => {
+		axios
+			.request({
+				url: `/versioning/repositorys/${repositoryId}`,
+				method: 'patch',
+				baseURL: 'http://127.0.0.1:8000/',
+				auth: {
+					username: 'vaksi', // This is the client_id
+					password: 'root', // This is the client_secret
+				},
+				data: {
+					name: newRepositoryName,
+					grant_type: 'client_credentials',
+					scope: 'public',
+				},
+			})
+			.then((respose) => {
+				console.log(respose);
+			});
+	};
+
+	const deleteRepository = () => {
+		axios
+			.request({
+				url: `/versioning/repositorys/${repositoryId}`,
+				method: 'delete',
+				baseURL: 'http://127.0.0.1:8000/',
+				auth: {
+					username: 'vaksi', // This is the client_id
+					password: 'root', // This is the client_secret
+				},
+				data: {
+					grant_type: 'client_credentials',
+					scope: 'public',
+				},
+			})
+			.then((respose) => {
+				console.log(respose);
+			});
+	};
 
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
@@ -15,15 +61,18 @@ const SettingsOptions = () => {
 					<Card.Title>Repository name</Card.Title>
 					<InputGroup className="mb-3 mt-3">
 						<FormControl
-							placeholder="Repository name"
+							placeholder="New repository name"
 							aria-label="Repository name"
 							aria-describedby="basic-addon2"
+							onChange={(e) => {
+								handleRepositoryNameChanging(e.target.value);
+							}}
 						/>
 						<Button
 							variant="success"
 							id="button-addon2"
 							onClick={() => {
-								alert('TODO: API call to rename repository');
+								updateRepositoryName();
 							}}
 						>
 							Rename
@@ -69,7 +118,7 @@ const SettingsOptions = () => {
 						variant="success"
 						onClick={() => {
 							handleDeleteModalClose();
-							alert('TODO: Add an API to delete this repository');
+							deleteRepository();
 						}}
 					>
 						Delete
