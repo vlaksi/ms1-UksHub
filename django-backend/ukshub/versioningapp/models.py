@@ -28,7 +28,7 @@ class Commit(models.Model):
         return 'Name of object: ' + self.message
 
 class Branch(models.Model):
-    repository = models.ForeignKey('Repository', on_delete=models.CASCADE, blank=True)
+    repository = models.ForeignKey('Repository', on_delete=models.CASCADE, blank=True, related_name = "repositoryBranches")
     child_branchs = models.ManyToManyField('self', blank=True)
     parent_branch = models.ForeignKey('self', on_delete=models.CASCADE,blank=True, null=True)
     files = models.ManyToManyField(File,blank=True)

@@ -12,4 +12,5 @@ urlpatterns = [
     path('folders/<int:pk>', views.FolderDetail.as_view()),
     path('files/', views.FileList.as_view()),
     path('files/<int:pk>', views.FileDetail.as_view()), 
+    path('repository/<int:pk>/branches/', views.repository_branches, name="repository-branches"), 
 ]

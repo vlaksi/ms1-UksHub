@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from .models import Branch, Commit, File, Folder, Repository
 from .serializers import BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer
 
@@ -52,3 +55,11 @@ class FileDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = File.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FileSerializer
+
+
+@api_view(['GET'])
+def repository_branches(request, pk):
+    repository = Repository.objects.get(id = pk)
+    repositories = repository.repositoryBranches.all()
+    serializers = BranchSerializer(repositories, many=True)
+    return Response(serializers.data)
