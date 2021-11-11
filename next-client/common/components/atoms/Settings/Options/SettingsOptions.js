@@ -5,11 +5,37 @@ import axios from 'axios';
 const SettingsOptions = ({ repositoryId }) => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [newRepositoryName, setNewRepositoryName] = useState('');
+	const [newRepositoryDescription,setNewRepositoryDescription] = useState('');
 
 	const handleRepositoryNameChanging = (newName) => {
 		setNewRepositoryName(newName);
 	};
 
+	const handleRepositoryDescriptionChanging = (newDescription) => {
+		setNewRepositoryDescription(newDescription);
+	};
+
+
+	const updateRepositoryDescription = () => {
+		axios
+			.request({
+				url: `/versioning/repositorys/${repositoryId}`,
+				method: 'patch',
+				baseURL: 'http://127.0.0.1:8000/',
+				auth: {
+					username: 'anci', // This is the client_id
+					password: 'root', // This is the client_secret
+				},
+				data: {
+					description: newRepositoryDescription,
+					grant_type: 'client_credentials',
+					scope: 'public',
+				},
+			})
+			.then((respose) => {
+				console.log(respose);
+			});
+	};
 	const updateRepositoryName = () => {
 		axios
 			.request({
@@ -17,7 +43,7 @@ const SettingsOptions = ({ repositoryId }) => {
 				method: 'patch',
 				baseURL: 'http://127.0.0.1:8000/',
 				auth: {
-					username: 'vaksi', // This is the client_id
+					username: 'anci', // This is the client_id
 					password: 'root', // This is the client_secret
 				},
 				data: {
@@ -58,7 +84,7 @@ const SettingsOptions = ({ repositoryId }) => {
 			<Card border="light" style={{ width: '100%' }}>
 				<Card.Header>Settings</Card.Header>
 				<Card.Body>
-					<Card.Title>Repository name</Card.Title>
+					<Card.Title>Repository details</Card.Title>
 					<InputGroup className="mb-3 mt-3">
 						<FormControl
 							placeholder="New repository name"
@@ -75,7 +101,26 @@ const SettingsOptions = ({ repositoryId }) => {
 								updateRepositoryName();
 							}}
 						>
-							Rename
+							Change
+						</Button>
+					</InputGroup>
+					<InputGroup className="mb-3 mt-3">
+						<FormControl
+								placeholder="New repository description"
+								aria-label="Repository description"
+								onChange={(e) => {
+									handleRepositoryDescriptionChanging(e.target.value);
+								}}
+						/>
+						<Button
+							variant="success"
+							id="button-addon2"
+							onClick={() => {
+								updateRepositoryDescription();
+							}}
+
+						>
+							Change
 						</Button>
 					</InputGroup>
 				</Card.Body>
@@ -93,7 +138,7 @@ const SettingsOptions = ({ repositoryId }) => {
 				>
 					<Card.Title>Delete this repository</Card.Title>
 					<Button variant="danger" onClick={handleShowDeleteModal}>
-						Danger
+						Delete
 					</Button>
 				</Card.Body>
 			</Card>

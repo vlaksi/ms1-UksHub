@@ -64,8 +64,6 @@ const UserRepositories = ({ username }) => {
 			});
 	};
 
-
-
 	return (
 		<>
 
