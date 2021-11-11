@@ -10,6 +10,7 @@ const SettingsOptions = ({ repositoryId }) => {
 
 	const notifyName = () => toast.success("Successfully changed name!");
 	const notifyDescription = () => toast.success("Successfully changed description!");
+	const notifyDeleted =() => toast.success("Successfully deleted repository!");
 
 	const notifyError = () => toast.error("Check if you entered all fields!");
 
@@ -39,7 +40,7 @@ const SettingsOptions = ({ repositoryId }) => {
 				},
 			})
 			.then((respose) => {
-				console.log(respose);
+				console.log(response);
 				notifyDescription();
 			})
 			.catch(error => {
@@ -64,7 +65,7 @@ const SettingsOptions = ({ repositoryId }) => {
 				},
 			})
 			.then((respose) => {
-				console.log(respose);
+				console.log(response);
 				notifyName();
 			})
 			.catch(error => {
@@ -80,7 +81,7 @@ const SettingsOptions = ({ repositoryId }) => {
 				method: 'delete',
 				baseURL: 'http://127.0.0.1:8000/',
 				auth: {
-					username: 'vaksi', // This is the client_id
+					username: 'anci', // This is the client_id
 					password: 'root', // This is the client_secret
 				},
 				data: {
@@ -89,7 +90,8 @@ const SettingsOptions = ({ repositoryId }) => {
 				},
 			})
 			.then((respose) => {
-				console.log(respose);
+				console.log(response);
+				notifyDeleted();
 			});
 	};
 

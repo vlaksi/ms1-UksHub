@@ -95,9 +95,6 @@ const UserRepositories = ({ username }) => {
 						</Form>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button variant="danger" onClick={handleClose}>
-							Cancel
-						</Button>
 						<Button variant="success"
 							onClick={() => {
 								addRepositoryName();
@@ -105,6 +102,10 @@ const UserRepositories = ({ username }) => {
 						>
 							Save Changes
 						</Button>
+						<Button variant="danger" onClick={handleClose}>
+							Cancel
+						</Button>
+						
 						
 					</Modal.Footer>
 				</Modal>
