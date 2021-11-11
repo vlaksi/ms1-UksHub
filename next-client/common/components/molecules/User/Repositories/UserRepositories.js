@@ -3,6 +3,8 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { MdAddCircle } from "react-icons/md";
 import {useState} from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 // TODO: Get this repositories for passed username
 const repositories = [
@@ -19,6 +21,8 @@ const UserRepositories = ({ username }) => {
 	const [show, setShow] = useState(false);
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
+
+	const notify = () => toast.success("Successfully created new repository!");
 
 	const [newRepositoryName, setNewRepositoryName] = useState('');
 	const handleRepositoryNameAdding = (newName) => {
@@ -50,9 +54,12 @@ const UserRepositories = ({ username }) => {
 			})
 			.then((respose) => {
 				console.log(respose);
+				notify();
 				handleClose();
 			});
 	};
+
+
 
 	return (
 		<>
@@ -95,9 +102,14 @@ const UserRepositories = ({ username }) => {
 						>
 							Save Changes
 						</Button>
+						
 					</Modal.Footer>
 				</Modal>
 			</div>
+			<ToastContainer 
+				position="top-center"
+				autoClose={3000}
+			></ToastContainer>
 
 
 			{repositories.map((repository) => {
