@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import { Card, FormControl, InputGroup, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 const SettingsOptions = ({ repositoryId }) => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [newRepositoryName, setNewRepositoryName] = useState('');
 	const [newRepositoryDescription,setNewRepositoryDescription] = useState('');
+
+	const notifyName = () => toast.success("Successfully changed name!");
+	const notifyDescription = () => toast.success("Successfully changed description!");
+
+	const notifyError = () => toast.error("Check if you entered all fields!");
 
 	const handleRepositoryNameChanging = (newName) => {
 		setNewRepositoryName(newName);
@@ -34,6 +40,11 @@ const SettingsOptions = ({ repositoryId }) => {
 			})
 			.then((respose) => {
 				console.log(respose);
+				notifyDescription();
+			})
+			.catch(error => {
+				console.log(error.response.data.error);
+				notifyError();
 			});
 	};
 	const updateRepositoryName = () => {
@@ -54,6 +65,11 @@ const SettingsOptions = ({ repositoryId }) => {
 			})
 			.then((respose) => {
 				console.log(respose);
+				notifyName();
+			})
+			.catch(error => {
+				console.log(error.response.data.error);
+				notifyError();
 			});
 	};
 
@@ -142,6 +158,12 @@ const SettingsOptions = ({ repositoryId }) => {
 					</Button>
 				</Card.Body>
 			</Card>
+
+			<ToastContainer 
+				position="top-right"
+				autoClose={3000}
+			></ToastContainer>
+
 
 			{/* Delete repository */}
 			<Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
