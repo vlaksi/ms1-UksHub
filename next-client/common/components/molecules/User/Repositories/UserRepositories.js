@@ -19,7 +19,7 @@ const repositories = [
 
 const UserRepositories = ({ username }) => {
 	const [show, setShow] = useState(false);
-	const handleClose = () => setShow(false);
+	const handleClose = () => {setShow(false); setNewRepositoryName(''); setNewRepositoryDescription('')};
 	const handleShow = () => setShow(true);
 
 	const notify = () => toast.success("Successfully created new repository!");
