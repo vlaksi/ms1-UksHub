@@ -23,6 +23,7 @@ const UserRepositories = ({ username }) => {
 	const handleShow = () => setShow(true);
 
 	const notify = () => toast.success("Successfully created new repository!");
+	const notifyError = () => toast.error("Check if you entered all fields!");
 
 	const [newRepositoryName, setNewRepositoryName] = useState('');
 	const handleRepositoryNameAdding = (newName) => {
@@ -56,6 +57,10 @@ const UserRepositories = ({ username }) => {
 				console.log(respose);
 				notify();
 				handleClose();
+			})
+			.catch(error => {
+				console.log(error.response.data.error);
+				notifyError();
 			});
 	};
 
@@ -107,7 +112,7 @@ const UserRepositories = ({ username }) => {
 				</Modal>
 			</div>
 			<ToastContainer 
-				position="top-center"
+				position="top-right"
 				autoClose={3000}
 			></ToastContainer>
 
