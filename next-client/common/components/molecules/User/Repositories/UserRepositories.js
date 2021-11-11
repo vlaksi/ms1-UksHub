@@ -50,6 +50,7 @@ const UserRepositories = ({ username }) => {
 			})
 			.then((respose) => {
 				console.log(respose);
+				handleClose();
 			});
 	};
 
