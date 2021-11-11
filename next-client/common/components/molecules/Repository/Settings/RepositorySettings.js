@@ -24,7 +24,7 @@ const RepositorySettings = () => {
 					<Col sm={8}>
 						<Tab.Content>
 							<Tab.Pane eventKey="#link1">
-								<SettingsOptions repositoryId={5} />
+								<SettingsOptions repositoryId={5} repositoryName={'Irvasi'} repositoryDescription={'Irvasi su zakon'}/>
 								{/* TODO: Pass real repository ID here, cause of the edit and deletion  */}
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link2">

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Card, FormControl, InputGroup, Button, Modal } from 'react-bootstrap';
+import { Card, FormControl, InputGroup, Button, Modal,Form } from 'react-bootstrap';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 
-const SettingsOptions = ({ repositoryId }) => {
+const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }) => {
+
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [newRepositoryName, setNewRepositoryName] = useState('');
 	const [newRepositoryDescription,setNewRepositoryDescription] = useState('');
@@ -39,8 +40,9 @@ const SettingsOptions = ({ repositoryId }) => {
 					scope: 'public',
 				},
 			})
-			.then((respose) => {
+			.then((response) => {
 				console.log(response);
+				console.log(repositoryName);
 				notifyDescription();
 			})
 			.catch(error => {
@@ -64,7 +66,7 @@ const SettingsOptions = ({ repositoryId }) => {
 					scope: 'public',
 				},
 			})
-			.then((respose) => {
+			.then((response) => {
 				console.log(response);
 				notifyName();
 			})
@@ -89,7 +91,7 @@ const SettingsOptions = ({ repositoryId }) => {
 					scope: 'public',
 				},
 			})
-			.then((respose) => {
+			.then((response) => {
 				console.log(response);
 				notifyDeleted();
 			});
@@ -103,9 +105,10 @@ const SettingsOptions = ({ repositoryId }) => {
 				<Card.Header>Settings</Card.Header>
 				<Card.Body>
 					<Card.Title>Repository details</Card.Title>
-					<InputGroup className="mb-3 mt-3">
+					<Form.Label className="mt-3">Name</Form.Label>
+					<InputGroup className="mb-3">
 						<FormControl
-							placeholder="New repository name"
+							defaultValue={repositoryName}
 							aria-label="Repository name"
 							aria-describedby="basic-addon2"
 							onChange={(e) => {
@@ -122,9 +125,11 @@ const SettingsOptions = ({ repositoryId }) => {
 							Change
 						</Button>
 					</InputGroup>
-					<InputGroup className="mb-3 mt-3">
+
+					<Form.Label>Description</Form.Label>
+					<InputGroup className="mb-3">
 						<FormControl
-								placeholder="New repository description"
+								defaultValue={repositoryDescription}
 								aria-label="Repository description"
 								onChange={(e) => {
 									handleRepositoryDescriptionChanging(e.target.value);
