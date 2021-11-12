@@ -10,6 +10,7 @@ const SettingsOptions = ({ repositoryId }) => {
 		setNewRepositoryName(newName);
 	};
 
+	// TODO: Move this to the service layer
 	const updateRepositoryName = () => {
 		axios
 			.request({
@@ -31,6 +32,7 @@ const SettingsOptions = ({ repositoryId }) => {
 			});
 	};
 
+	// TODO: Move this to the service layer
 	const deleteRepository = () => {
 		axios
 			.request({

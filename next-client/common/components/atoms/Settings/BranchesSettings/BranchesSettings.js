@@ -9,7 +9,7 @@ import {
 } from 'react-bootstrap';
 import { BiTransfer } from 'react-icons/bi';
 import { getDefaultBranch } from '../../../../services/versioning/branchService';
-import { branches } from './../../../../mocks/repository';
+import { updateRepositoryDefaultBranch } from '../../../../services/versioning/repositoryService';
 
 const BranchesSettings = ({ repository, repositoryBranches }) => {
 	const [defaultBranch, setDefaultBranch] = useState('');
@@ -19,8 +19,8 @@ const BranchesSettings = ({ repository, repositoryBranches }) => {
 	useEffect(async () => {
 		if (!repository) return;
 		let branch = await getDefaultBranch(repository.default_branch);
-		setDefaultBranch(branch.name);
-		setBufferBranch(branch.name);
+		setDefaultBranch(branch);
+		setBufferBranch(branch);
 	}, [repository]);
 
 	const handleClose = () => setShow(false);
@@ -44,7 +44,7 @@ const BranchesSettings = ({ repository, repositoryBranches }) => {
 								alignItems: 'center',
 							}}
 						>
-							<Badge bg="secondary"> {defaultBranch} </Badge>
+							<Badge bg="secondary"> {defaultBranch.name} </Badge>
 							<BiTransfer
 								style={{ marginRight: '5px', cursor: 'pointer' }}
 								onClick={handleShow}
@@ -73,7 +73,7 @@ const BranchesSettings = ({ repository, repositoryBranches }) => {
 							variant="secondary"
 							id="dropdown-basic"
 						>
-							{bufferBranch}
+							{bufferBranch.name}
 						</Dropdown.Toggle>
 
 						{repositoryBranches && (
@@ -83,7 +83,7 @@ const BranchesSettings = ({ repository, repositoryBranches }) => {
 										<Dropdown.Item
 											key={branch.name}
 											onClick={() => {
-												setBufferBranch(branch.name);
+												setBufferBranch(branch);
 											}}
 										>
 											{branch.name}
@@ -101,9 +101,8 @@ const BranchesSettings = ({ repository, repositoryBranches }) => {
 						onClick={() => {
 							setDefaultBranch(bufferBranch);
 							handleClose();
-							alert(
-								'TODO: Add an API call to update default branch of this repository'
-							);
+							updateRepositoryDefaultBranch(repository.pk, bufferBranch.pk);
+							// TODO: Add toaster here
 						}}
 					>
 						Update
