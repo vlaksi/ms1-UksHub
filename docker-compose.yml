@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  service:
+    container_name: django_backend
+    image: django_backend:latest
+    build:
+        context: ./django-backend/ukshub
+        dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./django-backend/ukshub/static:/code/static
+    depends_on:
+      - db
+
+  db:
+    restart: always
+    image: postgres
+    container_name: myapp_db
+    volumes:
+      - ../pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=postgres
+
+  client:
+    image: next_client:latest
+    container_name: next_client
+    build:
+        context: ./next-client
+        dockerfile: Dockerfile
+    command: ["npm", "start"]
+    ports:
+      - 3000:3000
+      
