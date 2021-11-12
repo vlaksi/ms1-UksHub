@@ -24,6 +24,38 @@ const PullRequestsOverview = () => {
 		setNewBaseBranch(newBaseBranch);
 	};
 
+	const cardsInfo = [
+		{
+		  title: "First Title",
+		  text: "First Text"
+		},
+		{
+		  title: "second Title",
+		  text: "second Text"
+		
+		},
+		{
+		  title: "third Title",
+		  text: "third Text"
+		}
+	  ];
+
+	  const renderCards = (card,index) => {
+		return(
+			<div>
+				<Card border="primary" style={{ width: '40rem', marginTop:'15px' }} key={index}>
+					<Card.Body>
+						<Card.Title>{card.title}</Card.Title>
+						<Card.Text>
+							#36 Opened 12/10/2021 by vaksi {card.text}
+							
+						</Card.Text>	
+						<Button variant="primary" style={{marginLeft:'25rem'}}>Show details<MdArrowForwardIos/></Button>
+					</Card.Body>
+				</Card>
+			</div>
+		);
+	  };
 
 	return (
 		<>
@@ -84,17 +116,8 @@ const PullRequestsOverview = () => {
 				</Modal>
 				
 			</div>
-			<div style={{display:'flex'}} >
-				<Card border="primary">
-					<Card.Body>
-						<Card.Title>Name of pull request</Card.Title>
-						<Card.Text>
-							#36 Opened 12/10/2021 by vaksi
-							<Button variant="primary" size="sm" style={{marginLeft: '15px'}}>Show details<MdArrowForwardIos/></Button>
-						</Card.Text>	
-					</Card.Body>
-				</Card>
-			</div>
+			{cardsInfo.map(renderCards)}
+			
 		</>
 	);
 };
