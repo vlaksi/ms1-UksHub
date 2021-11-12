@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Card,
 	ListGroup,
@@ -8,13 +8,21 @@ import {
 	Button,
 } from 'react-bootstrap';
 import { BiTransfer } from 'react-icons/bi';
-import { branches } from '../../../../mocks/repository';
+import { getDefaultBranch } from '../../../../services/versioning/branchService';
+import { branches } from './../../../../mocks/repository';
 
-const BranchesSettings = () => {
+const BranchesSettings = ({ repository, repositoryBranches }) => {
 	// TODO: Get a name of default branch
-	const [defaultBranch, setDefaultBranch] = useState('main');
+	const [defaultBranch, setDefaultBranch] = useState('');
 	const [bufferBranch, setBufferBranch] = useState(defaultBranch);
 	const [show, setShow] = useState(false);
+
+	useEffect(async () => {
+		let branch = await getDefaultBranch(1);
+		// let branch = await getDefaultBranch(repository.default_branch);
+		setDefaultBranch(branch.name);
+		setBufferBranch(branch.name);
+	}, []);
 
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
