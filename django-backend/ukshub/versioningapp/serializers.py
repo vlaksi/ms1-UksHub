@@ -5,7 +5,7 @@ from .models import Branch, Commit, File, Folder, Repository
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
-        fields = [ "pk", "author", "members", "actions" , "name", "description"]
+        fields = [ "pk", "author", "members", "actions" , "name", "description", "default_branch"]
         extra_kwargs = {
              "members": {"required": False},
              "actions": {"required": False},
