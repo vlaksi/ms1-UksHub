@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Tab, Col, ListGroup, Row } from 'react-bootstrap';
+import { getRepositoryBranches } from '../../../../services/versioning/branchService';
 import { getRepositoryById } from '../../../../services/versioning/repositoryService';
 import BranchesSettings from '../../../atoms/Settings/BranchesSettings/BranchesSettings';
 import ManageAccess from '../../../atoms/Settings/ManageAccess/ManageAccess';
@@ -7,10 +8,12 @@ import SettingsOptions from '../../../atoms/Settings/Options/SettingsOptions';
 
 const RepositorySettings = ({ repositoryId = 1 }) => {
 	const [repository, setRepository] = useState('');
+	const [repositoryBranches, setRepositoryBranches] = useState('');
 
 	useEffect(async () => {
 		// TODO: Move this somewhere else (ie. send a repository as a props to this component!)
 		setRepository(await getRepositoryById(repositoryId));
+		setRepositoryBranches(await getRepositoryBranches(repositoryId));
 	}, []);
 
 	return (
@@ -40,7 +43,10 @@ const RepositorySettings = ({ repositoryId = 1 }) => {
 								<ManageAccess />
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link3">
-								<BranchesSettings repository={repository} />
+								<BranchesSettings
+									repository={repository}
+									repositoryBranches={repositoryBranches}
+								/>
 							</Tab.Pane>
 						</Tab.Content>
 					</Col>

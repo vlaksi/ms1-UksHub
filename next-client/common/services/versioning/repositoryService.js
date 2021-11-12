@@ -18,7 +18,6 @@ export const getRepositoryById = async (repositoryId) => {
 		})
 		.then((response) => {
 			repository = response.data;
-			console.log('branch: ', repository);
 		})
 		.catch((err) => {
 			console.log(err);

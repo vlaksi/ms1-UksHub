@@ -12,17 +12,16 @@ import { getDefaultBranch } from '../../../../services/versioning/branchService'
 import { branches } from './../../../../mocks/repository';
 
 const BranchesSettings = ({ repository, repositoryBranches }) => {
-	// TODO: Get a name of default branch
 	const [defaultBranch, setDefaultBranch] = useState('');
 	const [bufferBranch, setBufferBranch] = useState(defaultBranch);
 	const [show, setShow] = useState(false);
 
 	useEffect(async () => {
-		let branch = await getDefaultBranch(1);
-		// let branch = await getDefaultBranch(repository.default_branch);
+		if (!repository) return;
+		let branch = await getDefaultBranch(repository.default_branch);
 		setDefaultBranch(branch.name);
 		setBufferBranch(branch.name);
-	}, []);
+	}, [repository]);
 
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
@@ -77,20 +76,22 @@ const BranchesSettings = ({ repository, repositoryBranches }) => {
 							{bufferBranch}
 						</Dropdown.Toggle>
 
-						<Dropdown.Menu>
-							{branches.map((branch) => {
-								return (
-									<Dropdown.Item
-										key={branch.branchName}
-										onClick={() => {
-											setBufferBranch(branch.branchName);
-										}}
-									>
-										{branch.branchName}
-									</Dropdown.Item>
-								);
-							})}
-						</Dropdown.Menu>
+						{repositoryBranches && (
+							<Dropdown.Menu>
+								{repositoryBranches?.map((branch) => {
+									return (
+										<Dropdown.Item
+											key={branch.name}
+											onClick={() => {
+												setBufferBranch(branch.name);
+											}}
+										>
+											{branch.name}
+										</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+						)}
 					</Dropdown>
 				</Modal.Body>
 
