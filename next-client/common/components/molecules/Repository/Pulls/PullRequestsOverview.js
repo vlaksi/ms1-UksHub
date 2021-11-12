@@ -45,18 +45,28 @@ const PullRequestsOverview = () => {
 										handlePullRequestNameAdding(e.target.value);}}
 								>
 								</Form.Control>
-								<Form.Label>Compare branch</Form.Label>
-								<Form.Control type="name" placeholder="Enter compare branch"
-									onChange={(e) => {
+		
+								<Form.Label className="mt-3">Compare branch</Form.Label>
+								<Form.Select  aria-label="Default select example" 
+										onChange={(e) => {
 										handleCompareBranchAdding(e.target.value);}}
 								>
-								</Form.Control>
-								<Form.Label>Base branch</Form.Label>
-								<Form.Control type="name" placeholder="Enter base branch"
-									onChange={(e) => {
+									<option>Open this select menu</option>
+									<option value="1">One</option>
+									<option value="2">Two</option>
+									<option value="3">Three</option>
+								</Form.Select>
+
+								<Form.Label className="mt-3">Base branch</Form.Label>
+								<Form.Select aria-label="Default select example" 
+										onChange={(e) => {
 										handleBaseBranchAdding(e.target.value);}}
 								>
-								</Form.Control>
+									<option>Open this select menu</option>
+									<option value="1">One</option>
+									<option value="2">Two</option>
+									<option value="3">Three</option>
+								</Form.Select>
 							</Form.Group>
 						</Form>
 					</Modal.Body>
