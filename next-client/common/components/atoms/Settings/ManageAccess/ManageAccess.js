@@ -45,6 +45,12 @@ const ManageAccess = ({ repository }) => {
 		setUserDataForSearch(await getUserDataForSearch());
 	}, [repository]);
 
+	const isUserAlreadyCollaborator = (user) => {
+		return repositoryCollaborators.find(
+			(collaborator) => collaborator.username == user.title
+		);
+	};
+
 	return (
 		<>
 			<Card border="light" style={{ width: '100%' }}>
@@ -52,7 +58,9 @@ const ManageAccess = ({ repository }) => {
 				<Card.Body>
 					<UserSearch
 						placeholder="Add a collaborator..."
-						data={userDataForSearch}
+						data={userDataForSearch.filter(
+							(user) => !isUserAlreadyCollaborator(user)
+						)}
 						onSelectItem={async (selectedValue) => {
 							console.log(selectedValue);
 							await createCollaboration(selectedValue.pk, repository.pk);
