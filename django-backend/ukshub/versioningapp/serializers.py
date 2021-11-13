@@ -1,8 +1,13 @@
 from django.db.models import fields
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Branch, Commit, File, Folder, Repository, Collaboration
+from .models import Branch, Commit, File, Folder, Repository, Collaboration, CollaborationType
 from .dtos import CollaboratorDto
+
+class CollaborationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollaborationType
+        fields = [ "pk", "name" ]
 
 class CollaboratorSerializer(serializers.ModelSerializer):
     class Meta:

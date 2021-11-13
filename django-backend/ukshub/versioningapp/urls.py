@@ -6,6 +6,7 @@ urlpatterns = [
     path('repositorys/<int:pk>', views.RepositoryDetail.as_view()),
     path('collaborations/', views.CollaborationList.as_view()),
     path('collaborations/<int:pk>', views.CollaborationDetail.as_view()),
+    path('collaboration/types/', views.collaboration_types, name="collaboration-types"),
     path('branchs/', views.BranchList.as_view()),
     path('branchs/<int:pk>', views.BranchDetail.as_view()),
     path('commits/', views.CommitList.as_view()),

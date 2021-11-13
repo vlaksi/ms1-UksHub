@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django.contrib.auth.models import User
-from .models import Branch, Commit, File, Folder, Repository, Collaboration
-from .serializers import CollaboratorSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
+from .models import CollaborationType, Branch, Commit, File, Folder, Repository, Collaboration
+from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
 from .dtos import CollaboratorDto
 
 class RepositoryList(generics.ListCreateAPIView):
@@ -68,6 +68,11 @@ class FileDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FileSerializer
 
+@api_view(['GET'])
+def collaboration_types(request):
+    collaboration_types = CollaborationType.objects.all()
+    serializers = CollaborationTypeSerializer(collaboration_types, many=True)
+    return Response(serializers.data)
 
 @api_view(['GET'])
 def repository_branches(request, pk):
