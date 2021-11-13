@@ -4,6 +4,7 @@ import { MdAddCircle } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { getAllRepositoriesByAuthor } from "../../../../services/versioning/repositoryService";
 
 // TODO: Get this repositories for passed username
 const repositories = [
@@ -66,31 +67,6 @@ const UserRepositories = ({ username, author_id }) => {
         console.log(error.response.data.error);
         notifyError();
       });
-  };
-
-  const getAllRepositoriesByAuthor = async (user_id) => {
-    let repositories;
-    await axios
-      .request({
-        url: `/versioning/users/${user_id}/repositories`,
-        method: "get",
-        baseURL: "http://127.0.0.1:8000/",
-        auth: {
-          username: "anci", // This is the client_id
-          password: "root", // This is the client_secret
-        },
-        data: {
-          grant_type: "client_credentials",
-          scope: "public",
-        },
-      })
-      .then((response) => {
-        repositories = response.data;
-      })
-      .catch((error) => {
-        console.log(error.response.data.error);
-      });
-    return repositories;
   };
 
   useEffect(async () => {
