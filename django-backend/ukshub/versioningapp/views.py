@@ -18,6 +18,16 @@ class RepositoryDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = RepositorySerializer
 
+class CollaborationList(generics.ListCreateAPIView):
+    queryset = Collaboration.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CollaborationSerializer
+
+class CollaborationDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Collaboration.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CollaborationSerializer
+
 class BranchList(generics.ListCreateAPIView):
     queryset = Branch.objects.all()
     permission_classes = [permissions.IsAuthenticated]
@@ -67,11 +77,10 @@ def repository_branches(request, pk):
     return Response(serializers.data)
 
 @api_view(['GET'])
-def repository_collaborators(request, repository_id):
+def repository_collaborators(request, repo_id):
     collaborators = []
-    collaborations = Collaboration.objects.filter(repository_id = repository_id)
+    collaborations = Collaboration.objects.filter(repository_id = repo_id)
     for collaboration in collaborations:
         collaborators.append(CollaboratorDto.create(collaboration.collaborator.username, collaboration.collaboration_type.name))
     serializers = CollaboratorSerializer(collaborators, many=True)
     return Response(serializers.data)
-
