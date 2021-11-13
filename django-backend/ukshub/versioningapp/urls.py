@@ -13,4 +13,5 @@ urlpatterns = [
     path('files/', views.FileList.as_view()),
     path('files/<int:pk>', views.FileDetail.as_view()), 
     path('repository/<int:pk>/branches/', views.repository_branches, name="repository-branches"), 
+    path('repository/<int:repository_id>/collaborators/', views.repository_collaborators, name="repository-collaborators"), 
 ]

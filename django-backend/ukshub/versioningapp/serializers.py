@@ -1,6 +1,6 @@
 from django.db.models import fields
 from rest_framework import serializers
-from .models import Branch, Commit, File, Folder, Repository
+from .models import Branch, Commit, File, Folder, Repository, Collaboration
 
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +10,11 @@ class RepositorySerializer(serializers.ModelSerializer):
              "members": {"required": False},
              "actions": {"required": False},
         }
+
+class CollaborationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collaboration
+        fields = [ "pk", "collaborator", "repository", "collaboration_type"]
 
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:

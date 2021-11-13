@@ -53,5 +53,5 @@ class CollaborationType(models.Model):
 
 class Collaboration(models.Model):
     collaborator = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
-    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False)
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False, related_name = "repositoryCollaborations")
     collaboration_type = models.ForeignKey(CollaborationType, on_delete=models.CASCADE, blank=False, null=False)
