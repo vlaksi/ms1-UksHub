@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from django.contrib.auth.models import User
 from .models import Branch, Commit, File, Folder, Repository, Collaboration
-from .serializers import BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
+from .serializers import UserSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
 
 class RepositoryList(generics.ListCreateAPIView):
     queryset = Repository.objects.all()
@@ -77,6 +77,7 @@ def repository_collaborators(request, repository_id):
         collaborators.append(newUser)
     print(collaborators)
     print('\n\n')
-    serializers = CollaborationSerializer(collaborations, many=True)
+    # serializers = CollaborationSerializer(collaborations, many=True)
+    serializers = UserSerializer(collaborators, many=True)
     return Response(serializers.data)
 

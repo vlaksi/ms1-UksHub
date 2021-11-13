@@ -1,6 +1,12 @@
 from django.db.models import fields
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Branch, Commit, File, Folder, Repository, Collaboration
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [ "pk", "password", "username", "email" ]
 
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
