@@ -14,6 +14,7 @@ import {
 	deleteCollaborationById,
 	getAllCollaboratorsRoles,
 	getRepositoryCollaboratos,
+	updateCollaboratorRole,
 } from '../../../../services/versioning/repositoryService';
 
 const ManageAccess = ({ repository }) => {
@@ -152,12 +153,13 @@ const ManageAccess = ({ repository }) => {
 					<Button
 						variant="success"
 						onClick={async () => {
+							handleEditModalClose();
+							await updateCollaboratorRole(
+								editCollaborator.collaboration_id,
+								bufferRole.pk
+							);
 							setRepositoryCollaborators(
 								await getRepositoryCollaboratos(repository.pk)
-							);
-							handleEditModalClose();
-							alert(
-								`TODO: Call an API to update ${bufferRole.pk} role of the collaborator`
 							);
 						}}
 					>
