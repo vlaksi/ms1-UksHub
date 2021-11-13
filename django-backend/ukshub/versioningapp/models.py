@@ -47,3 +47,11 @@ class Repository(models.Model):
     default_branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True, related_name='default_branch')
     def __str__(self):
         return 'Name of object: ' + self.name
+
+class CollaborationType(models.Model):
+    name = models.CharField(max_length=200, blank=False, null=False)
+
+class Collaboration(models.Model):
+    collaborator = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False)
+    collaboration_type = models.ForeignKey(CollaborationType, on_delete=models.CASCADE, blank=False, null=False)
