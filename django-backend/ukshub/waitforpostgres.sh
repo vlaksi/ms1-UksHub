@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function postgres_ready() {
     python << END
 import sys

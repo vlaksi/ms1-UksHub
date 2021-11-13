@@ -11,4 +11,5 @@ RUN pip install --upgrade wheel
 RUN pip install --upgrade setuptools
 RUN pip install -r requirements.txt
 
+RUN ["chmod", "+x", "waitforpostgres.sh"]
 RUN ["chmod", "+x", "start.sh"]
