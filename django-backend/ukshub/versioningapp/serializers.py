@@ -2,11 +2,12 @@ from django.db.models import fields
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Branch, Commit, File, Folder, Repository, Collaboration
+from .dtos import CollaboratorDto
 
-class UserSerializer(serializers.ModelSerializer):
+class CollaboratorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = [ "pk", "password", "username", "email" ]
+        model = CollaboratorDto
+        fields = [ "username", "role" ]
 
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
