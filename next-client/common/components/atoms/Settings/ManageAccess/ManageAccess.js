@@ -13,6 +13,7 @@ import { MdEdit } from 'react-icons/md';
 import { getDataForSearch } from '../../../../mocks/dataForSearch';
 import { getUserDataForSearch } from '../../../../services/useractivity/userService';
 import {
+	createCollaboration,
 	deleteCollaborationById,
 	getAllCollaboratorsRoles,
 	getRepositoryCollaboratos,
@@ -52,8 +53,12 @@ const ManageAccess = ({ repository }) => {
 					<UserSearch
 						placeholder="Add a collaborator..."
 						data={userDataForSearch}
-						onSelectItem={(selectedValue) => {
+						onSelectItem={async (selectedValue) => {
 							console.log(selectedValue);
+							await createCollaboration(selectedValue.pk, repository.pk);
+							setRepositoryCollaborators(
+								await getRepositoryCollaboratos(repository.pk)
+							);
 						}}
 					/>
 

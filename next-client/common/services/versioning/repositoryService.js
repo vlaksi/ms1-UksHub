@@ -52,6 +52,8 @@ export const updateRepositoryDefaultBranch = async (
 	return updatedBranch;
 };
 
+// TODO: Move all these collaboration stuff to the collaborationService !!
+
 export const getRepositoryCollaboratos = async (repositoryId) => {
 	let repositoryCollaborators;
 	await axios
@@ -138,6 +140,32 @@ export const updateCollaboratorRole = async (collaborationId, newRoleId) => {
 			},
 			data: {
 				collaboration_type: newRoleId,
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			console.log(response);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};
+
+export const createCollaboration = async (collaboratorId, repositoryId) => {
+	await axios
+		.request({
+			url: `/versioning/collaborations/`,
+			method: 'post',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'vaksi', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				collaborator: collaboratorId,
+				repository: repositoryId,
+				collaboration_type: 1,
 				grant_type: 'client_credentials',
 				scope: 'public',
 			},
