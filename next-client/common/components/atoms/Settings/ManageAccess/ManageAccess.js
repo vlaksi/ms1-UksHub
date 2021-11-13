@@ -10,12 +10,14 @@ import {
 } from 'react-bootstrap';
 import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
+import { getDataForSearch } from '../../../../mocks/dataForSearch';
 import {
 	deleteCollaborationById,
 	getAllCollaboratorsRoles,
 	getRepositoryCollaboratos,
 	updateCollaboratorRole,
 } from '../../../../services/versioning/repositoryService';
+import UserSearch from '../../UserSearch/UserSearch';
 
 const ManageAccess = ({ repository }) => {
 	const [removeCandidate, setRemoveCandidate] = useState('');
@@ -44,22 +46,14 @@ const ManageAccess = ({ repository }) => {
 			<Card border="light" style={{ width: '100%' }}>
 				<Card.Header>Collaborators</Card.Header>
 				<Card.Body>
-					<InputGroup className="mb-3 mt-3">
-						<FormControl
-							placeholder="Add a collaborator..."
-							aria-label="Add a collaborator..."
-							aria-describedby="basic-addon2"
-						/>
-						<Button
-							style={{ width: '80px' }}
-							variant="success"
-							onClick={() => {
-								alert('TODO: Call API to add a user to collaborators');
-							}}
-						>
-							Add
-						</Button>
-					</InputGroup>
+					<UserSearch
+						placeholder="Add a collaborator..."
+						data={getDataForSearch()}
+						onSelectItem={(selectedValue) => {
+							console.log(selectedValue);
+						}}
+					/>
+
 					<ListGroup variant="flush">
 						{repositoryCollaborators.map((collaborator) => {
 							return (
