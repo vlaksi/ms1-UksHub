@@ -19,7 +19,7 @@ const ManageAccess = ({ repository }) => {
 	const [removeCandidate, setRemoveCandidate] = useState('');
 	const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 	const [repositoryRoles, setRepositoryRoles] = useState([]);
-	const [bufferRole, setBufferRole] = useState('');
+	const [bufferRole, setBufferRole] = useState();
 	const [editCollaborator, setEditCollaborator] = useState('');
 
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -79,7 +79,6 @@ const ManageAccess = ({ repository }) => {
 										<MdEdit
 											style={{ marginRight: '15px', cursor: 'pointer' }}
 											onClick={() => {
-												setBufferRole(collaborator.role);
 												setEditCollaborator(collaborator);
 												handleShowEditModal();
 											}}
@@ -128,16 +127,16 @@ const ManageAccess = ({ repository }) => {
 							variant="secondary"
 							id="dropdown-basic"
 						>
-							{bufferRole}
+							{bufferRole ? bufferRole.name : 'choose role'}
 						</Dropdown.Toggle>
 
 						<Dropdown.Menu>
 							{repositoryRoles.map((repositoryRole) => {
 								return (
 									<Dropdown.Item
-										key={repositoryRole.name}
+										key={repositoryRole.pk}
 										onClick={() => {
-											setBufferRole(repositoryRole.name);
+											setBufferRole(repositoryRole);
 										}}
 									>
 										{repositoryRole.name}
@@ -151,20 +150,14 @@ const ManageAccess = ({ repository }) => {
 				<Modal.Footer>
 					<Button
 						variant="success"
-						onClick={() => {
-							let bufferCollaborators = [];
-							repositoryCollaborators.map((repositoryCollaborator) => {
-								if (
-									repositoryCollaborator.username == editCollaborator.username
-								) {
-									repositoryCollaborator.repositoryRole = bufferRole;
-								}
-
-								bufferCollaborators.push(repositoryCollaborator);
-							});
-							setRepositoryCollaborators(bufferCollaborators);
+						onClick={async () => {
+							setRepositoryCollaborators(
+								await getRepositoryCollaboratos(repository.pk)
+							);
 							handleEditModalClose();
-							alert('TODO: Call an API to update role of the collaborator');
+							alert(
+								`TODO: Call an API to update ${bufferRole.pk} role of the collaborator`
+							);
 						}}
 					>
 						Update
