@@ -101,3 +101,26 @@ export const getAllCollaboratorsRoles = async () => {
 		});
 	return collaboratorsRoles;
 };
+
+export const deleteCollaborationById = async (collaborationId) => {
+	await axios
+		.request({
+			url: `/versioning/collaborations/${collaborationId}`,
+			method: 'delete',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'vaksi', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			console.log(response);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};

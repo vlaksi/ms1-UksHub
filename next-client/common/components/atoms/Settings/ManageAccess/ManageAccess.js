@@ -11,6 +11,7 @@ import {
 import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
 import {
+	deleteCollaborationById,
 	getAllCollaboratorsRoles,
 	getRepositoryCollaboratos,
 } from '../../../../services/versioning/repositoryService';
@@ -197,9 +198,8 @@ const ManageAccess = ({ repository }) => {
 								)
 							);
 							handleDeleteModalClose();
-							alert(
-								'TODO: Add an API call to delete collaborator from collaborators'
-							);
+							deleteCollaborationById(removeCandidate.collaboration_id);
+							console.log(removeCandidate);
 						}}
 					>
 						Remove
