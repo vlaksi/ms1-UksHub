@@ -10,29 +10,15 @@ import {
 } from 'react-bootstrap';
 import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
-import { getRepositoryCollaboratos } from '../../../../services/versioning/repositoryService';
-
-const repositoryRoles = ['maintainer', 'developer', 'owner', 'guest'];
-
-const collaborators = [
-	{
-		username: 'Pufke',
-		repositoryRole: 'maintainer',
-	},
-	{
-		username: 'anciz',
-		repositoryRole: 'owner',
-	},
-	{
-		username: 'vlaksi',
-		repositoryRole: 'developer',
-	},
-];
+import {
+	getAllCollaboratorsRoles,
+	getRepositoryCollaboratos,
+} from '../../../../services/versioning/repositoryService';
 
 const ManageAccess = ({ repository }) => {
 	const [removeCandidate, setRemoveCandidate] = useState('');
-	const [repositoryCollaborators, setRepositoryCollaborators] =
-		useState(collaborators);
+	const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
+	const [repositoryRoles, setRepositoryRoles] = useState([]);
 	const [bufferRole, setBufferRole] = useState('');
 	const [editCollaborator, setEditCollaborator] = useState('');
 
@@ -48,6 +34,7 @@ const ManageAccess = ({ repository }) => {
 	useEffect(async () => {
 		if (!repository) return;
 		setRepositoryCollaborators(await getRepositoryCollaboratos(repository.pk));
+		setRepositoryRoles(await getAllCollaboratorsRoles());
 	}, [repository]);
 
 	return (
@@ -148,12 +135,12 @@ const ManageAccess = ({ repository }) => {
 							{repositoryRoles.map((repositoryRole) => {
 								return (
 									<Dropdown.Item
-										key={repositoryRole}
+										key={repositoryRole.name}
 										onClick={() => {
-											setBufferRole(repositoryRole);
+											setBufferRole(repositoryRole.name);
 										}}
 									>
-										{repositoryRole}
+										{repositoryRole.name}
 									</Dropdown.Item>
 								);
 							})}

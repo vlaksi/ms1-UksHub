@@ -76,3 +76,28 @@ export const getRepositoryCollaboratos = async (repositoryId) => {
 		});
 	return repositoryCollaborators;
 };
+
+export const getAllCollaboratorsRoles = async () => {
+	let collaboratorsRoles;
+	await axios
+		.request({
+			url: `/versioning/collaboration/types/`,
+			method: 'get',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'vaksi', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			collaboratorsRoles = response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	return collaboratorsRoles;
+};
