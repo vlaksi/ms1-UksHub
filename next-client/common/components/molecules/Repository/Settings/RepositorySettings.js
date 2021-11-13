@@ -40,7 +40,7 @@ const RepositorySettings = ({ repositoryId = 1 }) => {
 								{/* TODO: Pass real repository ID here, cause of the edit and deletion  */}
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link2">
-								<ManageAccess />
+								<ManageAccess repository={repository} />
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link3">
 								<BranchesSettings

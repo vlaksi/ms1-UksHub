@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Card,
 	FormControl,
@@ -10,6 +10,7 @@ import {
 } from 'react-bootstrap';
 import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
+import { getRepositoryCollaboratos } from '../../../../services/versioning/repositoryService';
 
 const repositoryRoles = ['maintainer', 'developer', 'owner', 'guest'];
 
@@ -28,7 +29,7 @@ const collaborators = [
 	},
 ];
 
-const ManageAccess = () => {
+const ManageAccess = ({ repository }) => {
 	const [removeCandidate, setRemoveCandidate] = useState('');
 	const [repositoryCollaborators, setRepositoryCollaborators] =
 		useState(collaborators);
@@ -43,6 +44,11 @@ const ManageAccess = () => {
 
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
+
+	useEffect(async () => {
+		if (!repository) return;
+		setRepositoryCollaborators(await getRepositoryCollaboratos(repository.pk));
+	}, [repository]);
 
 	return (
 		<>
@@ -79,14 +85,14 @@ const ManageAccess = () => {
 									<div style={{ display: 'flex' }}>
 										<p> {collaborator.username} </p>
 										<p style={{ marginLeft: '5px', opacity: '0.5' }}>
-											({collaborator.repositoryRole})
+											({collaborator.role})
 										</p>
 									</div>
 									<div>
 										<MdEdit
 											style={{ marginRight: '15px', cursor: 'pointer' }}
 											onClick={() => {
-												setBufferRole(collaborator.repositoryRole);
+												setBufferRole(collaborator.role);
 												setEditCollaborator(collaborator);
 												handleShowEditModal();
 											}}

@@ -51,3 +51,28 @@ export const updateRepositoryDefaultBranch = async (
 
 	return updatedBranch;
 };
+
+export const getRepositoryCollaboratos = async (repositoryId) => {
+	let repositoryCollaborators;
+	await axios
+		.request({
+			url: `/versioning/repository/${repositoryId}/collaborators/`,
+			method: 'get',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'vaksi', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			repositoryCollaborators = response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	return repositoryCollaborators;
+};
