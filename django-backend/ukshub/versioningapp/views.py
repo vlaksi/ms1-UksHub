@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from .models import Branch, Commit, File, Folder, Repository
 from .serializers import BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 class RepositoryList(generics.ListCreateAPIView):
     queryset = Repository.objects.all()
@@ -52,3 +54,10 @@ class FileDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = File.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FileSerializer
+
+@api_view(['GET'])
+def all_repositories_by_user(request, user_id):
+    repositories= Repository.objects.filter(author_id=user_id)
+    serializers=RepositorySerializer(repositories,many=True)
+    
+    return Response(serializers.data)
