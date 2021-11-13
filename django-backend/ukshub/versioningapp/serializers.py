@@ -12,7 +12,7 @@ class CollaborationTypeSerializer(serializers.ModelSerializer):
 class CollaboratorSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollaboratorDto
-        fields = [ "username", "role" ]
+        fields = [ "pk", "username", "role" ]
 
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:

@@ -86,6 +86,6 @@ def repository_collaborators(request, repo_id):
     collaborators = []
     collaborations = Collaboration.objects.filter(repository_id = repo_id)
     for collaboration in collaborations:
-        collaborators.append(CollaboratorDto.create(collaboration.collaborator.username, collaboration.collaboration_type.name))
+        collaborators.append(CollaboratorDto.create(collaboration.pk, collaboration.collaborator.username, collaboration.collaboration_type.name))
     serializers = CollaboratorSerializer(collaborators, many=True)
     return Response(serializers.data)
