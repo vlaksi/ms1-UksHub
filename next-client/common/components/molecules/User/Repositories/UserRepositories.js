@@ -6,16 +6,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { getAllRepositoriesByAuthor } from "../../../../services/versioning/repositoryService";
 
-// TODO: Get this repositories for passed username
-const repositories = [
-  {
-    name: "ms1-UksHub",
-  },
-  {
-    name: "Election-DAPP",
-  },
-];
-
 const UserRepositories = ({ username, author_id }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -41,7 +31,7 @@ const UserRepositories = ({ username, author_id }) => {
   const [newRepositoryList, setNewRepositoryList] = useState([]);
 
   // TODO: move this function to service layer
-  const addRepositoryName = () => {
+  const addRepository = () => {
     axios
       .request({
         url: `/versioning/repositorys/`,
@@ -54,12 +44,13 @@ const UserRepositories = ({ username, author_id }) => {
         data: {
           name: newRepositoryName,
           description: newRepositoryDescription,
+          author: "1",
           grant_type: "client_credentials",
           scope: "public",
         },
       })
-      .then((respose) => {
-        console.log(respose);
+      .then((response) => {
+        console.log(response);
         notify();
         handleClose();
       })
@@ -116,7 +107,7 @@ const UserRepositories = ({ username, author_id }) => {
             <Button
               variant="success"
               onClick={() => {
-                addRepositoryName();
+                addRepository();
               }}
             >
               Save Changes
