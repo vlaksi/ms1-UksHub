@@ -11,6 +11,7 @@ import {
 import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
 import { getDataForSearch } from '../../../../mocks/dataForSearch';
+import { getUserDataForSearch } from '../../../../services/useractivity/userService';
 import {
 	deleteCollaborationById,
 	getAllCollaboratorsRoles,
@@ -25,6 +26,7 @@ const ManageAccess = ({ repository }) => {
 	const [repositoryRoles, setRepositoryRoles] = useState([]);
 	const [bufferRole, setBufferRole] = useState();
 	const [editCollaborator, setEditCollaborator] = useState('');
+	const [userDataForSearch, setUserDataForSearch] = useState([]);
 
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -39,6 +41,7 @@ const ManageAccess = ({ repository }) => {
 		if (!repository) return;
 		setRepositoryCollaborators(await getRepositoryCollaboratos(repository.pk));
 		setRepositoryRoles(await getAllCollaboratorsRoles());
+		setUserDataForSearch(await getUserDataForSearch());
 	}, [repository]);
 
 	return (
@@ -48,7 +51,7 @@ const ManageAccess = ({ repository }) => {
 				<Card.Body>
 					<UserSearch
 						placeholder="Add a collaborator..."
-						data={getDataForSearch()}
+						data={userDataForSearch}
 						onSelectItem={(selectedValue) => {
 							console.log(selectedValue);
 						}}

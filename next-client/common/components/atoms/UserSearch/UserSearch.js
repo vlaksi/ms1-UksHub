@@ -3,7 +3,6 @@ import styles from './UserSearch.module.scss';
 import { BsFillFolderFill } from 'react-icons/bs';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdSyncProblem } from 'react-icons/md';
-import Link from 'next/link';
 
 function UserSearch({ placeholder, data, onSelectItem }) {
 	const [filteredData, setFilteredData] = useState([]);
@@ -43,6 +42,7 @@ function UserSearch({ placeholder, data, onSelectItem }) {
 								onClick={() => {
 									onSelectItem(value);
 									setFilteredData([]);
+									setWordEntered('');
 								}}
 							>
 								{value.type === 'repository' && (
