@@ -167,6 +167,32 @@ export const updateRepositoryDescription = async (
 
   return success;
 };
+
+export const deleteRepository = async (repositoryId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/versioning/repositorys/${repositoryId}`,
+      method: "delete",
+      baseURL: "http://127.0.0.1:8000/",
+      auth: {
+        username: "anci", // This is the client_id
+        password: "root", // This is the client_secret
+      },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return success;
+};
 // TODO: Move all these collaboration stuff to the collaborationService !!
 export const getRepositoryCollaboratos = async (repositoryId) => {
   let repositoryCollaborators;

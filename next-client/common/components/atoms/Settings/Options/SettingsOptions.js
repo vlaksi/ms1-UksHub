@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import {
+  deleteRepository,
   updateRepositoryDescription,
   updateRepositoryName,
 } from "../../../../services/versioning/repositoryService";
@@ -37,14 +38,6 @@ const SettingsOptions = ({
   const notifyDeleted = () => toast.success("Successfully deleted repository!");
   const notifyError = () => toast.error("Check if you entered all fields!");
 
-  // TODO: move these axios calls to functions in service layer
-  const updateNewRepositoryDescription = async () => {
-    let isSuccessfulUpdated = await updateRepositoryDescription(
-      newRepositoryDescription,
-      repositoryId
-    );
-    if (isSuccessfulUpdated) notifyDescription();
-  };
   const updateNewRepositoryName = async () => {
     let isSuccessfulUpdated = await updateRepositoryName(
       newRepositoryName,
@@ -56,26 +49,18 @@ const SettingsOptions = ({
       notifyError();
     }
   };
-
-  const deleteRepository = () => {
-    axios
-      .request({
-        url: `/versioning/repositorys/${repositoryId}`,
-        method: "delete",
-        baseURL: "http://127.0.0.1:8000/",
-        auth: {
-          username: "anci", // This is the client_id
-          password: "root", // This is the client_secret
-        },
-        data: {
-          grant_type: "client_credentials",
-          scope: "public",
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        notifyDeleted();
-      });
+  const updateNewRepositoryDescription = async () => {
+    let isSuccessfulUpdated = await updateRepositoryDescription(
+      newRepositoryDescription,
+      repositoryId
+    );
+    if (isSuccessfulUpdated) notifyDescription();
+  };
+  const deleteChosenRepository = async () => {
+    let isSuccessfulDeleted = await deleteRepository(repositoryId);
+    if (isSuccessfulDeleted) {
+      notifyDeleted();
+    }
   };
 
   const handleDeleteModalClose = () => setShowDeleteModal(false);
@@ -168,7 +153,7 @@ const SettingsOptions = ({
             variant="success"
             onClick={() => {
               handleDeleteModalClose();
-              deleteRepository();
+              deleteChosenRepository();
             }}
           >
             Delete

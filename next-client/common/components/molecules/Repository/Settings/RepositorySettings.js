@@ -6,7 +6,7 @@ import BranchesSettings from "../../../atoms/Settings/BranchesSettings/BranchesS
 import ManageAccess from "../../../atoms/Settings/ManageAccess/ManageAccess";
 import SettingsOptions from "../../../atoms/Settings/Options/SettingsOptions";
 
-const RepositorySettings = ({ repositoryId = 4 }) => {
+const RepositorySettings = ({ repositoryId = 44 }) => {
   const [repository, setRepository] = useState("");
   const [repositoryBranches, setRepositoryBranches] = useState("");
 
@@ -38,8 +38,8 @@ const RepositorySettings = ({ repositoryId = 4 }) => {
               <Tab.Pane eventKey="#link1">
                 <SettingsOptions
                   repositoryId={repositoryId}
-                  repositoryName={"Irvasi"}
-                  repositoryDescription={"Irvasi su zakon"}
+                  repositoryName={repository.name}
+                  repositoryDescription={repository.description}
                 />
                 {/* TODO: Pass real repository ID here, cause of the edit and deletion  */}
               </Tab.Pane>
