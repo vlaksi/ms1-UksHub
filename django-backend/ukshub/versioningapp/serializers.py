@@ -1,15 +1,32 @@
 from django.db.models import fields
 from rest_framework import serializers
-from .models import Branch, Commit, File, Folder, Repository
+from django.contrib.auth.models import User
+from .models import Branch, Commit, File, Folder, Repository, Collaboration, CollaborationType
+from .dtos import CollaboratorDto
+
+class CollaborationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollaborationType
+        fields = [ "pk", "name" ]
+
+class CollaboratorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollaboratorDto
+        fields = [ "collaboration_id", "username", "role" ]
 
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
-        fields = [ "pk", "author", "members", "actions" , "name", "description"]
+        fields = [ "pk", "author", "members", "actions" , "name", "description", "default_branch"]
         extra_kwargs = {
              "members": {"required": False},
              "actions": {"required": False},
         }
+
+class CollaborationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collaboration
+        fields = [ "pk", "collaborator", "repository", "collaboration_type"]
 
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:

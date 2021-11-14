@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
-from .models import Branch, Commit, File, Folder, Repository
-from .serializers import BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from django.contrib.auth.models import User
+from .models import CollaborationType, Branch, Commit, File, Folder, Repository, Collaboration
+from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
+from .dtos import CollaboratorDto
 
 class RepositoryList(generics.ListCreateAPIView):
     queryset = Repository.objects.all()
@@ -12,6 +17,16 @@ class RepositoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Repository.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = RepositorySerializer
+
+class CollaborationList(generics.ListCreateAPIView):
+    queryset = Collaboration.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CollaborationSerializer
+
+class CollaborationDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Collaboration.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CollaborationSerializer
 
 class BranchList(generics.ListCreateAPIView):
     queryset = Branch.objects.all()
@@ -52,3 +67,25 @@ class FileDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = File.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FileSerializer
+
+@api_view(['GET'])
+def collaboration_types(request):
+    collaboration_types = CollaborationType.objects.all()
+    serializers = CollaborationTypeSerializer(collaboration_types, many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def repository_branches(request, pk):
+    repository = Repository.objects.get(id = pk)
+    repositories = repository.repositoryBranches.all()
+    serializers = BranchSerializer(repositories, many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def repository_collaborators(request, repo_id):
+    collaborators = []
+    collaborations = Collaboration.objects.filter(repository_id = repo_id)
+    for collaboration in collaborations:
+        collaborators.append(CollaboratorDto.create(collaboration.pk, collaboration.collaborator.username, collaboration.collaboration_type.name))
+    serializers = CollaboratorSerializer(collaborators, many=True)
+    return Response(serializers.data)

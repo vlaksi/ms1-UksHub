@@ -1,19 +1,30 @@
 import { useState } from 'react';
-import { Card, FormControl, InputGroup, Button, Modal,Form } from 'react-bootstrap';
+import {
+	Card,
+	FormControl,
+	InputGroup,
+	Button,
+	Modal,
+	Form,
+} from 'react-bootstrap';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 
-const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }) => {
-
+const SettingsOptions = ({
+	repositoryId,
+	repositoryName,
+	repositoryDescription,
+}) => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [newRepositoryName, setNewRepositoryName] = useState('');
-	const [newRepositoryDescription,setNewRepositoryDescription] = useState('');
+	const [newRepositoryDescription, setNewRepositoryDescription] = useState('');
 
-	const notifyName = () => toast.success("Successfully changed name!");
-	const notifyDescription = () => toast.success("Successfully changed description!");
-	const notifyDeleted =() => toast.success("Successfully deleted repository!");
+	const notifyName = () => toast.success('Successfully changed name!');
+	const notifyDescription = () =>
+		toast.success('Successfully changed description!');
+	const notifyDeleted = () => toast.success('Successfully deleted repository!');
 
-	const notifyError = () => toast.error("Check if you entered all fields!");
+	const notifyError = () => toast.error('Check if you entered all fields!');
 
 	const handleRepositoryNameChanging = (newName) => {
 		setNewRepositoryName(newName);
@@ -23,7 +34,7 @@ const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }
 		setNewRepositoryDescription(newDescription);
 	};
 
-
+	// TODO: Move this to the service layer
 	const updateRepositoryDescription = () => {
 		axios
 			.request({
@@ -45,11 +56,13 @@ const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }
 				console.log(repositoryName);
 				notifyDescription();
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.log(error.response.data.error);
 				notifyError();
 			});
 	};
+
+	// TODO: Move this to the service layer
 	const updateRepositoryName = () => {
 		axios
 			.request({
@@ -70,12 +83,13 @@ const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }
 				console.log(response);
 				notifyName();
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.log(error.response.data.error);
 				notifyError();
 			});
 	};
 
+	// TODO: Move this to the service layer
 	const deleteRepository = () => {
 		axios
 			.request({
@@ -129,11 +143,11 @@ const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }
 					<Form.Label>Description</Form.Label>
 					<InputGroup className="mb-3">
 						<FormControl
-								defaultValue={repositoryDescription}
-								aria-label="Repository description"
-								onChange={(e) => {
-									handleRepositoryDescriptionChanging(e.target.value);
-								}}
+							defaultValue={repositoryDescription}
+							aria-label="Repository description"
+							onChange={(e) => {
+								handleRepositoryDescriptionChanging(e.target.value);
+							}}
 						/>
 						<Button
 							variant="success"
@@ -141,7 +155,6 @@ const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }
 							onClick={() => {
 								updateRepositoryDescription();
 							}}
-
 						>
 							Change
 						</Button>
@@ -166,11 +179,7 @@ const SettingsOptions = ({ repositoryId, repositoryName, repositoryDescription }
 				</Card.Body>
 			</Card>
 
-			<ToastContainer 
-				position="top-right"
-				autoClose={3000}
-			></ToastContainer>
-
+			<ToastContainer position="top-right" autoClose={3000}></ToastContainer>
 
 			{/* Delete repository */}
 			<Modal show={showDeleteModal} onHide={handleDeleteModalClose}>

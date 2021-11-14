@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Card,
 	FormControl,
@@ -10,30 +10,24 @@ import {
 } from 'react-bootstrap';
 import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
+import { getDataForSearch } from '../../../../mocks/dataForSearch';
+import { getUserDataForSearch } from '../../../../services/useractivity/userService';
+import {
+	createCollaboration,
+	deleteCollaborationById,
+	getAllCollaboratorsRoles,
+	getRepositoryCollaboratos,
+	updateCollaboratorRole,
+} from '../../../../services/versioning/repositoryService';
+import UserSearch from '../../UserSearch/UserSearch';
 
-const repositoryRoles = ['maintainer', 'developer', 'owner', 'guest'];
-
-const collaborators = [
-	{
-		username: 'Pufke',
-		repositoryRole: 'maintainer',
-	},
-	{
-		username: 'anciz',
-		repositoryRole: 'owner',
-	},
-	{
-		username: 'vlaksi',
-		repositoryRole: 'developer',
-	},
-];
-
-const ManageAccess = () => {
+const ManageAccess = ({ repository }) => {
 	const [removeCandidate, setRemoveCandidate] = useState('');
-	const [repositoryCollaborators, setRepositoryCollaborators] =
-		useState(collaborators);
-	const [bufferRole, setBufferRole] = useState('');
+	const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
+	const [repositoryRoles, setRepositoryRoles] = useState([]);
+	const [bufferRole, setBufferRole] = useState();
 	const [editCollaborator, setEditCollaborator] = useState('');
+	const [userDataForSearch, setUserDataForSearch] = useState([]);
 
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -44,27 +38,38 @@ const ManageAccess = () => {
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
 
+	useEffect(async () => {
+		if (!repository) return;
+		setRepositoryCollaborators(await getRepositoryCollaboratos(repository.pk));
+		setRepositoryRoles(await getAllCollaboratorsRoles());
+		setUserDataForSearch(await getUserDataForSearch());
+	}, [repository]);
+
+	const isUserAlreadyCollaborator = (user) => {
+		return repositoryCollaborators.find(
+			(collaborator) => collaborator.username == user.title
+		);
+	};
+
 	return (
 		<>
 			<Card border="light" style={{ width: '100%' }}>
 				<Card.Header>Collaborators</Card.Header>
 				<Card.Body>
-					<InputGroup className="mb-3 mt-3">
-						<FormControl
-							placeholder="Add a collaborator..."
-							aria-label="Add a collaborator..."
-							aria-describedby="basic-addon2"
-						/>
-						<Button
-							style={{ width: '80px' }}
-							variant="success"
-							onClick={() => {
-								alert('TODO: Call API to add a user to collaborators');
-							}}
-						>
-							Add
-						</Button>
-					</InputGroup>
+					<UserSearch
+						placeholder="Add a collaborator..."
+						data={userDataForSearch.filter(
+							(user) => !isUserAlreadyCollaborator(user)
+						)}
+						onSelectItem={async (selectedValue) => {
+							console.log(selectedValue);
+							await createCollaboration(selectedValue.pk, repository.pk);
+							setRepositoryCollaborators(
+								await getRepositoryCollaboratos(repository.pk)
+							);
+						}}
+					/>
+
 					<ListGroup variant="flush">
 						{repositoryCollaborators.map((collaborator) => {
 							return (
@@ -79,14 +84,13 @@ const ManageAccess = () => {
 									<div style={{ display: 'flex' }}>
 										<p> {collaborator.username} </p>
 										<p style={{ marginLeft: '5px', opacity: '0.5' }}>
-											({collaborator.repositoryRole})
+											({collaborator.role})
 										</p>
 									</div>
 									<div>
 										<MdEdit
 											style={{ marginRight: '15px', cursor: 'pointer' }}
 											onClick={() => {
-												setBufferRole(collaborator.repositoryRole);
 												setEditCollaborator(collaborator);
 												handleShowEditModal();
 											}}
@@ -135,19 +139,19 @@ const ManageAccess = () => {
 							variant="secondary"
 							id="dropdown-basic"
 						>
-							{bufferRole}
+							{bufferRole ? bufferRole.name : 'choose role'}
 						</Dropdown.Toggle>
 
 						<Dropdown.Menu>
 							{repositoryRoles.map((repositoryRole) => {
 								return (
 									<Dropdown.Item
-										key={repositoryRole}
+										key={repositoryRole.pk}
 										onClick={() => {
 											setBufferRole(repositoryRole);
 										}}
 									>
-										{repositoryRole}
+										{repositoryRole.name}
 									</Dropdown.Item>
 								);
 							})}
@@ -158,20 +162,15 @@ const ManageAccess = () => {
 				<Modal.Footer>
 					<Button
 						variant="success"
-						onClick={() => {
-							let bufferCollaborators = [];
-							repositoryCollaborators.map((repositoryCollaborator) => {
-								if (
-									repositoryCollaborator.username == editCollaborator.username
-								) {
-									repositoryCollaborator.repositoryRole = bufferRole;
-								}
-
-								bufferCollaborators.push(repositoryCollaborator);
-							});
-							setRepositoryCollaborators(bufferCollaborators);
+						onClick={async () => {
 							handleEditModalClose();
-							alert('TODO: Call an API to update role of the collaborator');
+							await updateCollaboratorRole(
+								editCollaborator.collaboration_id,
+								bufferRole.pk
+							);
+							setRepositoryCollaborators(
+								await getRepositoryCollaboratos(repository.pk)
+							);
 						}}
 					>
 						Update
@@ -211,9 +210,8 @@ const ManageAccess = () => {
 								)
 							);
 							handleDeleteModalClose();
-							alert(
-								'TODO: Add an API call to delete collaborator from collaborators'
-							);
+							deleteCollaborationById(removeCandidate.collaboration_id);
+							console.log(removeCandidate);
 						}}
 					>
 						Remove
