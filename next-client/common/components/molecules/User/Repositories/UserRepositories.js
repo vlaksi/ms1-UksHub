@@ -2,9 +2,11 @@ import RepositoryListItem from "../../../atoms/RepositoryListItem/RepositoryList
 import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { getAllRepositoriesByAuthor } from "../../../../services/versioning/repositoryService";
+import {
+  addRepository,
+  getAllRepositoriesByAuthor,
+} from "../../../../services/versioning/repositoryService";
 
 const UserRepositories = ({ username, author_id }) => {
   const [show, setShow] = useState(false);
@@ -30,40 +32,24 @@ const UserRepositories = ({ username, author_id }) => {
 
   const [newRepositoryList, setNewRepositoryList] = useState([]);
 
-  // TODO: move this function to service layer
-  const addRepository = () => {
-    axios
-      .request({
-        url: `/versioning/repositorys/`,
-        method: "post",
-        baseURL: "http://127.0.0.1:8000/",
-        auth: {
-          username: "anci", // This is the client_id
-          password: "root", // This is the client_secret
-        },
-        data: {
-          name: newRepositoryName,
-          description: newRepositoryDescription,
-          author: "1",
-          grant_type: "client_credentials",
-          scope: "public",
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        notify();
-        handleClose();
-      })
-      .catch((error) => {
-        console.log(error.response.data.error);
-        notifyError();
-      });
+  const addNewRepository = async () => {
+    let isSuccessfulAdded = await addRepository(
+      newRepositoryName,
+      newRepositoryDescription,
+      "1"
+    );
+    if (isSuccessfulAdded) {
+      notify();
+      handleClose();
+      setNewRepositoryList(await getAllRepositoriesByAuthor(author_id));
+    } else {
+      notifyError();
+    }
   };
 
   useEffect(async () => {
     if (!author_id) return;
-    let repositories = await getAllRepositoriesByAuthor(author_id);
-    setNewRepositoryList(repositories);
+    setNewRepositoryList(await getAllRepositoriesByAuthor(author_id));
   }, [author_id]);
 
   return (
@@ -107,7 +93,7 @@ const UserRepositories = ({ username, author_id }) => {
             <Button
               variant="success"
               onClick={() => {
-                addRepository();
+                addNewRepository();
               }}
             >
               Save Changes
