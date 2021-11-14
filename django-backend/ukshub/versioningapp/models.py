@@ -27,17 +27,8 @@ class Commit(models.Model):
     def __str__(self):
         return 'Name of object: ' + self.message
 
-class Repository(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    members = models.ManyToManyField(User, blank=True, related_name='member_of_repositorys')
-    actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
-    def __str__(self):
-        return 'Name of object: ' + self.name
-
 class Branch(models.Model):
-    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=True)
+    repository = models.ForeignKey('Repository', on_delete=models.CASCADE, blank=True, related_name = "repositoryBranches")
     child_branchs = models.ManyToManyField('self', blank=True)
     parent_branch = models.ForeignKey('self', on_delete=models.CASCADE,blank=True, null=True)
     files = models.ManyToManyField(File,blank=True)
@@ -47,3 +38,20 @@ class Branch(models.Model):
     def __str__(self):
         return 'Name of object: ' + self.name
 
+class Repository(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    members = models.ManyToManyField(User, blank=True, related_name='member_of_repositorys')
+    actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, blank=True)
+    default_branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True, related_name='default_branch')
+    def __str__(self):
+        return 'Name of object: ' + self.name
+
+class CollaborationType(models.Model):
+    name = models.CharField(max_length=200, blank=False, null=False)
+
+class Collaboration(models.Model):
+    collaborator = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False, related_name = "repositoryCollaborations")
+    collaboration_type = models.ForeignKey(CollaborationType, on_delete=models.CASCADE, blank=False, null=False)
