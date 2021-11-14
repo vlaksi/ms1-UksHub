@@ -109,9 +109,10 @@ const UserRepositories = ({ username, author_id }) => {
       {newRepositoryList?.map((repository) => {
         return (
           <RepositoryListItem
-            key={repository.name}
+            key={repository.pk}
             username={username}
             name={repository.name}
+            repositoryId={repository.pk}
           />
         );
       })}

@@ -7,7 +7,6 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import {
   deleteRepository,
