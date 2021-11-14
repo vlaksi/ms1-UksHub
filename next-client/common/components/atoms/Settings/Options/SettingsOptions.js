@@ -9,6 +9,10 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import {
+  updateRepositoryDescription,
+  updateRepositoryName,
+} from "../../../../services/versioning/repositoryService";
 
 const SettingsOptions = ({
   repositoryId,
@@ -19,13 +23,6 @@ const SettingsOptions = ({
   const [newRepositoryName, setNewRepositoryName] = useState("");
   const [newRepositoryDescription, setNewRepositoryDescription] = useState("");
 
-  const notifyName = () => toast.success("Successfully changed name!");
-  const notifyDescription = () =>
-    toast.success("Successfully changed description!");
-  const notifyDeleted = () => toast.success("Successfully deleted repository!");
-
-  const notifyError = () => toast.error("Check if you entered all fields!");
-
   const handleRepositoryNameChanging = (newName) => {
     setNewRepositoryName(newName);
   };
@@ -34,57 +31,30 @@ const SettingsOptions = ({
     setNewRepositoryDescription(newDescription);
   };
 
+  const notifyName = () => toast.success("Successfully changed name!");
+  const notifyDescription = () =>
+    toast.success("Successfully changed description!");
+  const notifyDeleted = () => toast.success("Successfully deleted repository!");
+  const notifyError = () => toast.error("Check if you entered all fields!");
+
   // TODO: move these axios calls to functions in service layer
-  const updateRepositoryDescription = () => {
-    axios
-      .request({
-        url: `/versioning/repositorys/${repositoryId}`,
-        method: "patch",
-        baseURL: "http://127.0.0.1:8000/",
-        auth: {
-          username: "anci", // This is the client_id
-          password: "root", // This is the client_secret
-        },
-        data: {
-          description: newRepositoryDescription,
-          grant_type: "client_credentials",
-          scope: "public",
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        console.log(repositoryName);
-        notifyDescription();
-      })
-      .catch((error) => {
-        console.log(error.response.data.error);
-        notifyError();
-      });
+  const updateNewRepositoryDescription = async () => {
+    let isSuccessfulUpdated = await updateRepositoryDescription(
+      newRepositoryDescription,
+      repositoryId
+    );
+    if (isSuccessfulUpdated) notifyDescription();
   };
-  const updateRepositoryName = () => {
-    axios
-      .request({
-        url: `/versioning/repositorys/${repositoryId}`,
-        method: "patch",
-        baseURL: "http://127.0.0.1:8000/",
-        auth: {
-          username: "anci", // This is the client_id
-          password: "root", // This is the client_secret
-        },
-        data: {
-          name: newRepositoryName,
-          grant_type: "client_credentials",
-          scope: "public",
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        notifyName();
-      })
-      .catch((error) => {
-        console.log(error.response.data.error);
-        notifyError();
-      });
+  const updateNewRepositoryName = async () => {
+    let isSuccessfulUpdated = await updateRepositoryName(
+      newRepositoryName,
+      repositoryId
+    );
+    if (isSuccessfulUpdated) {
+      notifyName();
+    } else {
+      notifyError();
+    }
   };
 
   const deleteRepository = () => {
@@ -130,7 +100,7 @@ const SettingsOptions = ({
               variant="success"
               id="button-addon2"
               onClick={() => {
-                updateRepositoryName();
+                updateNewRepositoryName();
               }}
             >
               Change
@@ -150,7 +120,7 @@ const SettingsOptions = ({
               variant="success"
               id="button-addon2"
               onClick={() => {
-                updateRepositoryDescription();
+                updateNewRepositoryDescription();
               }}
             >
               Change
