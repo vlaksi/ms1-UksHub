@@ -24,6 +24,7 @@ export const getAllRepositoriesByAuthor = async (user_id) => {
 		});
 	return repositories;
 };
+
 export const getRepositoryById = async (repositoryId) => {
 	let repository;
 	await axios
@@ -48,12 +49,13 @@ export const getRepositoryById = async (repositoryId) => {
 		});
 	return repository;
 };
+
 export const addRepository = async (
 	newRepositoryName,
 	newRepositoryDescription,
 	authorId
 ) => {
-	let success = false;
+	let repository = null;
 	await axios
 		.request({
 			url: `/versioning/repositorys/`,
@@ -72,15 +74,13 @@ export const addRepository = async (
 			},
 		})
 		.then((response) => {
-			console.log(response);
-			success = true;
+			repository = response.data;
 		})
 		.catch((error) => {
 			console.log(error.response.data.error);
-			success = false;
 		});
 
-	return success;
+	return repository;
 };
 
 export const updateRepositoryDefaultBranch = async (
@@ -137,6 +137,7 @@ export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
 		});
 	return success;
 };
+
 export const updateRepositoryDescription = async (
 	newRepositoryDescription,
 	repositoryId
