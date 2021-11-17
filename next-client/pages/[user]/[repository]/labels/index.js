@@ -1,7 +1,7 @@
 const Labels = () => {
 	return (
 		<>
-			<p> all labels </p>
+			<p> Show here all labels </p>
 		</>
 	);
 };

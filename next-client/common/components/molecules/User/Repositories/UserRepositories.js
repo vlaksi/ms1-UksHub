@@ -1,10 +1,9 @@
 import RepositoryListItem from '../../../atoms/RepositoryListItem/RepositoryListItem';
 import { Button, Modal, Form } from 'react-bootstrap';
-import { MdAddCircle } from "react-icons/md";
-import {useState} from 'react';
+import { MdAddCircle } from 'react-icons/md';
+import { useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-
 
 // TODO: Get this repositories for passed username
 const repositories = [
@@ -14,16 +13,19 @@ const repositories = [
 	{
 		name: 'Election-DAPP',
 	},
-
 ];
 
 const UserRepositories = ({ username }) => {
 	const [show, setShow] = useState(false);
-	const handleClose = () => {setShow(false); setNewRepositoryName(''); setNewRepositoryDescription('')};
+	const handleClose = () => {
+		setShow(false);
+		setNewRepositoryName('');
+		setNewRepositoryDescription('');
+	};
 	const handleShow = () => setShow(true);
 
-	const notify = () => toast.success("Successfully created new repository!");
-	const notifyError = () => toast.error("Check if you entered all fields!");
+	const notify = () => toast.success('Successfully created new repository!');
+	const notifyError = () => toast.error('Check if you entered all fields!');
 
 	const [newRepositoryName, setNewRepositoryName] = useState('');
 	const handleRepositoryNameAdding = (newName) => {
@@ -34,7 +36,6 @@ const UserRepositories = ({ username }) => {
 	const handleRepositoryDescriptionAdding = (newDescription) => {
 		setNewRepositoryDescription(newDescription);
 	};
-
 
 	const addRepositoryName = () => {
 		axios
@@ -58,7 +59,7 @@ const UserRepositories = ({ username }) => {
 				notify();
 				handleClose();
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.log(error.response.data.error);
 				notifyError();
 			});
@@ -66,9 +67,11 @@ const UserRepositories = ({ username }) => {
 
 	return (
 		<>
-
-			<div style={{display: 'flex', justifyContent: 'flex-end'}}>
-				<Button variant="outline-primary" onClick={handleShow}>	<MdAddCircle size={24}/> Add repository</Button>
+			<div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+				<Button variant="outline-primary" onClick={handleShow}>
+					{' '}
+					<MdAddCircle size={24} /> Add repository
+				</Button>
 
 				<Modal show={show} onHide={handleClose} backdrop="static">
 					<Modal.Header closeButton>
@@ -78,24 +81,30 @@ const UserRepositories = ({ username }) => {
 						<Form>
 							<Form.Group className="mb-3">
 								<Form.Label>Name of repository</Form.Label>
-								<Form.Control type="name" placeholder="Enter name of repository"
-									 onChange={(e) => {
-										handleRepositoryNameAdding(e.target.value);}}>
-								</Form.Control>
+								<Form.Control
+									type="name"
+									placeholder="Enter name of repository"
+									onChange={(e) => {
+										handleRepositoryNameAdding(e.target.value);
+									}}
+								></Form.Control>
 							</Form.Group>
 							<Form.Group className="mb-3">
 								<Form.Label>Description of repository</Form.Label>
-								<Form.Control as="textarea" rows={3} placeholder="Describe your repository"
-									 onChange={(e) => {
-										handleRepositoryDescriptionAdding(e.target.value);}}
-								>
-
-								</Form.Control>
+								<Form.Control
+									as="textarea"
+									rows={3}
+									placeholder="Describe your repository"
+									onChange={(e) => {
+										handleRepositoryDescriptionAdding(e.target.value);
+									}}
+								></Form.Control>
 							</Form.Group>
 						</Form>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button variant="success"
+						<Button
+							variant="success"
 							onClick={() => {
 								addRepositoryName();
 							}}
@@ -105,16 +114,10 @@ const UserRepositories = ({ username }) => {
 						<Button variant="danger" onClick={handleClose}>
 							Cancel
 						</Button>
-						
-						
 					</Modal.Footer>
 				</Modal>
 			</div>
-			<ToastContainer 
-				position="top-right"
-				autoClose={3000}
-			></ToastContainer>
-
+			<ToastContainer position="top-right" autoClose={3000}></ToastContainer>
 
 			{repositories.map((repository) => {
 				return (
