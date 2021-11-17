@@ -14,7 +14,6 @@ import {
   updateRepositoryName,
 } from "../../../../services/versioning/repositoryService";
 import { useRouter } from "next/router";
-import Router from "next/router";
 
 const SettingsOptions = ({
   repositoryId,
@@ -46,6 +45,8 @@ const SettingsOptions = ({
     );
     if (isSuccessfulUpdated) {
       notifyName();
+      // TODO: change this link
+      window.location.href = `http://localhost:3000/${user}/${repositoryId}`;
     } else {
       notifyError();
     }
@@ -89,7 +90,7 @@ const SettingsOptions = ({
             <Button
               variant="success"
               id="button-addon2"
-              onClick={() => {
+              onClick={async () => {
                 updateNewRepositoryName();
               }}
             >
