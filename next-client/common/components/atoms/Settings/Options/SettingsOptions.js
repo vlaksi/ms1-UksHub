@@ -13,6 +13,8 @@ import {
   updateRepositoryDescription,
   updateRepositoryName,
 } from "../../../../services/versioning/repositoryService";
+import { useRouter } from "next/router";
+import Router from "next/router";
 
 const SettingsOptions = ({
   repositoryId,
@@ -64,6 +66,10 @@ const SettingsOptions = ({
 
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
+
+  const router = useRouter();
+  const { user } = router.query;
+
   return (
     <>
       <Card border="light" style={{ width: "100%" }}>
@@ -150,14 +156,21 @@ const SettingsOptions = ({
         <Modal.Footer>
           <Button
             variant="success"
-            onClick={() => {
+            onClick={async () => {
+              await deleteChosenRepository();
               handleDeleteModalClose();
-              deleteChosenRepository();
+              // TODO: change this link
+              window.location.href = `http://localhost:3000/${user}`;
             }}
           >
             Delete
           </Button>
-          <Button variant="danger" onClick={handleDeleteModalClose}>
+          <Button
+            variant="danger"
+            onClick={() => {
+              handleDeleteModalClose();
+            }}
+          >
             Cancel
           </Button>
         </Modal.Footer>
