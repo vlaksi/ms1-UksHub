@@ -2,7 +2,6 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from django.contrib.auth.models import User
 from .models import CollaborationType, Branch, Commit, File, Folder, Repository, Collaboration
 from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
@@ -67,6 +66,12 @@ class FileDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = File.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FileSerializer
+
+@api_view(['GET'])
+def all_repositories_by_user(request, user_id):
+    repositories= Repository.objects.filter(author_id=user_id)
+    serializers=RepositorySerializer(repositories,many=True)
+    return Response(serializers.data)
 
 @api_view(['GET'])
 def collaboration_types(request):

@@ -1,5 +1,30 @@
 import axios from 'axios';
 
+export const getAllRepositoriesByAuthor = async (user_id) => {
+	let repositories;
+	await axios
+		.request({
+			url: `/versioning/users/${user_id}/repositories`,
+			method: 'get',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			repositories = response.data;
+		})
+		.catch((error) => {
+			console.log(error.response.data.error);
+		});
+	return repositories;
+};
+
 export const getRepositoryById = async (repositoryId) => {
 	let repository;
 	await axios
@@ -8,7 +33,7 @@ export const getRepositoryById = async (repositoryId) => {
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
 			auth: {
-				username: 'vaksi', // This is the client_id
+				username: 'admin', // This is the client_id
 				password: 'root', // This is the client_secret
 			},
 			data: {
@@ -25,6 +50,39 @@ export const getRepositoryById = async (repositoryId) => {
 	return repository;
 };
 
+export const addRepository = async (
+	newRepositoryName,
+	newRepositoryDescription,
+	authorId
+) => {
+	let repository = null;
+	await axios
+		.request({
+			url: `/versioning/repositorys/`,
+			method: 'post',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				name: newRepositoryName,
+				description: newRepositoryDescription,
+				author: authorId,
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			repository = response.data;
+		})
+		.catch((error) => {
+			console.log(error.response.data.error);
+		});
+
+	return repository;
+};
+
 export const updateRepositoryDefaultBranch = async (
 	repositoryId,
 	newDefaultBranchId
@@ -36,7 +94,7 @@ export const updateRepositoryDefaultBranch = async (
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
 			auth: {
-				username: 'vaksi', // This is the client_id
+				username: 'admin', // This is the client_id
 				password: 'root', // This is the client_secret
 			},
 			data: {
@@ -52,8 +110,91 @@ export const updateRepositoryDefaultBranch = async (
 	return updatedBranch;
 };
 
-// TODO: Move all these collaboration stuff to the collaborationService !!
+export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
+	let success = false;
+	await axios
+		.request({
+			url: `/versioning/repositorys/${repositoryId}`,
+			method: 'patch',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				name: newRepositoryName,
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			console.log(response);
+			success = true;
+		})
+		.catch((error) => {
+			console.log(error.response.data.error);
+			success = false;
+		});
+	return success;
+};
 
+export const updateRepositoryDescription = async (
+	newRepositoryDescription,
+	repositoryId
+) => {
+	let success = false;
+	await axios
+		.request({
+			url: `/versioning/repositorys/${repositoryId}`,
+			method: 'patch',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				description: newRepositoryDescription,
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			console.log(response);
+			success = true;
+		})
+		.catch((error) => {
+			console.log(error.response.data.error);
+		});
+
+	return success;
+};
+
+export const deleteRepository = async (repositoryId) => {
+	let success = false;
+	await axios
+		.request({
+			url: `/versioning/repositorys/${repositoryId}`,
+			method: 'delete',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			console.log(response);
+			success = true;
+		})
+		.catch((error) => {
+			console.log(error.response.data.error);
+		});
+	return success;
+};
+// TODO: Move all these collaboration stuff to the collaborationService !!
 export const getRepositoryCollaboratos = async (repositoryId) => {
 	let repositoryCollaborators;
 	await axios
@@ -62,7 +203,7 @@ export const getRepositoryCollaboratos = async (repositoryId) => {
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
 			auth: {
-				username: 'vaksi', // This is the client_id
+				username: 'admin', // This is the client_id
 				password: 'root', // This is the client_secret
 			},
 			data: {
@@ -87,7 +228,7 @@ export const getAllCollaboratorsRoles = async () => {
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
 			auth: {
-				username: 'vaksi', // This is the client_id
+				username: 'admin', // This is the client_id
 				password: 'root', // This is the client_secret
 			},
 			data: {
@@ -111,7 +252,7 @@ export const deleteCollaborationById = async (collaborationId) => {
 			method: 'delete',
 			baseURL: 'http://127.0.0.1:8000/',
 			auth: {
-				username: 'vaksi', // This is the client_id
+				username: 'admin', // This is the client_id
 				password: 'root', // This is the client_secret
 			},
 			data: {
@@ -135,7 +276,7 @@ export const updateCollaboratorRole = async (collaborationId, newRoleId) => {
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
 			auth: {
-				username: 'vaksi', // This is the client_id
+				username: 'admin', // This is the client_id
 				password: 'root', // This is the client_secret
 			},
 			data: {
@@ -159,7 +300,7 @@ export const createCollaboration = async (collaboratorId, repositoryId) => {
 			method: 'post',
 			baseURL: 'http://127.0.0.1:8000/',
 			auth: {
-				username: 'vaksi', // This is the client_id
+				username: 'admin', // This is the client_id
 				password: 'root', // This is the client_secret
 			},
 			data: {

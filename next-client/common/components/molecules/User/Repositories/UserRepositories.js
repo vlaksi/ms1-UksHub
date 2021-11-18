@@ -1,21 +1,16 @@
 import RepositoryListItem from '../../../atoms/RepositoryListItem/RepositoryListItem';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { MdAddCircle } from 'react-icons/md';
-import { useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import {
+	addRepository,
+	getAllRepositoriesByAuthor,
+	updateRepositoryDefaultBranch,
+} from '../../../../services/versioning/repositoryService';
+import { createBranch } from '../../../../services/versioning/branchService';
 
-// TODO: Get this repositories for passed username
-const repositories = [
-	{
-		name: 'ms1-UksHub',
-	},
-	{
-		name: 'Election-DAPP',
-	},
-];
-
-const UserRepositories = ({ username }) => {
+const UserRepositories = ({ username, author_id }) => {
 	const [show, setShow] = useState(false);
 	const handleClose = () => {
 		setShow(false);
@@ -37,33 +32,40 @@ const UserRepositories = ({ username }) => {
 		setNewRepositoryDescription(newDescription);
 	};
 
-	const addRepositoryName = () => {
-		axios
-			.request({
-				url: `/versioning/repositorys/`,
-				method: 'post',
-				baseURL: 'http://127.0.0.1:8000/',
-				auth: {
-					username: 'anci', // This is the client_id
-					password: 'root', // This is the client_secret
-				},
-				data: {
-					name: newRepositoryName,
-					description: newRepositoryDescription,
-					grant_type: 'client_credentials',
-					scope: 'public',
-				},
-			})
-			.then((respose) => {
-				console.log(respose);
-				notify();
-				handleClose();
-			})
-			.catch((error) => {
-				console.log(error.response.data.error);
-				notifyError();
-			});
+	const [newRepositoryList, setNewRepositoryList] = useState([]);
+
+	const addNewRepository = async () => {
+		let createdRepository = await addRepository(
+			newRepositoryName,
+			newRepositoryDescription,
+			'1'
+		);
+		if (!createdRepository) {
+			notifyError();
+			return;
+		}
+		let createdDefaultBranch = await createBranch(createdRepository.pk);
+		if (!createdDefaultBranch) {
+			notifyError();
+			return;
+		}
+		let updatedRepository = await updateRepositoryDefaultBranch(
+			createdDefaultBranch.repository,
+			createdDefaultBranch.pk
+		);
+		if (updatedRepository) {
+			notify();
+			handleClose();
+			setNewRepositoryList(await getAllRepositoriesByAuthor(author_id));
+		} else {
+			notifyError();
+		}
 	};
+
+	useEffect(async () => {
+		if (!author_id) return;
+		setNewRepositoryList(await getAllRepositoriesByAuthor(author_id));
+	}, [author_id]);
 
 	return (
 		<>
@@ -106,7 +108,7 @@ const UserRepositories = ({ username }) => {
 						<Button
 							variant="success"
 							onClick={() => {
-								addRepositoryName();
+								addNewRepository();
 							}}
 						>
 							Save Changes
@@ -119,12 +121,13 @@ const UserRepositories = ({ username }) => {
 			</div>
 			<ToastContainer position="top-right" autoClose={3000}></ToastContainer>
 
-			{repositories.map((repository) => {
+			{newRepositoryList?.map((repository) => {
 				return (
 					<RepositoryListItem
-						key={repository.name}
+						key={repository.pk}
 						username={username}
 						name={repository.name}
+						repositoryId={repository.pk}
 					/>
 				);
 			})}
