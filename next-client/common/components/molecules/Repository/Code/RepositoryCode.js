@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Card, Dropdown, ListGroup, Modal, Button } from 'react-bootstrap';
+import {
+	Card,
+	Dropdown,
+	ListGroup,
+	Modal,
+	Button,
+	Form,
+} from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
 import { AiFillHome, AiOutlineFile, AiFillPlusCircle } from 'react-icons/ai';
 import styles from './RepositoryCode.module.scss';
@@ -132,13 +139,12 @@ const RepositoryCode = ({ repositoryId = 1 }) => {
 				<Modal.Header closeButton>
 					<Modal.Title> Add new content </Modal.Title>
 				</Modal.Header>
-				<Modal.Body
-					style={{
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: ' baseline',
-					}}
-				></Modal.Body>
+				<Modal.Body>
+					<Form.Group controlId="formFileMultiple" className="mb-3">
+						<Form.Label>Add your files for the upload</Form.Label>
+						<Form.Control type="file" multiple />
+					</Form.Group>
+				</Modal.Body>
 
 				<Modal.Footer>
 					<Button
