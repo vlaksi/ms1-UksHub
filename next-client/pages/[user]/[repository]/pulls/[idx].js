@@ -4,7 +4,12 @@ const PullRequestIndex = () => {
 	const router = useRouter();
 	const { idx } = router.query;
 
-	return <p>PullRequestIndex: {idx}</p>;
+	return (
+		<>
+			<h5> Add style for the PullRequest </h5>
+			<p> PullRequestIndex: {idx}</p>
+		</>
+	);
 };
 
 export default PullRequestIndex;
