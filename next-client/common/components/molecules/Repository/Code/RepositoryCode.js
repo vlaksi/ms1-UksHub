@@ -1,15 +1,19 @@
-import { useState } from 'react';
-import { Card, Dropdown, ListGroup } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Card, Dropdown, ListGroup, Modal, Button } from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
-import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
+import { AiFillHome, AiOutlineFile, AiFillPlusCircle } from 'react-icons/ai';
 import styles from './RepositoryCode.module.scss';
 import { branches } from '../../../../mocks/repository';
 
-const RepositoryCode = () => {
+const RepositoryCode = ({ repositoryId = 1 }) => {
 	const [activeBranch, setActiveBranch] = useState(branches[0]);
 	const [activeFolders, setActiveFolders] = useState(branches[0].folders);
 	const [activeFiles, setActiveFiles] = useState(branches[0].files);
 	const [activeFilesPath, setActiveFilesPath] = useState([]);
+	const [show, setShow] = useState(false);
+
+	const handleClose = () => setShow(false);
+	const handleShow = () => setShow(true);
 
 	return (
 		<>
@@ -55,19 +59,29 @@ const RepositoryCode = () => {
 								})}
 							</div>
 						</div>
-						<div>
+						<div style={{ display: 'flex' }}>
 							<AiFillHome
-								onClick={() => {
-									setActiveFolders(activeBranch.folders);
-									setActiveFiles(activeBranch.files);
-									setActiveFilesPath([]);
-								}}
 								style={{
 									cursor: 'pointer',
 									marginRight: '10px',
 									height: '20px',
 									width: '20px',
 								}}
+								onClick={() => {
+									setActiveFolders(activeBranch.folders);
+									setActiveFiles(activeBranch.files);
+									setActiveFilesPath([]);
+								}}
+							/>
+							{/* TODO: Do not display this one to the other users, only to myself */}
+							<AiFillPlusCircle
+								style={{
+									cursor: 'pointer',
+									marginRight: '10px',
+									height: '20px',
+									width: '20px',
+								}}
+								onClick={handleShow}
 							/>
 						</div>
 					</div>
@@ -113,6 +127,33 @@ const RepositoryCode = () => {
 					<div className={styles.repositoryFooter}>2 days ago</div>
 				</Card.Footer>
 			</Card>
+
+			<Modal show={show} onHide={handleClose}>
+				<Modal.Header closeButton>
+					<Modal.Title> Add new content </Modal.Title>
+				</Modal.Header>
+				<Modal.Body
+					style={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: ' baseline',
+					}}
+				></Modal.Body>
+
+				<Modal.Footer>
+					<Button
+						variant="success"
+						onClick={() => {
+							alert('suc');
+						}}
+					>
+						Add
+					</Button>
+					<Button variant="danger" onClick={handleClose}>
+						Cancel
+					</Button>
+				</Modal.Footer>
+			</Modal>
 		</>
 	);
 };
