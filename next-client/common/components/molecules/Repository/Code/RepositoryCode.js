@@ -22,6 +22,13 @@ const RepositoryCode = ({ repositoryId = 1 }) => {
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
 
+	const onFileChange = (files) => {
+		let filesLenght = files.length;
+		for (let i = 0; i < filesLenght; i++) {
+			console.log(files[i]);
+		}
+	};
+
 	return (
 		<>
 			<Card>
@@ -142,7 +149,11 @@ const RepositoryCode = ({ repositoryId = 1 }) => {
 				<Modal.Body>
 					<Form.Group controlId="formFileMultiple" className="mb-3">
 						<Form.Label>Add your files for the upload</Form.Label>
-						<Form.Control type="file" multiple />
+						<Form.Control
+							type="file"
+							multiple
+							onChange={(e) => onFileChange(e.target.files)}
+						/>
 					</Form.Group>
 				</Modal.Body>
 
