@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -101,13 +102,13 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': 'uks',
+        'NAME': 'postgres',
 
-        'USER': 'postgres',
+        'USER': os.getenv('POSTGRES_USER'),
 
-        'PASSWORD': 'root',
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
 
-        'HOST': 'localhost',
+        'HOST': 'db',
 
         'PORT': '5432',
 
@@ -134,6 +135,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        }
+    }
+}
+
+# Cache time to live is 15 minutes.
+CACHE_TTL = 60 * 15
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
