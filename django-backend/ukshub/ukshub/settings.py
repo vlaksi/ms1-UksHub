@@ -69,7 +69,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:8888",
 ]
 
 ROOT_URLCONF = 'ukshub.urls'
