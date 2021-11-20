@@ -35,3 +35,28 @@ export const addPullRequest = async (
 
   return pullRequest;
 };
+export const getPullRequestsByRepository = async (repositoryId) => {
+  let pullRequests = null;
+  await axios
+    .request({
+      url: `/progresstrack/pullrequests/repository/${repositoryId}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      auth: {
+        username: "admin", // This is the client_id
+        password: "root", // This is the client_secret
+      },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      pullRequests = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return pullRequests;
+};

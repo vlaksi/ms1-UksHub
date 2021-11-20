@@ -2,31 +2,16 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { BsFillTagsFill } from "react-icons/bs";
 import { GoMilestone } from "react-icons/go";
 import { MdAddCircle } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PullRequestList from "../../../atoms/PullRequestList/PullRequestList";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { getRepositoryBranches } from "../../../../services/versioning/branchService";
-import { addPullRequest } from "../../../../services/progresstrackapp/pullRequestService";
+import {
+  addPullRequest,
+  getPullRequestsByRepository,
+} from "../../../../services/progresstrackapp/pullRequestService";
 import { ToastContainer, toast } from "react-toastify";
-
-const ourPullRequests = [
-  {
-    pk: "1",
-    title: "First Title",
-    text: "First Text",
-  },
-  {
-    pk: "2",
-    title: "second Title",
-    text: "second Text",
-  },
-  {
-    pk: "3",
-    title: "third Title",
-    text: "third Text",
-  },
-];
 
 const PullRequestsOverview = ({ dbRepository }) => {
   const router = useRouter();
@@ -42,6 +27,8 @@ const PullRequestsOverview = ({ dbRepository }) => {
 
   const notify = () => toast.success("Successfully created new pull request!");
   const notifyError = () => toast.error("Check if you entered all fields!");
+
+  const [newPullRequest, setNewPullRequest] = useState([]);
 
   const [newPullRequestName, setNewPullRequestName] = useState("");
   const handlePullRequestNameAdding = (newName) => {
@@ -80,6 +67,14 @@ const PullRequestsOverview = ({ dbRepository }) => {
       notifyError();
     }
   };
+
+  useEffect(async () => {
+    if (!dbRepository.pk) return;
+    setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
+  }, [dbRepository.pk]);
+
+  console.log(getPullRequestsByRepository(dbRepository.pk));
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -169,7 +164,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
         </Modal>
       </div>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
-      <PullRequestList pullRequests={ourPullRequests} />
+      <PullRequestList pullRequests={newPullRequest} />
       {/* TODO: Pass a real pull requests here */}
     </>
   );
