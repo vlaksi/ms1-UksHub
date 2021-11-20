@@ -7,6 +7,7 @@ import PullRequestList from "../../../atoms/PullRequestList/PullRequestList";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { getRepositoryBranches } from "../../../../services/versioning/branchService";
+import { addPullRequest } from "../../../../services/progresstrackapp/pullRequestService";
 
 const ourPullRequests = [
   {
@@ -49,6 +50,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
   const [newBaseBranch, setNewBaseBranch] = useState("");
   const handleBaseBranchAdding = (newBaseBranch) => {
     setNewBaseBranch(newBaseBranch);
+    console.log(newBaseBranch);
   };
 
   const [allBranches, setAllBranches] = useState([]);
@@ -57,7 +59,14 @@ const PullRequestsOverview = ({ dbRepository }) => {
     let branches = await getRepositoryBranches(dbRepository.pk);
     setAllBranches(branches);
   };
-
+  const addNewPullRequest = async () => {
+    let createdPullRequest = await addPullRequest(
+      newPullRequestName,
+      //newBaseBranch.pk,
+      //newCompareBranch.pk,
+      dbRepository.pk
+    );
+  };
   return (
     <>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -137,7 +146,9 @@ const PullRequestsOverview = ({ dbRepository }) => {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="success">Save Changes</Button>
+            <Button variant="success" onClick={addNewPullRequest}>
+              Save Changes
+            </Button>
             <Button variant="danger" onClick={handleClose}>
               Cancel
             </Button>
