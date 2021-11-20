@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { getRepositoryBranches } from "../../../../services/versioning/branchService";
 import { addPullRequest } from "../../../../services/progresstrackapp/pullRequestService";
+import { ToastContainer, toast } from "react-toastify";
 
 const ourPullRequests = [
   {
@@ -34,8 +35,13 @@ const PullRequestsOverview = ({ dbRepository }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
+    setNewPullRequestName("");
+    //TODO: add for other fields
   };
   const handleShow = () => setShow(true);
+
+  const notify = () => toast.success("Successfully created new pull request!");
+  const notifyError = () => toast.error("Check if you entered all fields!");
 
   const [newPullRequestName, setNewPullRequestName] = useState("");
   const handlePullRequestNameAdding = (newName) => {
@@ -66,6 +72,13 @@ const PullRequestsOverview = ({ dbRepository }) => {
       //newCompareBranch.pk,
       dbRepository.pk
     );
+
+    if (createdPullRequest) {
+      notify();
+      handleClose();
+    } else {
+      notifyError();
+    }
   };
   return (
     <>
@@ -155,6 +168,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
           </Modal.Footer>
         </Modal>
       </div>
+      <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
       <PullRequestList pullRequests={ourPullRequests} />
       {/* TODO: Pass a real pull requests here */}
     </>
