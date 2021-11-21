@@ -55,6 +55,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
   const addNewPullRequest = async () => {
     let createdPullRequest = await addPullRequest(
       newPullRequestName,
+      //TODO: add more fields
       //newBaseBranch.pk,
       //newCompareBranch.pk,
       dbRepository.pk
@@ -63,6 +64,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
     if (createdPullRequest) {
       notify();
       handleClose();
+      setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
     } else {
       notifyError();
     }
