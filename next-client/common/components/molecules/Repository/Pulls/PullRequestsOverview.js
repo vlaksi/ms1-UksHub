@@ -43,22 +43,22 @@ const PullRequestsOverview = ({ dbRepository }) => {
   const [newBaseBranch, setNewBaseBranch] = useState("");
   const handleBaseBranchAdding = (newBaseBranch) => {
     setNewBaseBranch(newBaseBranch);
-    console.log(newBaseBranch);
   };
 
   const [allBranches, setAllBranches] = useState([]);
 
   const getRepositoryAllBranches = async () => {
     let branches = await getRepositoryBranches(dbRepository.pk);
+    setNewBaseBranch(branches[0].pk);
+    setNewCompareBranch(branches[0].pk);
     setAllBranches(branches);
   };
 
   const addNewPullRequest = async () => {
     let createdPullRequest = await addPullRequest(
       newPullRequestName,
-      //TODO: add more fields
-      //newBaseBranch.pk,
-      //newCompareBranch.pk,
+      newBaseBranch,
+      newCompareBranch,
       dbRepository.pk,
       "1"
     );
@@ -137,7 +137,11 @@ const PullRequestsOverview = ({ dbRepository }) => {
                   }}
                 >
                   {allBranches?.map((branch) => {
-                    return <option>{branch.name}</option>;
+                    return (
+                      <option key={branch.pk} value={branch.pk}>
+                        {branch.name}
+                      </option>
+                    );
                   })}
                 </Form.Select>
 
@@ -149,7 +153,11 @@ const PullRequestsOverview = ({ dbRepository }) => {
                   }}
                 >
                   {allBranches?.map((branch) => {
-                    return <option>{branch.name}</option>;
+                    return (
+                      <option key={branch.pk} value={branch.pk}>
+                        {branch.name}
+                      </option>
+                    );
                   })}
                 </Form.Select>
               </Form.Group>

@@ -2,8 +2,8 @@ import axios from "axios";
 
 export const addPullRequest = async (
   newPullRequestName,
-  //newBaseBranch,
-  //newCompareBranch,
+  newBaseBranch,
+  newCompareBranch,
   repositoryId,
   authorId
 ) => {
@@ -20,8 +20,8 @@ export const addPullRequest = async (
       data: {
         author: authorId,
         title: newPullRequestName,
-        base_branch: "2",
-        compare_branch: "2",
+        base_branch: newBaseBranch,
+        compare_branch: newCompareBranch,
         repository: repositoryId,
         creation_date: "2021-11-18T17:13:40.948Z",
         grant_type: "client_credentials",
