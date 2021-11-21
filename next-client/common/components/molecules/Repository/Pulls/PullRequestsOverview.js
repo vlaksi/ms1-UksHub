@@ -52,6 +52,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
     let branches = await getRepositoryBranches(dbRepository.pk);
     setAllBranches(branches);
   };
+
   const addNewPullRequest = async () => {
     let createdPullRequest = await addPullRequest(
       newPullRequestName,
@@ -74,8 +75,6 @@ const PullRequestsOverview = ({ dbRepository }) => {
     if (!dbRepository.pk) return;
     setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
   }, [dbRepository.pk]);
-
-  console.log(getPullRequestsByRepository(dbRepository.pk));
 
   return (
     <>
@@ -167,7 +166,6 @@ const PullRequestsOverview = ({ dbRepository }) => {
       </div>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
       <PullRequestList pullRequests={newPullRequest} />
-      {/* TODO: Pass a real pull requests here */}
     </>
   );
 };

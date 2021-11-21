@@ -60,3 +60,29 @@ export const getPullRequestsByRepository = async (repositoryId) => {
 
   return pullRequests;
 };
+
+export const deletePullRequest = async (pullRequestId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/pullrequests/${pullRequestId}`,
+      method: "delete",
+      baseURL: "http://127.0.0.1:8000/",
+      auth: {
+        username: "admin", // This is the client_id
+        password: "root", // This is the client_secret
+      },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return success;
+};
