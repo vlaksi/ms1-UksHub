@@ -9,6 +9,7 @@ class Label(models.Model):
     decription = models.CharField(max_length=200)
     def __str__(self):
          return 'Name of object: ' + self.name 
+
 class Issue(models.Model):  
     repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='issues')
     author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE,related_name='issue_created')
@@ -20,6 +21,7 @@ class Issue(models.Model):
     labels = models.ManyToManyField(Label, blank=True)
     def __str__(self):
         return 'Title of object: ' + self.title
+
 class Milestone(models.Model):  
     title = models.CharField(max_length=200)
     due_date = models.DateTimeField('due date')
@@ -29,6 +31,7 @@ class Milestone(models.Model):
         return 'Title of object: ' + self.title       
           
 class PullRequest(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='pull_requests')
     reviewes = models.ManyToManyField(User, blank=True, related_name='wated_review_from_me')  
     assigness = models.ManyToManyField(User, blank=True, related_name='pull_request_assigned_to_me')
