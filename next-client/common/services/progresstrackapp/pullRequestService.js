@@ -4,7 +4,8 @@ export const addPullRequest = async (
   newPullRequestName,
   //newBaseBranch,
   //newCompareBranch,
-  repositoryId
+  repositoryId,
+  authorId
 ) => {
   let pullRequest = null;
   await axios
@@ -17,6 +18,7 @@ export const addPullRequest = async (
         password: "root", // This is the client_secret
       },
       data: {
+        author: authorId,
         title: newPullRequestName,
         base_branch: "2",
         compare_branch: "2",
@@ -35,11 +37,12 @@ export const addPullRequest = async (
 
   return pullRequest;
 };
+
 export const getPullRequestsByRepository = async (repositoryId) => {
   let pullRequests = null;
   await axios
     .request({
-      url: `/progresstrack/pullrequests/repository/${repositoryId}`,
+      url: `/progresstrack/repository/${repositoryId}/pullrequests`,
       method: "get",
       baseURL: "http://127.0.0.1:8000/",
       auth: {

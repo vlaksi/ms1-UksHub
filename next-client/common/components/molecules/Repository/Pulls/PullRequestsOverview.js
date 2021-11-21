@@ -59,9 +59,10 @@ const PullRequestsOverview = ({ dbRepository }) => {
       //TODO: add more fields
       //newBaseBranch.pk,
       //newCompareBranch.pk,
-      dbRepository.pk
+      dbRepository.pk,
+      "1"
     );
-
+    // TODO: Change author ID to the logged user id !
     if (createdPullRequest) {
       notify();
       handleClose();
