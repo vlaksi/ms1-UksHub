@@ -1,13 +1,29 @@
 import { Card, Button, Modal } from "react-bootstrap";
 import { useState } from "react";
+import { deletePullRequest } from "../../../services/progresstrackapp/pullRequestService";
+import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
+  const router = useRouter();
+  const { user } = router.query;
+
+  const notifyDeleted = () =>
+    toast.success("Successfully deleted pull request!");
+
+  const deleteChosenPullRequest = async () => {
+    let isSuccessfulDeleted = await deletePullRequest(pullRequestId);
+    if (isSuccessfulDeleted) {
+      notifyDeleted();
+    }
+  };
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
       <h1>Add style for this page</h1>
       <p> PullRequestIndex: {pullRequestId}</p>
       <Card border="danger" style={{ width: "50%" }}>
@@ -45,10 +61,10 @@ const PullRequestDetails = ({ pullRequestId }) => {
           <Button
             variant="success"
             onClick={async () => {
-              //await deleteChosenRepository();
+              await deleteChosenPullRequest();
               handleDeleteModalClose();
               // TODO: change this link
-              //window.location.href = `http://localhost:3000/${user}`;
+              window.location.href = `http://localhost:3000/${user}`;
             }}
           >
             Delete
