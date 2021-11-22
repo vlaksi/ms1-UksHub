@@ -43,7 +43,12 @@ const UserRepository = ({ username, repositoryId }) => {
 											{username}
 										</a>
 									</Link>{' '}
-									/ {repository.name}
+									/{' '}
+									<Link href={`/${username}/${repository.pk}`}>
+										<a style={{ textDecoration: 'none', color: '#444' }}>
+											{repository.name}
+										</a>
+									</Link>{' '}
 								</h4>
 							</div>
 							{/* Actions */}
@@ -58,7 +63,9 @@ const UserRepository = ({ username, repositoryId }) => {
 										<Button variant="outline-secondary">
 											<AiOutlineEye size={22} /> Watch
 										</Button>
-										<Button variant="outline-secondary">0</Button>
+										<Link href={`/${username}/${repository.pk}/watchers`}>
+											<Button variant="outline-secondary">0</Button>
+										</Link>
 									</ButtonGroup>
 								</div>
 								<div style={{ marginRight: '5px', marginLeft: '5px' }}>
