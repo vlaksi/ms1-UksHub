@@ -14,9 +14,9 @@ class ReactionType(models.Model):
 class Action(models.Model): 
     author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE,related_name='action_created') 
     repository = models.ForeignKey('versioningapp.Repository', on_delete=models.CASCADE, related_name = "repositoryActions")
-    action_type =  models.ForeignKey(to=ActionType, null=False, on_delete=models.CASCADE)
+    action_type =  models.CharField(max_length=200)
     def __str__(self):
-        return 'Type of Action: ' + self.type.name
+        return 'Type of Action: ' + self.action_type
 
 class Reaction(models.Model):  
     author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE,related_name='reactions_created') 

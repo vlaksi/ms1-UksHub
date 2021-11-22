@@ -1,6 +1,8 @@
 from django.db.models import query
 from django.shortcuts import render
 from rest_framework import generics, serializers, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.contrib.auth.models import User
 from .models import Action, ActionType, Comment, Reaction, ReactionType
 from .serializers import UserSerializer, ActionSerializer, ActionTypeSerializer, CommentSerializer, ReactionSerializer, ReactionTypeSerializer
@@ -64,3 +66,13 @@ class ReactionTypeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ReactionType.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ReactionTypeSerializer
+
+@api_view(['GET'])
+def all_users_by_repo_and_action(request, repo_id, action_name):
+    users = []
+    actions = Action.objects.filter(repository_id = repo_id, action_type = action_name)
+    for action in actions:
+        print(action.author)
+        users.append(action.author)
+    serializers = UserSerializer(users, many=True)
+    return Response(serializers.data)
