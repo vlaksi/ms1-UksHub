@@ -1,7 +1,6 @@
-import { Row, Col, Tabs, Tab, Button, ButtonGroup } from 'react-bootstrap';
+import { Row, Col, Tabs, Tab } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { AiOutlineEye, AiOutlineStar, AiOutlineBranches } from 'react-icons/ai';
 
 import RepositoryCode from '../../molecules/Repository/Code/RepositoryCode';
 import IssuesOverview from '../../molecules/Repository/Issues/IssuesOverview';
@@ -10,6 +9,7 @@ import RepositoryInsights from '../../molecules/Repository/Insights/RepositoryIn
 import RepositorySettings from '../../molecules/Repository/Settings/RepositorySettings';
 import { getRepositoryById } from '../../../services/versioning/repositoryService';
 import { getRepositoryBranches } from '../../../services/versioning/branchService';
+import Actions from '../../atoms/Actions/Actions';
 
 const UserRepository = ({ username, repositoryId }) => {
 	// TODO: Get a user profile information with username attribute !!
@@ -51,40 +51,7 @@ const UserRepository = ({ username, repositoryId }) => {
 									</Link>{' '}
 								</h4>
 							</div>
-							{/* Actions */}
-							<div
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-								}}
-							>
-								<div style={{ marginRight: '5px' }}>
-									<ButtonGroup aria-label="Basic example">
-										<Button variant="outline-secondary">
-											<AiOutlineEye size={22} /> Watch
-										</Button>
-										<Link href={`/${username}/${repository.pk}/watchers`}>
-											<Button variant="outline-secondary">0</Button>
-										</Link>
-									</ButtonGroup>
-								</div>
-								<div style={{ marginRight: '5px', marginLeft: '5px' }}>
-									<ButtonGroup aria-label="Basic example">
-										<Button variant="outline-secondary">
-											<AiOutlineStar size={22} /> Star
-										</Button>
-										<Button variant="outline-secondary">0</Button>
-									</ButtonGroup>
-								</div>
-								<div style={{ marginLeft: '5px' }}>
-									<ButtonGroup aria-label="Basic example">
-										<Button variant="outline-secondary">
-											<AiOutlineBranches size={22} /> Fork
-										</Button>
-										<Button variant="outline-secondary">0</Button>
-									</ButtonGroup>
-								</div>
-							</div>
+							<Actions username={username} repository={repository} />
 						</div>
 
 						<Tabs
