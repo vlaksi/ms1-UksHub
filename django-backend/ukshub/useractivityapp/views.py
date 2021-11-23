@@ -76,3 +76,15 @@ def all_users_by_repo_and_action(request, repo_id, action_name):
         users.append(action.author)
     serializers = UserSerializer(users, many=True)
     return Response(serializers.data)
+
+@api_view(['GET'])
+def action_by_repo_and_user(request, action_name, repo_id, user_id):
+    try:
+        action = Action.objects.get(repository_id = repo_id, action_type = action_name, author_id = user_id)
+        serializers = ActionSerializer(action, many=False)
+        return Response(serializers.data)
+    except Action.DoesNotExist:
+        action = None
+        return Response({})
+
+    

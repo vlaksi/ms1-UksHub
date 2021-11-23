@@ -12,7 +12,7 @@ class ReactionType(models.Model):
         return 'Name of object: ' + self.name
 
 class Action(models.Model): 
-    author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE,related_name='action_created') 
+    author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE) 
     repository = models.ForeignKey('versioningapp.Repository', on_delete=models.CASCADE, related_name = "repositoryActions")
     action_type =  models.CharField(max_length=200)
     def __str__(self):
