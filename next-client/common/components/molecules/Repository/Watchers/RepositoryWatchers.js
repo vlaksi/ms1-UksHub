@@ -2,23 +2,17 @@ import { useEffect, useState } from 'react';
 import { getRepositoryById } from '../../../../services/versioning/repositoryService';
 import Link from 'next/link';
 import UserItem from '../../../atoms/UserItem/UserItem';
-
-const userMockup = [
-	{
-		username: 'vlaksi',
-	},
-	{
-		username: 'anciz',
-	},
-];
+import { getAllRepositoryUsersByAction } from '../../../../services/useractivity/actionService';
 
 const RepositoryWatchers = ({ username, repositoryId }) => {
 	// TODO: Find a way how to only get once upon repository eg.
 	const [repository, setRepository] = useState();
+	const [users, setUsers] = useState([]);
 
 	useEffect(async () => {
 		if (!repositoryId) return;
 		setRepository(await getRepositoryById(repositoryId));
+		setUsers(await getAllRepositoryUsersByAction(repositoryId, 'watch'));
 	}, [repositoryId]);
 
 	return (
@@ -42,7 +36,7 @@ const RepositoryWatchers = ({ username, repositoryId }) => {
 						</h4>
 					</div>
 					<hr></hr>
-					{userMockup.map((user) => {
+					{users?.map((user) => {
 						return <UserItem key={user.username} user={user} />;
 					})}
 				</>

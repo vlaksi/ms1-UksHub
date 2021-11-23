@@ -1,12 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Row, Col, Tabs, Tab, Button, ButtonGroup } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import { AiOutlineEye, AiOutlineStar, AiOutlineBranches } from 'react-icons/ai';
+import { FiMoreHorizontal } from 'react-icons/fi';
+
 import Link from 'next/link';
+import { createRepositoryAction } from '../../../services/useractivity/actionService';
 
 const Actions = ({ username, repository }) => {
 	const [isUserWatchRepo, setIsUserWatchRepo] = useState(false);
 	const [isUserStarRepo, setIsUserStarRepo] = useState(false);
 	const [isUserForkRepo, setIsUserForkRepo] = useState(false);
+
+	const watchRepository = () => {
+		setIsUserWatchRepo(true);
+		createRepositoryAction(1, repository.pk, 'watch');
+		// TODO: Add real logged user id as the first param
+	};
 
 	return (
 		<div
@@ -32,14 +41,16 @@ const Actions = ({ username, repository }) => {
 						<Button
 							variant="outline-secondary"
 							onClick={() => {
-								setIsUserWatchRepo(true);
+								watchRepository();
 							}}
 						>
 							<AiOutlineEye size={22} /> Watch
 						</Button>
 					)}
 					<Link href={`/${username}/${repository.pk}/watchers`}>
-						<Button variant="outline-secondary">0</Button>
+						<Button variant="outline-secondary">
+							<FiMoreHorizontal />
+						</Button>
 					</Link>
 				</ButtonGroup>
 			</div>
@@ -66,7 +77,9 @@ const Actions = ({ username, repository }) => {
 							<AiOutlineStar size={22} /> Star
 						</Button>
 					)}
-					<Button variant="outline-secondary">0</Button>
+					<Button variant="outline-secondary">
+						<FiMoreHorizontal />
+					</Button>
 				</ButtonGroup>
 			</div>
 			{/* Fork */}
@@ -93,7 +106,9 @@ const Actions = ({ username, repository }) => {
 						</Button>
 					)}
 
-					<Button variant="outline-secondary">0</Button>
+					<Button variant="outline-secondary">
+						<FiMoreHorizontal />
+					</Button>
 				</ButtonGroup>
 			</div>
 		</div>
