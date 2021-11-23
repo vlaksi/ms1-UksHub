@@ -32,6 +32,35 @@ export const createRepositoryAction = async (
 	return action;
 };
 
+export const getActionByRepoAndAuthor = async (
+	actionName,
+	repositoryId,
+	userId
+) => {
+	let action;
+	await axios
+		.request({
+			url: `/useractivity/action/${actionName}/${repositoryId}/${userId}/`,
+			method: 'get',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			action = response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	return action;
+};
+
 export const deleteActionById = async (actionId) => {
 	let action;
 	await axios

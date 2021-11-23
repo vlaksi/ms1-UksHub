@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { AiOutlineEye, AiOutlineStar, AiOutlineBranches } from 'react-icons/ai';
 import { FiMoreHorizontal } from 'react-icons/fi';
@@ -8,6 +8,7 @@ import Link from 'next/link';
 import {
 	createRepositoryAction,
 	deleteActionById,
+	getActionByRepoAndAuthor,
 } from '../../../services/useractivity/actionService';
 
 const Actions = ({ username, repository }) => {
@@ -19,6 +20,14 @@ const Actions = ({ username, repository }) => {
 	const [isUserForkRepo, setIsUserForkRepo] = useState(false);
 
 	const [watchAction, setWatchAction] = useState();
+
+	useEffect(async () => {
+		if (!repository) return;
+		setWatchAction(await getActionByRepoAndAuthor('watch', repository.pk, 1));
+		let action = await getActionByRepoAndAuthor('watch', repository.pk, 1);
+		if (action.pk) setIsUserWatchRepo(true);
+		// TODO: Put real one userId
+	}, []);
 
 	const watchRepository = async () => {
 		setIsUserWatchRepo(true);
