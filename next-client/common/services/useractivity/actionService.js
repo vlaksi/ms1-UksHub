@@ -32,6 +32,31 @@ export const createRepositoryAction = async (
 	return action;
 };
 
+export const deleteActionById = async (actionId) => {
+	let action;
+	await axios
+		.request({
+			url: `/useractivity/actions/${actionId}`,
+			method: 'delete',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			action = response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	return action;
+};
+
 export const getAllRepositoryUsersByAction = async (
 	repositoryId,
 	actionType = 'watch'
