@@ -11,7 +11,7 @@ const Watchers = () => {
 			<RepositoryAction
 				username={user}
 				repositoryId={repository}
-				actionType="watch"
+				actionType="star"
 			/>
 		</>
 	);

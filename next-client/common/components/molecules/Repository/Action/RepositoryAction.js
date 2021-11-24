@@ -4,7 +4,7 @@ import Link from 'next/link';
 import UserItem from '../../../atoms/UserItem/UserItem';
 import { getAllRepositoryUsersByAction } from '../../../../services/useractivity/actionService';
 
-const RepositoryWatchers = ({ username, repositoryId }) => {
+const RepositoryAction = ({ username, repositoryId, actionType = 'watch' }) => {
 	// TODO: Find a way how to only get once upon repository eg.
 	const [repository, setRepository] = useState();
 	const [users, setUsers] = useState([]);
@@ -12,7 +12,7 @@ const RepositoryWatchers = ({ username, repositoryId }) => {
 	useEffect(async () => {
 		if (!repositoryId) return;
 		setRepository(await getRepositoryById(repositoryId));
-		setUsers(await getAllRepositoryUsersByAction(repositoryId, 'watch'));
+		setUsers(await getAllRepositoryUsersByAction(repositoryId, actionType));
 	}, [repositoryId]);
 
 	return (
@@ -20,20 +20,31 @@ const RepositoryWatchers = ({ username, repositoryId }) => {
 			{repository && (
 				<>
 					{/* Name of the user/repo */}
-					<div>
-						<h4>
-							<Link href={`/${username}`}>
-								<a style={{ textDecoration: 'none', color: '#444' }}>
-									{username}
-								</a>
-							</Link>{' '}
-							/{' '}
-							<Link href={`/${username}/${repository.pk}`}>
-								<a style={{ textDecoration: 'none', color: '#444' }}>
-									{repository.name}
-								</a>
-							</Link>{' '}
-						</h4>
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'baseline',
+							justifyContent: 'space-between',
+						}}
+					>
+						<div>
+							<h4>
+								<Link href={`/${username}`}>
+									<a style={{ textDecoration: 'none', color: '#444' }}>
+										{username}
+									</a>
+								</Link>{' '}
+								/{' '}
+								<Link href={`/${username}/${repository.pk}`}>
+									<a style={{ textDecoration: 'none', color: '#444' }}>
+										{repository.name}
+									</a>
+								</Link>{' '}
+							</h4>
+						</div>
+						<div>
+							<h5> Users that {actionType} repository</h5>
+						</div>
 					</div>
 					<hr></hr>
 					{users?.map((user) => {
@@ -45,4 +56,4 @@ const RepositoryWatchers = ({ username, repositoryId }) => {
 	);
 };
 
-export default RepositoryWatchers;
+export default RepositoryAction;

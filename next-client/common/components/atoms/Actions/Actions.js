@@ -20,13 +20,31 @@ const Actions = ({ username, repository }) => {
 	const [isUserForkRepo, setIsUserForkRepo] = useState(false);
 
 	const [watchAction, setWatchAction] = useState();
+	const [starAction, setStarAction] = useState();
+	const [forkAction, setForkAction] = useState();
 
 	useEffect(async () => {
 		if (!repository) return;
-		setWatchAction(await getActionByRepoAndAuthor('watch', repository.pk, 1));
-		let action = await getActionByRepoAndAuthor('watch', repository.pk, 1);
-		if (action.pk) setIsUserWatchRepo(true);
-		// TODO: Put real one userId
+		// Watch
+		let watchAction = await getActionByRepoAndAuthor('watch', repository.pk, 1); // TODO: Put real one userId
+		if (watchAction?.pk) {
+			setIsUserWatchRepo(true);
+			setWatchAction(watchAction);
+		}
+
+		// Star
+		let starAction = await getActionByRepoAndAuthor('star', repository.pk, 1); // TODO: Put real one userId
+		if (starAction?.pk) {
+			setIsUserStarRepo(true);
+			setStarAction(starAction);
+		}
+
+		// Fork
+		let forkAction = await getActionByRepoAndAuthor('fork', repository.pk, 1); // TODO: Put real one userId
+		if (forkAction?.pk) {
+			setIsUserForkRepo(true);
+			setForkAction(forkAction);
+		}
 	}, []);
 
 	const watchRepository = async () => {
@@ -40,6 +58,34 @@ const Actions = ({ username, repository }) => {
 		setIsUserWatchRepo(false);
 		deleteActionById(watchAction.pk);
 		notify('Successfully deleted repository!');
+	};
+
+	const starRepository = async () => {
+		setIsUserStarRepo(true);
+		setStarAction(await createRepositoryAction(1, repository.pk, 'star'));
+		// TODO: Add real logged user id as the first param
+		notify('Successfully stared repository!');
+	};
+
+	const unStarRepository = () => {
+		setIsUserStarRepo(false);
+		deleteActionById(starAction.pk);
+		notify('Successfully deleted repository!');
+	};
+
+	const forkRepository = async () => {
+		setIsUserForkRepo(true);
+		setForkAction(await createRepositoryAction(1, repository.pk, 'fork'));
+		// TODO: Add real logged user id as the first param
+		notify('Successfully forked repository!');
+		// TODO: Create that repository to this user !!
+	};
+
+	const unForkRepository = () => {
+		setIsUserForkRepo(false);
+		deleteActionById(forkAction.pk);
+		notify('Successfully deleted repository!');
+		// TODO: Delete that repository also !!!
 	};
 
 	return (
@@ -89,7 +135,7 @@ const Actions = ({ username, repository }) => {
 								variant="outline-secondary"
 								style={{ backgroundColor: '#c3c3c3' }}
 								onClick={() => {
-									setIsUserStarRepo(false);
+									unStarRepository();
 								}}
 							>
 								<AiOutlineStar size={22} /> Unstar
@@ -98,15 +144,17 @@ const Actions = ({ username, repository }) => {
 							<Button
 								variant="outline-secondary"
 								onClick={() => {
-									setIsUserStarRepo(true);
+									starRepository();
 								}}
 							>
 								<AiOutlineStar size={22} /> Star
 							</Button>
 						)}
-						<Button variant="outline-secondary">
-							<FiMoreHorizontal />
-						</Button>
+						<Link href={`/${username}/${repository.pk}/stargazers`}>
+							<Button variant="outline-secondary">
+								<FiMoreHorizontal />
+							</Button>
+						</Link>
 					</ButtonGroup>
 				</div>
 				{/* Fork */}
@@ -117,7 +165,7 @@ const Actions = ({ username, repository }) => {
 								variant="outline-secondary"
 								style={{ backgroundColor: '#c3c3c3' }}
 								onClick={() => {
-									setIsUserForkRepo(false);
+									unForkRepository();
 								}}
 							>
 								<AiOutlineBranches size={22} /> Unfork
@@ -126,16 +174,18 @@ const Actions = ({ username, repository }) => {
 							<Button
 								variant="outline-secondary"
 								onClick={() => {
-									setIsUserForkRepo(true);
+									forkRepository();
 								}}
 							>
 								<AiOutlineBranches size={22} /> Fork
 							</Button>
 						)}
 
-						<Button variant="outline-secondary">
-							<FiMoreHorizontal />
-						</Button>
+						<Link href={`/${username}/${repository.pk}/forks`}>
+							<Button variant="outline-secondary">
+								<FiMoreHorizontal />
+							</Button>
+						</Link>
 					</ButtonGroup>
 				</div>
 			</div>
