@@ -18,4 +18,5 @@ urlpatterns = [
     path('users/<int:user_id>/repositories',views.all_repositories_by_user,name="all-repositories"),
     path('repository/<int:pk>/branches/', views.repository_branches, name="repository-branches"), 
     path('repository/<int:repo_id>/collaborators/', views.repository_collaborators, name="repository-collaborators"),
+
 ]

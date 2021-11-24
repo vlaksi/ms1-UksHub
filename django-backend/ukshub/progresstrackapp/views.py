@@ -1,5 +1,7 @@
 from django.db.models import query
 from django.shortcuts import render
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework import generics, serializers, permissions
 from .models import Issue, Label, Milestone, PullRequest
 from .serializers import IssueSerializer, LabelSerializer, MilestoneSerializer, PullRequestSerializer
@@ -43,3 +45,9 @@ class PullRequestDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PullRequest.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PullRequestSerializer
+
+@api_view(['GET'])
+def all_pull_requests_by_repository_id(request, repo_id):
+    pull_requests= PullRequest.objects.filter(repository=repo_id)
+    serializers=PullRequestSerializer(pull_requests,many=True)
+    return Response(serializers.data)
