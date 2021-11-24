@@ -3,17 +3,17 @@ from django.shortcuts import render
 from rest_framework import generics, serializers, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.models import User
+from authentication.models import UserAccount
 from .models import Action, ActionType, Comment, Reaction, ReactionType
 from .serializers import UserSerializer, ActionSerializer, ActionTypeSerializer, CommentSerializer, ReactionSerializer, ReactionTypeSerializer
 
 class UserList(generics.ListCreateAPIView):
-    queryset = User.objects.all()
+    queryset = UserAccount.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
+    queryset = UserAccount.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer
 

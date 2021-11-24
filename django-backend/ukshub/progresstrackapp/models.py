@@ -1,7 +1,7 @@
 from django.db import models
 from versioningapp.models import Branch,Repository
 from useractivityapp.models import Comment
-from django.contrib.auth.models import User
+from authentication.models import UserAccount
 
 class Label(models.Model):  
     name = models.CharField(max_length=200)
@@ -12,8 +12,8 @@ class Label(models.Model):
 
 class Issue(models.Model):  
     repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='issues')
-    author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE,related_name='issue_created')
-    assigness = models.ManyToManyField(User, blank=True, related_name='issue_assigned_to_me')
+    author = models.ForeignKey(to=UserAccount, null=False, on_delete=models.CASCADE,related_name='issue_created')
+    assigness = models.ManyToManyField(UserAccount, blank=True, related_name='issue_assigned_to_me')
     comments = models.ManyToManyField(Comment, blank=True, related_name='issue')
     title= models.CharField(max_length=200)
     creation_date= models.DateTimeField('date of creation')
@@ -33,8 +33,8 @@ class Milestone(models.Model):
 class PullRequest(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='pull_requests')
-    reviewes = models.ManyToManyField(User, blank=True, related_name='wated_review_from_me')  
-    assigness = models.ManyToManyField(User, blank=True, related_name='pull_request_assigned_to_me')
+    reviewes = models.ManyToManyField(UserAccount, blank=True, related_name='wated_review_from_me')  
+    assigness = models.ManyToManyField(UserAccount, blank=True, related_name='pull_request_assigned_to_me')
     base_branch =  models.ForeignKey(to=Branch, null=False, on_delete=models.CASCADE, related_name='base_branchs')
     compare_branch =  models.ForeignKey(to=Branch, null=False, on_delete=models.CASCADE,related_name='compare_branch')
     is_able_to_merge = models.BooleanField(default=False)

@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models import UniqueConstraint
+from authentication.models import UserAccount
 
 class ActionType(models.Model):  
     name = models.CharField(max_length=200)
@@ -25,13 +25,13 @@ class Action(models.Model):
         return 'Type of Action: ' + self.action_type
 
 class Reaction(models.Model):  
-    author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE,related_name='reactions_created') 
+    author = models.ForeignKey(to=UserAccount, null=False, on_delete=models.CASCADE,related_name='reactions_created') 
     type =  models.ForeignKey(to=ReactionType, null=False, on_delete=models.CASCADE)
     def __str__(self):
         return 'Type of Reaction: ' + self.type.name
         
 class Comment(models.Model):  
-    author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE,related_name='comment_created') 
+    author = models.ForeignKey(to=UserAccount, null=False, on_delete=models.CASCADE,related_name='comment_created') 
     reaction = models.ManyToManyField(to=Reaction, blank=True, related_name='comment') 
     message = models.CharField(max_length=200)
     creation_date = models.DateTimeField('date of creation')
