@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import {
   deletePullRequest,
   getPullRequestById,
+  updatePullRequestName,
 } from "../../../services/progresstrackapp/pullRequestService";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -17,6 +18,7 @@ import { useRouter } from "next/router";
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [pullRequest, setPullRequest] = useState("");
+  const [newPullRequestName, setNewPullRequestName] = useState("");
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
@@ -26,6 +28,9 @@ const PullRequestDetails = ({ pullRequestId }) => {
   const notifyDeleted = () =>
     toast.success("Successfully deleted pull request!");
 
+  const handlePullRequestNameChanging = (newName) => {
+    setNewPullRequestName(newName);
+  };
   const deleteChosenPullRequest = async () => {
     let isSuccessfulDeleted = await deletePullRequest(pullRequestId);
     if (isSuccessfulDeleted) {
@@ -38,6 +43,20 @@ const PullRequestDetails = ({ pullRequestId }) => {
     setPullRequest(pullRequest);
   }, [pullRequestId]);
 
+  const updateNewPullRequestName = async () => {
+    let isSuccessfulUpdated = await updatePullRequestName(
+      newPullRequestName,
+      pullRequestId
+    );
+    /* if (isSuccessfulUpdated) {
+      //notifyName();
+      // TODO: change this link
+      window.location.href = `http://localhost:3000/${user}/${repositoryId}`;
+    } else {
+      notifyError();
+    }*/
+  };
+
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
@@ -49,18 +68,26 @@ const PullRequestDetails = ({ pullRequestId }) => {
           {pullRequest.title}
         </div>
       </h2>
-      <h2>
-        <InputGroup className="mb-3">
-          <FormControl
-            defaultValue={pullRequest.title}
-            aria-label="Pull request title"
-            aria-describedby="basic-addon2"
-          />
-          <Button variant="success" id="button-addon2">
-            Change
-          </Button>
-        </InputGroup>
-      </h2>
+
+      <InputGroup className="mb-3">
+        <FormControl
+          defaultValue={pullRequest.title}
+          aria-label="Pull request title"
+          aria-describedby="basic-addon2"
+          onChange={(e) => {
+            handlePullRequestNameChanging(e.target.value);
+          }}
+        />
+        <Button
+          variant="success"
+          id="button-addon2"
+          onClick={async () => {
+            updateNewPullRequestName();
+          }}
+        >
+          Change
+        </Button>
+      </InputGroup>
 
       <Card border="danger" style={{ width: "50%" }}>
         <Card.Header>Danger Zone</Card.Header>

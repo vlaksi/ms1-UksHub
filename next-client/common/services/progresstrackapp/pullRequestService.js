@@ -65,6 +65,37 @@ export const getPullRequestsByRepository = async (repositoryId) => {
   return pullRequests;
 };
 
+export const updatePullRequestName = async (
+  newPullRequestName,
+  pullRequestId
+) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/pullrequests/${pullRequestId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      auth: {
+        username: "admin", // This is the client_id
+        password: "root", // This is the client_secret
+      },
+      data: {
+        title: newPullRequestName,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};
+
 export const getPullRequestById = async (pullRequestId) => {
   let pullRequest = null;
   await axios
