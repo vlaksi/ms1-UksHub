@@ -45,7 +45,7 @@ class Repository(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, blank=True)
     default_branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True, related_name='default_branch')
-    forked_from_author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='authorRepositoryForkedFrom')
+    forked_from_author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True, related_name='authorRepositoryForkedFrom')
     def __str__(self):
         return 'Name of object: ' + self.name
 

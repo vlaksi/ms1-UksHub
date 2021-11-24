@@ -31,7 +31,7 @@ class Milestone(models.Model):
         return 'Title of object: ' + self.title       
           
 class PullRequest(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True)
     repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='pull_requests')
     reviewes = models.ManyToManyField(UserAccount, blank=True, related_name='wated_review_from_me')  
     assigness = models.ManyToManyField(UserAccount, blank=True, related_name='pull_request_assigned_to_me')
