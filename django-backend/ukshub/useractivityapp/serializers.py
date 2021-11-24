@@ -24,7 +24,7 @@ class ReactionSerializer(serializers.ModelSerializer):
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
-        fields = [ "pk", "author", "repository", "action_type" ]
+        fields = [ "pk", "author", "repository", "action_type", "new_forked_repository" ]
 
 class ReactionTypeSerializer(serializers.ModelSerializer):
     class Meta:
