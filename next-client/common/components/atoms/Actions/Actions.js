@@ -11,7 +11,10 @@ import {
 	getActionByRepoAndAuthor,
 	updateActionNewForkedRepoId,
 } from '../../../services/useractivity/actionService';
-import { addRepository } from '../../../services/versioning/repositoryService';
+import {
+	addRepository,
+	deleteRepository,
+} from '../../../services/versioning/repositoryService';
 
 const Actions = ({ username, repository }) => {
 	const notify = (message = 'Successfully!') => toast.success(` ${message} `);
@@ -92,7 +95,11 @@ const Actions = ({ username, repository }) => {
 			repository.default_branch,
 			repository.author
 		);
-		updateActionNewForkedRepoId(createdForkAction.pk, forkedRepository.pk);
+		let updatedForkAction = await updateActionNewForkedRepoId(
+			createdForkAction.pk,
+			forkedRepository.pk
+		);
+		setForkAction(updatedForkAction);
 		notify('Successfully forked repository!');
 	};
 
@@ -100,7 +107,9 @@ const Actions = ({ username, repository }) => {
 		setIsUserForkRepo(false);
 		deleteActionById(forkAction.pk);
 		notify('Successfully deleted repository!');
+		console.log('forkAction: ', forkAction);
 		// TODO: Delete that repository also !!!
+		deleteRepository(forkAction.new_forked_repository);
 	};
 
 	return (
