@@ -1,0 +1,17 @@
+.userItemWrapper {
+	height: 40px;
+	display: flex;
+	align-items: center;
+	color: black;
+	cursor: pointer;
+	border-radius: 15px;
+
+	p {
+		margin-left: 10px;
+		margin-bottom: 0px;
+		font-size: 14px;
+	}
+	&:hover {
+		background-color: lightgrey;
+	}
+}
