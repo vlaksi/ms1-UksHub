@@ -28,6 +28,13 @@ const PullRequestDetails = ({ pullRequestId }) => {
   const notifyDeleted = () =>
     toast.success("Successfully deleted pull request!");
 
+  const notifyName = () => {
+    toast.success("Successfully changed title!");
+  };
+
+  const notifyError = () => {
+    toast.error("Check if you entered all fields!");
+  };
   const handlePullRequestNameChanging = (newName) => {
     setNewPullRequestName(newName);
   };
@@ -48,13 +55,13 @@ const PullRequestDetails = ({ pullRequestId }) => {
       newPullRequestName,
       pullRequestId
     );
-    /* if (isSuccessfulUpdated) {
-      //notifyName();
+    if (isSuccessfulUpdated) {
+      notifyName();
       // TODO: change this link
-      window.location.href = `http://localhost:3000/${user}/${repositoryId}`;
+      //window.location.href = `http://localhost:3000/${user}/2/pulls/${pullRequestId}`;
     } else {
       notifyError();
-    }*/
+    }
   };
 
   return (
