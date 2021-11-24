@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from authentication.models import UserAccount
 from useractivityapp.models import Action,Comment
 
 class File(models.Model):  
@@ -19,7 +19,7 @@ class Folder(models.Model):
         return 'Name of object: ' + self.name
     
 class Commit(models.Model):
-    autor = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name='created_commits')
+    autor = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, related_name='created_commits')
     files = models.ManyToManyField(File)
     message = models.CharField(max_length=200)
     creation_date = models.DateTimeField('date of creation')
@@ -39,8 +39,8 @@ class Branch(models.Model):
         return 'Name of object: ' + self.name
 
 class Repository(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    members = models.ManyToManyField(User, blank=True, related_name='member_of_repositorys')
+    author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True)
+    members = models.ManyToManyField(UserAccount, blank=True, related_name='member_of_repositorys')
     actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, blank=True)
@@ -52,6 +52,6 @@ class CollaborationType(models.Model):
     name = models.CharField(max_length=200, blank=False, null=False)
 
 class Collaboration(models.Model):
-    collaborator = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+    collaborator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=False, null=False)
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False, related_name = "repositoryCollaborations")
     collaboration_type = models.ForeignKey(CollaborationType, on_delete=models.CASCADE, blank=False, null=False)
