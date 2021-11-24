@@ -9,7 +9,9 @@ import {
 	createRepositoryAction,
 	deleteActionById,
 	getActionByRepoAndAuthor,
+	updateActionNewForkedRepoId,
 } from '../../../services/useractivity/actionService';
+import { addRepository } from '../../../services/versioning/repositoryService';
 
 const Actions = ({ username, repository }) => {
 	const notify = (message = 'Successfully!') => toast.success(` ${message} `);
@@ -75,10 +77,23 @@ const Actions = ({ username, repository }) => {
 
 	const forkRepository = async () => {
 		setIsUserForkRepo(true);
-		setForkAction(await createRepositoryAction(1, repository.pk, 'fork'));
+		let createdForkAction = await createRepositoryAction(
+			1,
+			repository.pk,
+			'fork'
+		);
+		setForkAction(createdForkAction);
 		// TODO: Add real logged user id as the first param
-		notify('Successfully forked repository!');
 		// TODO: Create that repository to this user !!
+		let forkedRepository = await addRepository(
+			repository.name,
+			repository.description,
+			2, // TODO: Instead of the authorId 2, use real loged user id (because he is user that making fork)
+			repository.default_branch,
+			repository.author
+		);
+		updateActionNewForkedRepoId(createdForkAction.pk, forkedRepository.pk);
+		notify('Successfully forked repository!');
 	};
 
 	const unForkRepository = () => {

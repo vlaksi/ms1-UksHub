@@ -53,7 +53,9 @@ export const getRepositoryById = async (repositoryId) => {
 export const addRepository = async (
 	newRepositoryName,
 	newRepositoryDescription,
-	authorId
+	authorId,
+	defaultBranch = null,
+	forkedFromAuthorId = null
 ) => {
 	let repository = null;
 	await axios
@@ -69,6 +71,8 @@ export const addRepository = async (
 				name: newRepositoryName,
 				description: newRepositoryDescription,
 				author: authorId,
+				default_branch: defaultBranch,
+				forked_from_author: forkedFromAuthorId,
 				grant_type: 'client_credentials',
 				scope: 'public',
 			},
