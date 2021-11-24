@@ -1,23 +1,29 @@
 from django.db import models
+from django.db.models import UniqueConstraint
 from authentication.models import UserAccount
 
 class ActionType(models.Model):  
     name = models.CharField(max_length=200)
-    path_to_icon = models.CharField(max_length=200)
     def __str__(self):
         return 'Name of object: ' + self.name
 
 class ReactionType(models.Model):  
     name= models.CharField(max_length=200)
-    path_to_icon= models.CharField(max_length=200)
     def __str__(self):
         return 'Name of object: ' + self.name
 
 class Action(models.Model): 
-    author = models.ForeignKey(to=UserAccount, null=False, on_delete=models.CASCADE,related_name='action_created') 
-    type =  models.ForeignKey(to=ActionType, null=False, on_delete=models.CASCADE)
+    author = models.ForeignKey(to=User, null=False, on_delete=models.CASCADE) 
+    repository = models.ForeignKey('versioningapp.Repository', on_delete=models.CASCADE, related_name = "repositoryActions")
+    action_type =  models.CharField(max_length=200)
+    new_forked_repository = models.ForeignKey('versioningapp.Repository', on_delete=models.CASCADE, related_name = "actionNewForkedRepository", null=True)
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields = ['author', 'repository', 'action_type'], name = 'unique_action_constraint')
+        ]
     def __str__(self):
-        return 'Type of Action: ' + self.type.name
+        return 'Type of Action: ' + self.action_type
+
 class Reaction(models.Model):  
     author = models.ForeignKey(to=UserAccount, null=False, on_delete=models.CASCADE,related_name='reactions_created') 
     type =  models.ForeignKey(to=ReactionType, null=False, on_delete=models.CASCADE)

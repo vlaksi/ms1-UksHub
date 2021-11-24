@@ -1,7 +1,7 @@
 from django.db.models import fields
 from rest_framework import serializers
+from .models import Action, Comment, Reaction, ReactionType, ActionType
 from django.contrib.auth import get_user_model
-from .models import Action, Comment, Reaction, ReactionType
 
 User = get_user_model()
 
@@ -26,14 +26,14 @@ class ReactionSerializer(serializers.ModelSerializer):
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
-        fields = [ "pk", "author", "type" ]
+        fields = [ "pk", "author", "repository", "action_type", "new_forked_repository" ]
 
 class ReactionTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReactionType
-        fields = [ "pk", "name", "path_to_icon" ]
+        fields = [ "pk", "name" ]
 
 class ActionTypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ReactionType
-        fields = [ "pk", "name", "path_to_icon" ]
+        model = ActionType
+        fields = [ "pk", "name" ]
