@@ -126,8 +126,7 @@ const UserRepositories = ({ username, author_id }) => {
 					<RepositoryListItem
 						key={repository.pk}
 						username={username}
-						name={repository.name}
-						repositoryId={repository.pk}
+						repository={repository}
 					/>
 				);
 			})}

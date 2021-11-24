@@ -39,3 +39,28 @@ export const getUserDataForSearch = async () => {
 
 	return dataForSearch;
 };
+
+export const getUserById = async (authorId) => {
+	let user;
+	await axios
+		.request({
+			url: `/useractivity/users/${authorId}`,
+			method: 'get',
+			baseURL: 'http://127.0.0.1:8000/',
+			auth: {
+				username: 'admin', // This is the client_id
+				password: 'root', // This is the client_secret
+			},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			user = response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	return user;
+};
