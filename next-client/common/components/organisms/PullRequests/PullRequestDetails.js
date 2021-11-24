@@ -1,11 +1,22 @@
-import { Card, Button, Modal } from "react-bootstrap";
-import { useState } from "react";
-import { deletePullRequest } from "../../../services/progresstrackapp/pullRequestService";
+import {
+  Card,
+  Button,
+  Modal,
+  Badge,
+  InputGroup,
+  FormControl,
+} from "react-bootstrap";
+import { useState, useEffect } from "react";
+import {
+  deletePullRequest,
+  getPullRequestById,
+} from "../../../services/progresstrackapp/pullRequestService";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [pullRequest, setPullRequest] = useState("");
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
@@ -21,11 +32,36 @@ const PullRequestDetails = ({ pullRequestId }) => {
       notifyDeleted();
     }
   };
+  useEffect(async () => {
+    if (!pullRequestId) return;
+    let pullRequest = await getPullRequestById(pullRequestId);
+    setPullRequest(pullRequest);
+  }, [pullRequestId]);
+
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
-      <h1>Add style for this page</h1>
-      <p> PullRequestIndex: {pullRequestId}</p>
+      <h2>
+        <div style={{ display: "flex" }}>
+          <Badge pill bg="primary" text="light" style={{ marginRight: "10px" }}>
+            #{pullRequest.pk}
+          </Badge>{" "}
+          {pullRequest.title}
+        </div>
+      </h2>
+      <h2>
+        <InputGroup className="mb-3">
+          <FormControl
+            defaultValue={pullRequest.title}
+            aria-label="Pull request title"
+            aria-describedby="basic-addon2"
+          />
+          <Button variant="success" id="button-addon2">
+            Change
+          </Button>
+        </InputGroup>
+      </h2>
+
       <Card border="danger" style={{ width: "50%" }}>
         <Card.Header>Danger Zone</Card.Header>
         <Card.Body

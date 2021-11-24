@@ -7,7 +7,6 @@ const PullRequestIndex = () => {
 
   return (
     <>
-      <h5> Add style for the PullRequest </h5>
       <PullRequestDetails pullRequestId={idx}></PullRequestDetails>
     </>
   );
