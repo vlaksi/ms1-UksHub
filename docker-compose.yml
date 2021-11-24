@@ -1,0 +1,46 @@
+version: '3.2'
+
+services:
+
+  client:
+    image: next_client:latest
+    container_name: next_client
+    build:
+        context: ./next-client
+        dockerfile: Dockerfile
+    command: ["npm", "start"]
+    ports:
+      - 3000:3000
+      
+  db:
+    restart: always
+    image: postgres:14-alpine
+    container_name: postgres_db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+
+  server:
+    container_name: django_backend
+    image: django_backend:latest
+    build:
+        context: ./django-backend/ukshub
+        dockerfile: Dockerfile
+    command: ["./waitforpostgres.sh"]
+    ports:
+      - 8000:8000
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+    volumes:
+      - ./django-backend/ukshub/static:/code/static
+    depends_on:
+      - db
+
+  redis:
+    image: redis
+    container_name: cashingapp_redis
+    ports:
+      - 6379:6379
