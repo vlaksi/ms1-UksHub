@@ -7,10 +7,7 @@ export const getAllUsers = async () => {
 			url: `/useractivity/users/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -47,10 +44,7 @@ export const getUserById = async (authorId) => {
 			url: `/useractivity/users/${authorId}`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',

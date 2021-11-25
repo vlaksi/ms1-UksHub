@@ -7,10 +7,7 @@ export const getAllRepositoriesByAuthor = async (user_id) => {
 			url: `/versioning/users/${user_id}/repositories`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -32,10 +29,7 @@ export const getRepositoryById = async (repositoryId) => {
 			url: `/versioning/repositorys/${repositoryId}`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -63,10 +57,7 @@ export const addRepository = async (
 			url: `/versioning/repositorys/`,
 			method: 'post',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				name: newRepositoryName,
 				description: newRepositoryDescription,
@@ -97,10 +88,7 @@ export const updateRepositoryDefaultBranch = async (
 			url: `/versioning/repositorys/${repositoryId}`,
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				default_branch: newDefaultBranchId,
 				grant_type: 'client_credentials',
@@ -121,10 +109,7 @@ export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
 			url: `/versioning/repositorys/${repositoryId}`,
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				name: newRepositoryName,
 				grant_type: 'client_credentials',
@@ -152,10 +137,7 @@ export const updateRepositoryDescription = async (
 			url: `/versioning/repositorys/${repositoryId}`,
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				description: newRepositoryDescription,
 				grant_type: 'client_credentials',
@@ -180,10 +162,7 @@ export const deleteRepository = async (repositoryId) => {
 			url: `/versioning/repositorys/${repositoryId}`,
 			method: 'delete',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -207,10 +186,7 @@ export const getRepositoryCollaboratos = async (repositoryId) => {
 			url: `/versioning/repository/${repositoryId}/collaborators/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -232,10 +208,7 @@ export const getAllCollaboratorsRoles = async () => {
 			url: `/versioning/collaboration/types/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -256,10 +229,7 @@ export const deleteCollaborationById = async (collaborationId) => {
 			url: `/versioning/collaborations/${collaborationId}`,
 			method: 'delete',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -280,10 +250,7 @@ export const updateCollaboratorRole = async (collaborationId, newRoleId) => {
 			url: `/versioning/collaborations/${collaborationId}`,
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				collaboration_type: newRoleId,
 				grant_type: 'client_credentials',
@@ -304,10 +271,7 @@ export const createCollaboration = async (collaboratorId, repositoryId) => {
 			url: `/versioning/collaborations/`,
 			method: 'post',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
 			data: {
 				collaborator: collaboratorId,
 				repository: repositoryId,

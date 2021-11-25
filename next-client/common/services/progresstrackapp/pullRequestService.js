@@ -13,10 +13,7 @@ export const addPullRequest = async (
       url: `/progresstrack/pullrequests/`,
       method: "post",
       baseURL: "http://127.0.0.1:8000/",
-      auth: {
-        username: "admin", // This is the client_id
-        password: "root", // This is the client_secret
-      },
+      headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
       data: {
         author: authorId,
         title: newPullRequestName,
@@ -46,10 +43,7 @@ export const getPullRequestsByRepository = async (repositoryId) => {
       url: `/progresstrack/repository/${repositoryId}/pullrequests`,
       method: "get",
       baseURL: "http://127.0.0.1:8000/",
-      auth: {
-        username: "admin", // This is the client_id
-        password: "root", // This is the client_secret
-      },
+      headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
       data: {
         grant_type: "client_credentials",
         scope: "public",
@@ -75,10 +69,7 @@ export const updatePullRequestName = async (
       url: `/progresstrack/pullrequests/${pullRequestId}`,
       method: "patch",
       baseURL: "http://127.0.0.1:8000/",
-      auth: {
-        username: "admin", // This is the client_id
-        password: "root", // This is the client_secret
-      },
+      headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
       data: {
         title: newPullRequestName,
         grant_type: "client_credentials",
@@ -103,10 +94,7 @@ export const getPullRequestById = async (pullRequestId) => {
       url: `/progresstrack/pullrequests/${pullRequestId}`,
       method: "get",
       baseURL: "http://127.0.0.1:8000/",
-      auth: {
-        username: "admin", // This is the client_id
-        password: "root", // This is the client_secret
-      },
+      headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
       data: {
         grant_type: "client_credentials",
         scope: "public",
@@ -129,10 +117,7 @@ export const deletePullRequest = async (pullRequestId) => {
       url: `/progresstrack/pullrequests/${pullRequestId}`,
       method: "delete",
       baseURL: "http://127.0.0.1:8000/",
-      auth: {
-        username: "admin", // This is the client_id
-        password: "root", // This is the client_secret
-      },
+      headers: { 'Authorization': 'JWT ' + localStorage.getItem('token') },
       data: {
         grant_type: "client_credentials",
         scope: "public",
