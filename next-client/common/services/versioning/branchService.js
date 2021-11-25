@@ -7,10 +7,7 @@ export const getDefaultBranch = async (branchId) => {
 			url: `/versioning/branchs/${branchId}`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -32,10 +29,7 @@ export const getRepositoryBranches = async (repositoryId) => {
 			url: `/versioning/repository/${repositoryId}/branches/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -57,10 +51,7 @@ export const createBranch = async (repositoryId, branchName = 'main') => {
 			url: `/versioning/branchs/`,
 			method: 'post',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				name: branchName,
 				repository: repositoryId,

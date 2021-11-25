@@ -11,10 +11,7 @@ export const createRepositoryAction = async (
 			url: `/useractivity/actions/`,
 			method: 'post',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				author: authorId,
 				repository: repositoryId,
@@ -43,10 +40,7 @@ export const getActionByRepoAndAuthor = async (
 			url: `/useractivity/action/${actionName}/${repositoryId}/${userId}/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -68,10 +62,7 @@ export const deleteActionById = async (actionId) => {
 			url: `/useractivity/actions/${actionId}`,
 			method: 'delete',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -96,10 +87,7 @@ export const getAllRepositoryUsersByAction = async (
 			url: `/useractivity/users/${repositoryId}/${actionType}/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -124,10 +112,7 @@ export const updateActionNewForkedRepoId = async (
 			url: `/useractivity/actions/${actionId}`,
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
-			auth: {
-				username: 'admin', // This is the client_id
-				password: 'root', // This is the client_secret
-			},
+			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
 			data: {
 				new_forked_repository: newForkedRepositoryId,
 				grant_type: 'client_credentials',
