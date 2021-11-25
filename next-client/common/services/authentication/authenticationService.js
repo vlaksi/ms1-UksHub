@@ -21,14 +21,15 @@ export const login = async (
         .catch((error) => {
             console.log(error.response.data.error);
         });
-
-
 };
 
 
 export const register = async (
     username,
-    password
+    password,
+    first_name,
+    last_name,
+    email
 ) => {
     await axios
         .request({
@@ -39,6 +40,9 @@ export const register = async (
                 username: username,
                 password: password,
                 re_password: password,
+                last_name: last_name,
+                first_name: first_name,
+                email: email
             }
         })
         .then((response) => {

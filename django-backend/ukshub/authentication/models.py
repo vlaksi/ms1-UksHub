@@ -6,23 +6,25 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 
 class UserAccountManager(BaseUserManager):
     def create_user(self, username, first_name, last_name, email,  password, **extra_fields):
-        if not first_name:
+        if not email:
             raise ValueError('Users must have an email address')
 
-        user = self.model( username=username,first_name=first_name,last_name=last_name, email=email, **extra_fields)
+        user = self.model( username=username,first_name=first_name,last_name=last_name, email=email, is_active=True, **extra_fields)
     
         user.set_password(password)
         user.is_active = True
         user.save()
 
         return user
-    def create_superuser(self, username, email, password,**extra_fields):
+    def create_superuser(self, username, first_name, last_name, email,  password, **extra_fields):
         """
          Creates and saves a superuser with the given email and password.
         """
         user = self.create_user(
              email=email,
              username=username,
+             first_name=first_name,
+             last_name=last_name,
              password=password,**extra_fields
         )
         user.staff = True
