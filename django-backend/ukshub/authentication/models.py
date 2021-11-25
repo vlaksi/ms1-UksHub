@@ -5,11 +5,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        if not username:
+    def create_user(self, username, first_name, last_name, email,  password, **extra_fields):
+        if not first_name:
             raise ValueError('Users must have an email address')
 
-        user = self.model( username=username, **extra_fields)
+        user = self.model( username=username,first_name=first_name,last_name=last_name, email=email, **extra_fields)
     
         user.set_password(password)
         user.is_active = True
@@ -42,7 +42,8 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     objects = UserAccountManager()
 
     USERNAME_FIELD = 'username'
- 
+    
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
     def get_full_name(self):
         return self.first_name
