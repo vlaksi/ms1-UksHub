@@ -4,12 +4,22 @@ import UserLanding from '../../common/components/organisms/UserLanding/UserLandi
 const User = () => {
 	const router = useRouter();
 	const { user } = router.query;
-
-	return (
-		<>
-			<UserLanding username={user} />
-		</>
-	);
+	if (typeof window !== "undefined") {
+		var token = localStorage.getItem('token')
+	}
+	if (token) {
+		return (
+			<>
+				<UserLanding username={user} />
+			</>
+		);
+	} else {
+		return (
+			<>
+				<h1>You need to log in</h1>
+			</>
+		);
+	}
 };
 
 export default User;
