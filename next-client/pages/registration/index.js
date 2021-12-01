@@ -60,22 +60,33 @@ const Registration = () => {
 					<Form.Group className="mb-3" controlId="formBasicEmail">
 						<Form.Label>Last name</Form.Label>
 						<Form.Control required type="text" placeholder="Enter last name" onChange={(event) => setLast_name(event.target.value)} />
+						<Form.Control.Feedback type="invalid">
+							Please provide a valid state.
+						</Form.Control.Feedback>
 					</Form.Group>
 
 					<Form.Group className="mb-3" controlId="formBasicEmail">
 						<Form.Label>Email</Form.Label>
 						<Form.Control required type="email" placeholder="Enter email" onChange={(event) => setEmail(event.target.value)} />
+						<Form.Control.Feedback type="invalid">
+							Please provide a valid state.
+						</Form.Control.Feedback>
 					</Form.Group>
 
 					<Form.Group className="mb-3" controlId="formBasicEmail">
 						<Form.Label>Username</Form.Label>
 						<Form.Control required type="text" placeholder="Enter username" onChange={(event) => setUsername(event.target.value)} />
-
+						<Form.Control.Feedback type="invalid">
+							Please provide a valid state.
+						</Form.Control.Feedback>
 					</Form.Group>
 
 					<Form.Group className="mb-3" controlId="formBasicPassword">
 						<Form.Label>Password</Form.Label>
 						<Form.Control required type="password" placeholder="Password" onChange={(event) => setPassword(event.target.value)} />
+						<Form.Control.Feedback type="invalid">
+							Please provide a valid state.
+						</Form.Control.Feedback>
 					</Form.Group>
 
 					<Button variant="primary" type="submit" className="mt-2 mb-5">

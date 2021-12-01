@@ -4,7 +4,7 @@ export const login = async (
     username,
     password
 ) => {
-    await axios
+    return await axios
         .request({
             url: `/auth/jwt/create/`,
             method: "post",
@@ -14,14 +14,7 @@ export const login = async (
                 password: password
             }
         })
-        .then((response) => {
-            if (typeof window !== "undefined") {
-                localStorage.setItem('token', response.data.access)
-            }
-        })
-        .catch((error) => {
-            console.log(error.response.data.error);
-        });
+
 };
 
 
