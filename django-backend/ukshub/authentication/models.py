@@ -13,7 +13,7 @@ class UserAccountManager(BaseUserManager):
     
         user.set_password(password)
         user.is_active = True
-        user.save()
+        user.save(using=self._db)
 
         return user
     def create_superuser(self, username, first_name, last_name, email,  password, **extra_fields):
