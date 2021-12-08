@@ -57,4 +57,79 @@ export const getUserById = async (authorId) => {
 			console.log(err);
 		});
 	return user;
+
+export const addUser = async (newUserUsername, newUserPassword, newUserFirstName, newUserLastName, newUserEmail) => {
+    let repository = null;
+    await axios
+        .request({
+            url: `/useractivity/users/`,
+            method: 'post',
+            baseURL: 'http://127.0.0.1:8000/',
+            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            data: {
+                username: newUserUsername,
+                password: newUserPassword,
+                first_name: newUserFirstName,
+                last_name: newUserLastName,
+                email: newUserEmail,
+                grant_type: 'client_credentials',
+                scope: 'public',
+            },
+        })
+        .then((response) => {
+            repository = response.data;
+        })
+        .catch((error) => {
+            console.log(error.response.data.error);
+        });
+
+    return repository;
+};
+
+export const editUser = async (userId, newUserUsername, newUserPassword, newUserFirstName, newUserLastName, newUserEmail) => {
+    let repository = null;
+    await axios
+        .request({
+            url: `/useractivity/users/${userId}`,
+            method: 'put',
+            baseURL: 'http://127.0.0.1:8000/',
+            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            data: {
+                username: newUserUsername,
+                password: newUserPassword,
+                first_name: newUserFirstName,
+                last_name: newUserLastName,
+                email: newUserEmail,
+                grant_type: 'client_credentials',
+                scope: 'public',
+            },
+        })
+        .then((response) => {
+            repository = response.data;
+        })
+        .catch((error) => {
+            console.log(error.response.data.error);
+        });
+
+    return repository;
+};
+
+export const deleteUser = async (userId) => {
+    let repository = null;
+    await axios
+        .request({
+            url: `/useractivity/users/${userId}`,
+            method: 'delete',
+            baseURL: 'http://127.0.0.1:8000/',
+            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            data: {},
+        })
+        .then((response) => {
+            repository = response.data;
+        })
+        .catch((error) => {
+            console.log(error.response.data.error);
+        });
+
+    return repository;
 };
