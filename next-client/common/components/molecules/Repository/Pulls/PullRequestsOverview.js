@@ -73,9 +73,9 @@ const PullRequestsOverview = ({ dbRepository }) => {
   };
 
   useEffect(async () => {
-    if (!dbRepository.pk) return;
+    if (!dbRepository?.pk) return;
     setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
-  }, [dbRepository.pk]);
+  }, [dbRepository?.pk]);
 
   return (
     <>
