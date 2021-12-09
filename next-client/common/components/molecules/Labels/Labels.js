@@ -2,6 +2,7 @@ import LabelListItem from "../../atoms/LabelsListItem/LabelListItem";
 import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 const Labels = () => {
   const labels = [
@@ -40,6 +41,8 @@ const Labels = () => {
     //TODO: add for other fields
   };
   const handleShow = () => setShow(true);
+  const notify = () => toast.success("Successfully created new label!");
+  const notifyError = () => toast.error("Check if you entered all fields!");
 
   return (
     <>
@@ -84,13 +87,15 @@ const Labels = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success">Save Changes</Button>
+          <Button variant="success" onClick={notify}>
+            Save Changes
+          </Button>
           <Button variant="danger" onClick={handleClose}>
             Cancel
           </Button>
         </Modal.Footer>
       </Modal>
-
+      <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
       {labels.map((labelItem) => {
         return (
           <div key={labelItem.pk}>
