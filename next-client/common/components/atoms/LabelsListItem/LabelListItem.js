@@ -1,7 +1,12 @@
-import { ListGroup, Badge, Button } from "react-bootstrap";
+import { ListGroup, Badge, Button, Modal } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
+import { useState } from "react";
 
 const LabelListItem = ({ label }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleDeleteModalClose = () => setShowDeleteModal(false);
+  const handleShowDeleteModal = () => setShowDeleteModal(true);
+
   return (
     <ListGroup as="ol">
       <ListGroup.Item
@@ -27,14 +32,49 @@ const LabelListItem = ({ label }) => {
             ></MdModeEditOutline>
             Edit label
           </Button>
+
           <Button
             variant="outline-danger"
             size="sm"
             style={{ marginRight: "15px" }}
+            onClick={handleShowDeleteModal}
           >
             <MdDelete style={{ marginBottom: "4px" }}></MdDelete>
             Delete label
           </Button>
+          <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Delete confirmation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: " baseline",
+              }}
+            >
+              <p>Are you sure you want to delete this label ?</p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button
+                variant="success"
+                onClick={async () => {
+                  handleDeleteModalClose();
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  handleDeleteModalClose();
+                }}
+              >
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       </ListGroup.Item>
     </ListGroup>
