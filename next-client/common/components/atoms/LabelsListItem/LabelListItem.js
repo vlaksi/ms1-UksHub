@@ -1,4 +1,4 @@
-import { ListGroup, Badge, Button, Modal } from "react-bootstrap";
+import { ListGroup, Badge, Button, Modal, Form } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
 
@@ -6,6 +6,22 @@ const LabelListItem = ({ label }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const [labelName, setLabelName] = useState("magarac");
+  const handleChangingLabelName = (labelName) => {
+    setLabelName(labelName);
+  };
+
+  const [labelDescription, setLabelDescription] = useState("konj");
+  const handleChangingLabelDescription = (labelDescription) => {
+    setLabelDescription(labelDescription);
+  };
 
   return (
     <ListGroup as="ol">
@@ -26,6 +42,9 @@ const LabelListItem = ({ label }) => {
             variant="outline-success"
             style={{ marginRight: "15px" }}
             size="sm"
+            onClick={() => {
+              handleShow();
+            }}
           >
             <MdModeEditOutline
               style={{ marginBottom: "4px" }}
@@ -33,6 +52,43 @@ const LabelListItem = ({ label }) => {
             Edit label
           </Button>
 
+          <Modal show={show} onHide={handleClose} backdrop="static">
+            <Modal.Header closeButton>
+              <Modal.Title>Edit this label</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Name of label</Form.Label>
+                  <Form.Control
+                    type="name"
+                    defaultValue={labelName}
+                    onChange={(e) => {
+                      handleChangingLabelName(e.target.value);
+                    }}
+                  ></Form.Control>
+                  <Form.Label style={{ marginTop: "15px" }}>
+                    Description of label
+                  </Form.Label>
+                  <Form.Control
+                    type="name"
+                    defaultValue={labelDescription}
+                    as="textarea"
+                    rows={2}
+                    onChange={(e) => {
+                      handleChangingLabelDescription(e.target.value);
+                    }}
+                  ></Form.Control>
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="success">Save Changes</Button>
+              <Button variant="danger" onClick={handleClose}>
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Modal>
           <Button
             variant="outline-danger"
             size="sm"
