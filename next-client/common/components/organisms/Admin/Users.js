@@ -7,7 +7,9 @@ import { addUser, deleteUser, editUser, getAllUsers } from '../../../services/us
 const Users = () => {
     const [users, setUsers] = useState([]);
     const [show, setShow] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isAddMode, setIsAddMode] = useState(false);
+    const [user, setUser] = useState();
     const [userId, setUserId] = useState('');
     const [userUsername, setNewUsername] = useState('');
     const [userFirstName, setNewFirstName] = useState('');
@@ -23,6 +25,10 @@ const Users = () => {
         setNewLastName('');
         setNewPassword('');
         setNewEmail('');
+    };
+    const handleShowDeleteUserModal = (user) => {
+        setShowDeleteModal(true);
+        setUser(user);
     };
 
     const showEditUser = (user) => {
@@ -79,9 +85,12 @@ const Users = () => {
         }
     };
 
+    const handleDeleteModalClose = () => setShowDeleteModal(false);
+
     const deleteUserCommand = async (user) => {
         await deleteUser(user.pk);
         notifyDeletedUser();
+        setUser();
         setUsers(await getAllUsers());
     };
 
@@ -209,7 +218,7 @@ const Users = () => {
                                     <Button
                                         variant="danger"
                                         onClick={() => {
-                                            deleteUserCommand(user);
+                                            handleShowDeleteUserModal(user);
                                         }}
                                     >
                                         Delete
@@ -220,6 +229,42 @@ const Users = () => {
                     })}
                 </tbody>
             </table>
+
+            {/* Delete repository */}
+            <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete confirmation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: ' baseline',
+                    }}
+                >
+                    <p>Are you sure you want to delete user "{user?.username}" ?</p>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button
+                        variant="success"
+                        onClick={() => {
+                            deleteUserCommand(user);
+                            handleDeleteModalClose();
+                        }}
+                    >
+                        Delete
+                    </Button>
+                    <Button
+                        variant="danger"
+                        onClick={() => {
+                            handleDeleteModalClose();
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };
