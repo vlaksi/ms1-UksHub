@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
+from ..models import Label
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -9,18 +10,49 @@ USER1_FIRST_NAME = 'Ivana'
 USER1_LAST_NAME = 'Perisic'
 USER1_EMAIL = 'ica@gmail.com'
 
-
 def initialize_db_with_test_data():
-    user1 = User.objects.create_user(username=USER1_USERNAME, password=USER1_PASSWORD,first_name=USER1_FIRST_NAME,last_name=USER1_LAST_NAME,email=USER1_EMAIL)
-    user1.save()
+    # Create labels
+    label1 = Label.objects.create(name='label1', decription='desc1', color='red')
+    label2 = Label.objects.create(name='label2', decription='desc2', color='blue')
 
-class TestPullRequestModel(TestCase):
+    label1.save()
+    label2.save()
+
+def get_label(index=0):
+    return Label.objects.all()[index]
+
+class TestLabelModel(TestCase):
     
     @classmethod
     def setUpTestData(cls):
-        # Set up data for the whole TestCase
         initialize_db_with_test_data()
 
+    def test_label_name(self):
+        label = get_label()
+        verbose_name = label._meta.get_field('name').verbose_name
+        self.assertEquals(verbose_name, 'name')
 
-    def test_title_pull_request(self):
-        assert 1 == 1
+    def test_label_name_max_length(self):
+        label = get_label()
+        max_length = label._meta.get_field('name').max_length
+        self.assertEquals(max_length, 200)
+
+    def test_color_name(self):
+        label = get_label()
+        verbose_name = label._meta.get_field('color').verbose_name
+        self.assertEquals(verbose_name, 'color')
+
+    def test_label_color_max_length(self):
+        label = get_label()
+        max_length = label._meta.get_field('decription').max_length
+        self.assertEquals(max_length, 200)
+
+    def test_decription_name(self):
+        label = get_label()
+        verbose_name = label._meta.get_field('decription').verbose_name
+        self.assertEquals(verbose_name, 'decription')
+
+    def test_label_decription_max_length(self):
+        label = get_label()
+        max_length = label._meta.get_field('decription').max_length
+        self.assertEquals(max_length, 200)
