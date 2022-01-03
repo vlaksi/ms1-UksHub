@@ -1,6 +1,8 @@
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.test import TestCase
 from ..models import Label, PullRequest
+from versioningapp.models import Branch, Repository
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -11,6 +13,28 @@ USER1_LAST_NAME = 'Perisic'
 USER1_EMAIL = 'ica@gmail.com'
 
 def initialize_db_with_test_data():
+    # Create users
+    user1 = User.objects.create_user(username=USER1_USERNAME, password=USER1_PASSWORD,first_name=USER1_FIRST_NAME,last_name=USER1_LAST_NAME,email=USER1_EMAIL)
+    user1.save()
+
+    # Create repositories
+    repository1 = Repository.objects.create(author=user1, name='RepoUKS')
+    repository1.save()
+
+    # Create branches
+    branch1 = Branch.objects.create(repository=repository1, name='main')
+    branch2 = Branch.objects.create(repository=repository1, name='develop')
+    
+    branch1.save()
+    branch2.save()
+
+    # Create pull requests
+    pull_request1 = PullRequest.objects.create(title='feature[pull-request]: crud', repository=repository1, base_branch=branch1, compare_branch=branch2, creation_date=timezone.now())
+    pull_request2 = PullRequest.objects.create(title='test[pull-request]: progresstrackapp', repository=repository1, base_branch=branch1, compare_branch=branch2, creation_date=timezone.now())
+    
+    pull_request1.save()
+    pull_request2.save()
+
     # Create labels
     label1 = Label.objects.create(name='label1', decription='desc1', color='red')
     label2 = Label.objects.create(name='label2', decription='desc2', color='blue')
