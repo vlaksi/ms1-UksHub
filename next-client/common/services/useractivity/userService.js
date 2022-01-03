@@ -59,11 +59,33 @@ export const getUserById = async (authorId) => {
     return user;
 };
 
+export const getAllUsersForAdmin = async () => {
+    let users;
+    await axios
+        .request({
+            url: `/useractivity/manageusers/`,
+            method: 'get',
+            baseURL: 'http://127.0.0.1:8000/',
+            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            data: {
+                grant_type: 'client_credentials',
+                scope: 'public',
+            },
+        })
+        .then((response) => {
+            users = response.data;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    return users;
+};
+
 export const addUser = async (newUserUsername, newUserPassword, newUserFirstName, newUserLastName, newUserEmail) => {
     let repository = null;
     await axios
         .request({
-            url: `/useractivity/users/`,
+            url: `/useractivity/manageusers/`,
             method: 'post',
             baseURL: 'http://127.0.0.1:8000/',
             headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
@@ -91,7 +113,7 @@ export const editUser = async (userId, newUserUsername, newUserPassword, newUser
     let repository = null;
     await axios
         .request({
-            url: `/useractivity/users/${userId}`,
+            url: `/useractivity/manageusers/${userId}`,
             method: 'put',
             baseURL: 'http://127.0.0.1:8000/',
             headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
@@ -119,7 +141,7 @@ export const deleteUser = async (userId) => {
     let repository = null;
     await axios
         .request({
-            url: `/useractivity/users/${userId}`,
+            url: `/useractivity/manageusers/${userId}`,
             method: 'delete',
             baseURL: 'http://127.0.0.1:8000/',
             headers: { Authorization: 'JWT ' + localStorage.getItem('token') },

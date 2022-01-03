@@ -7,6 +7,16 @@ from authentication.models import UserAccount
 from .models import Action, ActionType, Comment, Reaction, ReactionType
 from .serializers import UserSerializer, ActionSerializer, ActionTypeSerializer, CommentSerializer, ReactionSerializer, ReactionTypeSerializer
 
+class UserAdminList(generics.ListCreateAPIView):
+    queryset = UserAccount.objects.all()
+    permission_classes = [permissions.IsAdminUser]
+    serializer_class = UserSerializer
+
+class UserAdminDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserAccount.objects.all()
+    permission_classes = [permissions.IsAdminUser]
+    serializer_class = UserSerializer
+
 class UserList(generics.ListCreateAPIView):
     queryset = UserAccount.objects.all()
     permission_classes = [permissions.IsAuthenticated]

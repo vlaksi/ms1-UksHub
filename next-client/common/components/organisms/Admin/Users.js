@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { MdAddCircle } from 'react-icons/md';
 import { ToastContainer, toast } from 'react-toastify';
-import { addUser, deleteUser, editUser, getAllUsers } from '../../../services/useractivity/userService';
+import { addUser, deleteUser, editUser, getAllUsersForAdmin } from '../../../services/useractivity/userService';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -32,7 +32,6 @@ const Users = () => {
     };
 
     const showEditUser = (user) => {
-        console.log(user);
         setIsAddMode(false);
         setUserId(user.pk);
         setNewUsername(user.username);
@@ -81,7 +80,7 @@ const Users = () => {
         } else {
             notify();
             handleClose();
-            setUsers(await getAllUsers());
+            setUsers(await getAllUsersForAdmin());
         }
     };
 
@@ -91,11 +90,11 @@ const Users = () => {
         await deleteUser(user.pk);
         notifyDeletedUser();
         setUser();
-        setUsers(await getAllUsers());
+        setUsers(await getAllUsersForAdmin());
     };
 
     useEffect(async () => {
-        setUsers(await getAllUsers());
+        setUsers(await getAllUsersForAdmin());
         setIsAddMode(true);
     }, []);
 
