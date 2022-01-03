@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
-from ..models import Label
+from ..models import Label, PullRequest
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -20,6 +20,9 @@ def initialize_db_with_test_data():
 
 def get_label(index=0):
     return Label.objects.all()[index]
+
+def get_pull_request(index=0):
+    return PullRequest.objects.all()[index]
 
 class TestLabelModel(TestCase):
     
@@ -56,3 +59,31 @@ class TestLabelModel(TestCase):
         label = get_label()
         max_length = label._meta.get_field('decription').max_length
         self.assertEquals(max_length, 200)
+
+
+class TestPullRequestModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+
+# TODO: Add test cases for the issue !!
+class TestIssueModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+        # extend init function with data needed for the Issue
+
+
+# TODO: Add test cases for the Milestone !!
+class TestMilestoneModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+        # extend init function with data needed for the Milestone
+
+
+    
