@@ -22,7 +22,7 @@ class TestPullRequestListView(TestCase):
 
     def get_repository_pull_requests(self, repo_id=0):
         repo_id = get_repo_id(repo_id)
-        response = self.client.get(reverse('all-pull-requests', kwargs={'repo_id': repo_id}))
+        response = self.client.get(reverse('all-repository-pull-requests', kwargs={'repo_id': repo_id}))
         return response, repo_id
 
     def test_view_url_access_by_name(self):
