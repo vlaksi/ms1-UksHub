@@ -1,8 +1,9 @@
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.test import TestCase
+
 from ..models import Label, PullRequest
 from versioningapp.models import Branch, Repository
+from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
