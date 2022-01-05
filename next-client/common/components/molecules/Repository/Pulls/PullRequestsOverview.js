@@ -60,7 +60,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
       newBaseBranch,
       newCompareBranch,
       dbRepository.pk,
-      "1"
+      "8"
     );
     // TODO: Change author ID to the logged user id !
     if (createdPullRequest) {
@@ -73,9 +73,9 @@ const PullRequestsOverview = ({ dbRepository }) => {
   };
 
   useEffect(async () => {
-    if (!dbRepository.pk) return;
+    if (!dbRepository?.pk) return;
     setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
-  }, [dbRepository.pk]);
+  }, [dbRepository?.pk]);
 
   return (
     <>

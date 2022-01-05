@@ -20,7 +20,8 @@ const UserLanding = ({ username }) => {
               <UserOverview username={username} />
             </Tab>
             <Tab eventKey="repositories" title="Repositories">
-              <UserRepositories username={username} author_id="1" />
+              {/* TODO: Change author_id to right one */}
+              <UserRepositories username={username} author_id="8" />
             </Tab>
           </Tabs>
         </Col>
