@@ -1,5 +1,6 @@
 import json
 
+from django.utils import timezone
 from django.http import Http404
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -7,6 +8,9 @@ from django.urls import reverse
 from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER1_PASSWORD, PULL_REQUEST_1_TITLE
 from ..models import Issue, Label, Milestone, PullRequest
 from versioningapp.models import Branch, Repository
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 from rest_framework.test import APIClient
 
@@ -78,3 +82,31 @@ class TestPullRequestListView(TestCase):
     def test_get_HTTP404_pull_request_by_non_existent_id(self):
         response = self.c.get('/progresstrack/pullrequests/9999', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
+
+    def test_post_pull_request_successfully(self):
+        user_id = User.objects.get(username=USER1_USERNAME).pk
+        repo_id = Repository.objects.get(author=user_id, name="RepoUKS").pk
+        base_branch_id = Branch.objects.get(repository=repo_id, name='main').pk
+        compare_branch_id = Branch.objects.get(repository=repo_id, name='develop').pk
+        test_pr_name = 'Test_PR'
+
+        pull_request = {
+            "repository": repo_id,
+            "base_branch": base_branch_id,
+            "compare_branch": compare_branch_id,
+            "creation_date": "2022-01-05T00:28:03.966Z",
+            "title": test_pr_name,
+            "author": user_id
+        }
+  
+        response = self.c.post(
+            '/progresstrack/pullrequests/',
+            data=json.dumps(pull_request),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['title'], test_pr_name)
+        self.assertEquals(res_obj['author'], user_id)
