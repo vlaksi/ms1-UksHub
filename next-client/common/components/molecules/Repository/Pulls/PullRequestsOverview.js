@@ -21,7 +21,6 @@ const PullRequestsOverview = ({ dbRepository }) => {
   const handleClose = () => {
     setShow(false);
     setNewPullRequestName("");
-    //TODO: add for other fields
   };
   const handleShow = () => setShow(true);
 
