@@ -130,3 +130,19 @@ class TestPullRequestListView(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertNotEqual(res_obj['title'], pr.title)
         self.assertEqual(res_obj['title'], new_pr_name)
+
+    def test_put_HTTP404_pull_request_change_title(self):
+        pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE)
+        new_pr_name = 'New_PR_Name'
+        pull_request = get_mocked_pr(new_pr_name)
+
+        response = self.c.put(
+            '/progresstrack/pullrequests/99999',
+            data=json.dumps(pull_request),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+        self.assertEquals(res_obj, {'detail': 'Not found.'})
