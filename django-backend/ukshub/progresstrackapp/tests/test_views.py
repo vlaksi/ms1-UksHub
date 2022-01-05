@@ -57,3 +57,20 @@ class TestPullRequestListView(TestCase):
         res_obj = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(res_obj),3)
+
+    def test_get_pull_request_by_id(self):
+        pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE)
+        response = self.c.get('/progresstrack/pullrequests/'+str(pr.pk), HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['title'], PULL_REQUEST_1_TITLE)
+        self.assertEqual(res_obj['issues'], [])
+        self.assertEqual(res_obj['milestones'], [])
+        self.assertEqual(res_obj['labels'], [])
+        self.assertEqual(res_obj['comments'], [])
+
+    def test_get_HTTP404_wrong_endpoint_call_pull_request_by_id(self):
+        # wrong is because we should not have / on the end of the endpoint !
+        pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE) 
+        response = self.c.get('/progresstrack/pullrequests/'+str(pr.pk)+'/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
