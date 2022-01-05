@@ -146,3 +146,25 @@ class TestPullRequestListView(TestCase):
 
         self.assertEquals(response.status_code, 404)
         self.assertEquals(res_obj, {'detail': 'Not found.'})
+
+    def test_delete_pull_request(self):
+        pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE)
+
+        response = self.c.delete(
+            '/progresstrack/pullrequests/'+str(pr.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP404_pull_request(self):
+        pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE)
+
+        response = self.c.delete(
+            '/progresstrack/pullrequests/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        
+        self.assertEquals(response.status_code, 404)
