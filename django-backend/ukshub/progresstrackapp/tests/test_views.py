@@ -74,3 +74,7 @@ class TestPullRequestListView(TestCase):
         pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE) 
         response = self.c.get('/progresstrack/pullrequests/'+str(pr.pk)+'/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
+    
+    def test_get_HTTP404_pull_request_by_non_existent_id(self):
+        response = self.c.get('/progresstrack/pullrequests/9999', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
