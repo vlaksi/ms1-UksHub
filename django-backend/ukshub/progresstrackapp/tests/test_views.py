@@ -29,6 +29,22 @@ def get_repo_id(repository_id=0):
         repo_id = repositories[len(repositories) - 1].id + 999
     return repo_id
 
+def get_mocked_pr(test_pr_name='Some_PR_Test'):
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+    repo_id = Repository.objects.get(author=user_id, name="RepoUKS").pk
+    base_branch_id = Branch.objects.get(repository=repo_id, name='main').pk
+    compare_branch_id = Branch.objects.get(repository=repo_id, name='develop').pk
+
+    pull_request = {
+        "repository": repo_id,
+        "base_branch": base_branch_id,
+        "compare_branch": compare_branch_id,
+        "creation_date": "2022-01-05T00:28:03.966Z",
+        "title": test_pr_name,
+        "author": user_id
+    }
+    return pull_request
+
 class TestPullRequestListView(TestCase):
 
     @classmethod
@@ -84,20 +100,8 @@ class TestPullRequestListView(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_post_pull_request_successfully(self):
-        user_id = User.objects.get(username=USER1_USERNAME).pk
-        repo_id = Repository.objects.get(author=user_id, name="RepoUKS").pk
-        base_branch_id = Branch.objects.get(repository=repo_id, name='main').pk
-        compare_branch_id = Branch.objects.get(repository=repo_id, name='develop').pk
         test_pr_name = 'Test_PR'
-
-        pull_request = {
-            "repository": repo_id,
-            "base_branch": base_branch_id,
-            "compare_branch": compare_branch_id,
-            "creation_date": "2022-01-05T00:28:03.966Z",
-            "title": test_pr_name,
-            "author": user_id
-        }
+        pull_request = get_mocked_pr(test_pr_name)
   
         response = self.c.post(
             '/progresstrack/pullrequests/',
@@ -109,4 +113,20 @@ class TestPullRequestListView(TestCase):
 
         self.assertEquals(response.status_code, 201)
         self.assertEquals(res_obj['title'], test_pr_name)
-        self.assertEquals(res_obj['author'], user_id)
+
+    def test_put_pull_request_change_title(self):
+        pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE)
+        new_pr_name = 'New_PR_Name'
+        pull_request = get_mocked_pr(new_pr_name)
+
+        response = self.c.put(
+            '/progresstrack/pullrequests/'+str(pr.pk),
+            data=json.dumps(pull_request),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['title'], pr.title)
+        self.assertEqual(res_obj['title'], new_pr_name)
