@@ -2,25 +2,25 @@ import axios from 'axios';
 import { getToken } from '../authentication/token';
 
 export const getAllUsers = async () => {
-	let users;
-	await axios
-		.request({
-			url: `/useractivity/users/`,
-			method: 'get',
-			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ getToken()},
-			data: {
-				grant_type: 'client_credentials',
-				scope: 'public',
-			},
-		})
-		.then((response) => {
-			users = response.data;
-		})
-		.catch((err) => {
-			console.log(err);
-		});
-	return users;
+    let users;
+    await axios
+        .request({
+            url: `/useractivity/users/`,
+            method: 'get',
+            baseURL: 'http://127.0.0.1:8000/',
+            headers: { Authorization: 'JWT ' + getToken() },
+            data: {
+                grant_type: 'client_credentials',
+                scope: 'public',
+            },
+        })
+        .then((response) => {
+            users = response.data;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    return users;
 };
 
 export const getUserDataForSearch = async () => {
@@ -45,7 +45,7 @@ export const getUserById = async (authorId) => {
             url: `/useractivity/users/${authorId}`,
             method: 'get',
             baseURL: 'http://127.0.0.1:8000/',
-            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            headers: { Authorization: 'JWT ' + getToken() },
             data: {
                 grant_type: 'client_credentials',
                 scope: 'public',
@@ -67,7 +67,7 @@ export const getAllUsersForAdmin = async () => {
             url: `/useractivity/manageusers/`,
             method: 'get',
             baseURL: 'http://127.0.0.1:8000/',
-            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            headers: { Authorization: 'JWT ' + getToken() },
             data: {
                 grant_type: 'client_credentials',
                 scope: 'public',
@@ -89,7 +89,7 @@ export const addUser = async (newUserUsername, newUserPassword, newUserFirstName
             url: `/useractivity/manageusers/`,
             method: 'post',
             baseURL: 'http://127.0.0.1:8000/',
-            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            headers: { Authorization: 'JWT ' + getToken() },
             data: {
                 username: newUserUsername,
                 password: newUserPassword,
@@ -117,7 +117,7 @@ export const editUser = async (userId, newUserUsername, newUserPassword, newUser
             url: `/useractivity/manageusers/${userId}`,
             method: 'put',
             baseURL: 'http://127.0.0.1:8000/',
-            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            headers: { Authorization: 'JWT ' + getToken() },
             data: {
                 username: newUserUsername,
                 password: newUserPassword,
@@ -145,7 +145,7 @@ export const deleteUser = async (userId) => {
             url: `/useractivity/manageusers/${userId}`,
             method: 'delete',
             baseURL: 'http://127.0.0.1:8000/',
-            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
+            headers: { Authorization: 'JWT ' + getToken() },
             data: {},
         })
         .then((response) => {
