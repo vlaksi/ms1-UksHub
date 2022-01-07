@@ -1,25 +1,26 @@
 import axios from 'axios';
+import { getToken } from '../authentication/token';
 
 export const getAllUsers = async () => {
-    let users;
-    await axios
-        .request({
-            url: `/useractivity/users/`,
-            method: 'get',
-            baseURL: 'http://127.0.0.1:8000/',
-            headers: { Authorization: 'JWT ' + localStorage.getItem('token') },
-            data: {
-                grant_type: 'client_credentials',
-                scope: 'public',
-            },
-        })
-        .then((response) => {
-            users = response.data;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    return users;
+	let users;
+	await axios
+		.request({
+			url: `/useractivity/users/`,
+			method: 'get',
+			baseURL: 'http://127.0.0.1:8000/',
+			headers: {'Authorization': 'JWT '+ getToken()},
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			users = response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	return users;
 };
 
 export const getUserDataForSearch = async () => {
