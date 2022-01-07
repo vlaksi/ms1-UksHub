@@ -4,7 +4,7 @@ import { Row, Col, Form, Button } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 
 import { login } from './../../common/services/authentication/authenticationService';
-
+import { getParsedToken, saveToken } from '../../common/services/authentication/token';
 
 const Login = () => {
 	const [passsword, setPassword] = useState();
@@ -23,7 +23,7 @@ const Login = () => {
 			document.body.style.cursor = 'wait';
 			login(username, passsword).then((response) => {
 				if (typeof window !== "undefined") {
-					localStorage.setItem('token', response.data.access)
+					saveToken(response.data.access)
 				}
 				setValidated(true);
 				document.body.style.cursor = 'default';
