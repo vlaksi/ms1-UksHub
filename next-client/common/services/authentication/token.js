@@ -19,8 +19,3 @@ export function getParsedToken() {
 export function removeToken() {
     localStorage.removeItem(TOKEN_NAME);
 }
-
-export function getUsernameFromToken() {
-    let parsedToken=getParsedToken();
-    return parsedToken.sub;
-}
