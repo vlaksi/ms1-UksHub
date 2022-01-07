@@ -27,7 +27,8 @@ const Login = () => {
 				}
 				setValidated(true);
 				document.body.style.cursor = 'default';
-				Router.push('/home')
+				let loggedInUserId = getParsedToken().user_id;
+				Router.push(`/${loggedInUserId}`)
 			}).catch((error) => {
 				document.body.style.cursor = 'default';
 				console.log(error.response)
