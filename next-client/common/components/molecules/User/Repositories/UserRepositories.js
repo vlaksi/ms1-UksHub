@@ -38,7 +38,7 @@ const UserRepositories = ({ username, author_id }) => {
 		let createdRepository = await addRepository(
 			newRepositoryName,
 			newRepositoryDescription,
-			'1'
+			'8'
 		);
 		//TODO: Change author id (can be read from the url via 'user' attribute)
 		if (!createdRepository) {

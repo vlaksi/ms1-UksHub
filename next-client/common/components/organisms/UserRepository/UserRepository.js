@@ -66,7 +66,7 @@ const UserRepository = ({ username, repositoryId }) => {
 								<IssuesOverview />
 							</Tab>
 							<Tab eventKey="pullRequests" title="Pull requests">
-								<PullRequestsOverview />
+								<PullRequestsOverview dbRepository={repository}/>
 							</Tab>
 							<Tab eventKey="insights" title="Insights">
 								<RepositoryInsights />

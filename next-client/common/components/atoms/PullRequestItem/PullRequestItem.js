@@ -53,7 +53,7 @@ const PullRequestItem = ({ pullRequest }) => {
 					</Badge>
 					by
 					<Badge pill bg="light" text="dark">
-						{author?.username}
+						{author?.email}
 					</Badge>
 				</Card.Text>
 			</Card.Body>

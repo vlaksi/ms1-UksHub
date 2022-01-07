@@ -3,7 +3,7 @@ import PullRequestItem from '../PullRequestItem/PullRequestItem';
 const PullRequestList = ({ pullRequests }) => {
 	return (
 		<>
-			{pullRequests.map((pullRequest) => {
+			{pullRequests && pullRequests.map((pullRequest) => {
 				return (
 					<div key={pullRequest.pk}>
 						<PullRequestItem pullRequest={pullRequest} />
