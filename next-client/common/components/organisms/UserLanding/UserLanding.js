@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { Row, Col, Tabs, Tab } from "react-bootstrap";
-import UserOverview from "../../molecules/User/Overview/UserOverview";
-import UserRepositories from "../../molecules/User/Repositories/UserRepositories";
-import { getUserById } from "../../../services/useractivity/userService";
+import { useEffect, useState } from 'react';
+import { Row, Col, Tabs, Tab } from 'react-bootstrap';
+import UserOverview from '../../molecules/User/Overview/UserOverview';
+import UserRepositories from '../../molecules/User/Repositories/UserRepositories';
+import { getUserById } from '../../../services/useractivity/userService';
 
 const UserLanding = ({ userId }) => {
   const [user, setUser] = useState();
@@ -28,11 +28,14 @@ const UserLanding = ({ userId }) => {
               className="mb-3"
             >
               <Tab eventKey="profile" title="Overview">
-                {/* <UserOverview username={username} /> */}
+                {/* TODO: Change to the username instead of the first_name */}
+                <UserOverview username={user.first_name} />
               </Tab>
               <Tab eventKey="repositories" title="Repositories">
-                {/* TODO: Change author_id to right one */}
-                {/* <UserRepositories username={username} author_id="8" /> */}
+                <UserRepositories
+                  username={user.first_name}
+                  author_id={userId}
+                />
               </Tab>
             </Tabs>
           </Col>
