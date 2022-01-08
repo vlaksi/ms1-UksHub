@@ -47,7 +47,7 @@ const UserRepository = ({ userId, repositoryId }) => {
                 <h4>
                   <Link href={`/${userId}`}>
                     <a style={{ textDecoration: 'none', color: '#444' }}>
-                      {user.first_name}
+                      {user.username}
                     </a>
                   </Link>{' '}
                   /{' '}
