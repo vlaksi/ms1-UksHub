@@ -7,7 +7,10 @@ import IssuesOverview from '../../molecules/Repository/Issues/IssuesOverview';
 import PullRequestsOverview from '../../molecules/Repository/Pulls/PullRequestsOverview';
 import RepositoryInsights from '../../molecules/Repository/Insights/RepositoryInsights';
 import RepositorySettings from '../../molecules/Repository/Settings/RepositorySettings';
-import { getRepositoryById } from '../../../services/versioning/repositoryService';
+import {
+  getRepositoryById,
+  getRepositoryCollaboratos,
+} from '../../../services/versioning/repositoryService';
 import { getRepositoryBranches } from '../../../services/versioning/branchService';
 import Actions from '../../atoms/Actions/Actions';
 import { getUserById } from '../../../services/useractivity/userService';
@@ -17,11 +20,13 @@ const UserRepository = ({ userId, repositoryId }) => {
   const [user, setUser] = useState();
   const [repository, setRepository] = useState();
   const [repositoryBranches, setRepositoryBranches] = useState();
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   useEffect(async () => {
     if (!repositoryId) return;
     setRepository(await getRepositoryById(repositoryId));
     setRepositoryBranches(await getRepositoryBranches(repositoryId));
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repositoryId));
   }, [repositoryId]);
 
   useEffect(async () => {
@@ -29,6 +34,13 @@ const UserRepository = ({ userId, repositoryId }) => {
     let userById = await getUserById(userId);
     setUser(userById);
   }, [userId]);
+
+  const isLoggedInUserCollaborator = () => {
+    let loggedInUserId = getParsedToken().user_id;
+    return repositoryCollaborators.find(
+      (collaborator) => collaborator.collaborator_id == loggedInUserId
+    );
+  };
 
   return (
     <>
@@ -76,12 +88,12 @@ const UserRepository = ({ userId, repositoryId }) => {
               <Tab eventKey="pullRequests" title="Pull requests">
                 <PullRequestsOverview dbRepository={repository} />
               </Tab>
-              {userId == getParsedToken().user_id && (
+              {isLoggedInUserCollaborator() && (
                 <Tab eventKey="insights" title="Insights">
                   <RepositoryInsights />
                 </Tab>
               )}
-              {userId == getParsedToken().user_id && (
+              {isLoggedInUserCollaborator() && (
                 <Tab eventKey="settings" title="Settings">
                   <RepositorySettings
                     repository={repository}

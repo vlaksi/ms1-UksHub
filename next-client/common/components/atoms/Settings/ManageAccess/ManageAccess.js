@@ -10,7 +10,6 @@ import {
 } from 'react-bootstrap';
 import { AiFillDelete } from 'react-icons/ai';
 import { MdEdit } from 'react-icons/md';
-import { getDataForSearch } from '../../../../mocks/dataForSearch';
 import { getUserDataForSearch } from '../../../../services/useractivity/userService';
 import {
   createCollaboration,
@@ -50,7 +49,6 @@ const ManageAccess = ({ repository }) => {
       (collaborator) => collaborator.username == user.title
     );
   };
-  console.log('repository: ', repository);
 
   return (
     <>
