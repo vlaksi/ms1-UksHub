@@ -41,12 +41,12 @@ class Testauthentication(TestCase):
         response = c.post('/auth/jwt/create/', {'username': USER1_USERNAME, 'password': USER1_PASSWORD})
         self.assertEqual(response.status_code, 200)
 
-    def test1_registration(self):
+    def test_success_registration(self):
         c = Client()
         response = c.post('/auth/users/', {'username': USER2_USERNAME, 'password': USER2_PASSWORD, 're_password': USER2_PASSWORD, 'email': USER2_EMAIL, 'first_name': USER2_FIRST_NAME, 'last_name': USER2_LAST_NAME})
         self.assertEqual(response.status_code, 201)
 
-    def test2_registration(self):
+    def test_failure_registration(self):
         c = Client()
         response = c.post('/auth/users/', {'username': USER1_USERNAME, 'password': USER1_PASSWORD, 're_password': USER1_PASSWORD, 'email': USER1_EMAIL, 'first_name': USER1_FIRST_NAME, 'last_name': USER1_LAST_NAME})
         self.assertEqual(response.status_code, 400)

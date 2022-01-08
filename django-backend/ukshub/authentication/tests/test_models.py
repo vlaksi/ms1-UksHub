@@ -34,12 +34,21 @@ class TestUserAccountModel(TestCase):
         self.assertEquals(verbose_name, 'first name')
 
     def test_user_last_name(self):
-            user = get_user()
-            verbose_name = user._meta.get_field('last_name').verbose_name
-            self.assertEquals(verbose_name, 'last name')
+        user = get_user()
+        verbose_name = user._meta.get_field('last_name').verbose_name
+        self.assertEquals(verbose_name, 'last name')
 
     def test_user_email(self):
         user = get_user()
         verbose_name = user._meta.get_field('email').verbose_name
         self.assertEquals(verbose_name, 'email')
     
+    def test_user_password(self):
+        user = get_user()
+        verbose_name = user._meta.get_field('password').verbose_name
+        self.assertEquals(verbose_name, 'password')
+
+    def test_user_username(self):
+        user = get_user()
+        verbose_name = user._meta.get_field('username').verbose_name
+        self.assertEquals(verbose_name, 'username')
