@@ -16,7 +16,7 @@ JSON = 'application/json'
 
 # User init consts
 USER2_USERNAME = 'user2'
-USER2_PASSWORD = 'Ovojejakasifra!'
+USER2_PASSWORD = 'Ovojejakasifra!!'
 USER2_FIRST_NAME = 'Milana'
 USER2_LAST_NAME = 'Mikic'
 USER2_EMAIL = 'miki@gmail.com'
@@ -26,7 +26,7 @@ def get_jwt_token():
     response = c.post('/auth/jwt/create/', {'username': USER1_USERNAME, 'password': USER1_PASSWORD})
     return json.loads(response.content.decode('UTF-8'))['access']
 
-class Testauthentication(TestCase):
+class TestAuthenticationViews(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -36,19 +36,20 @@ class Testauthentication(TestCase):
         self.c = Client()
         self.token = f'JWT {get_jwt_token()}'
 
-    def test_login(self):
-        c = Client()
-        response = c.post('/auth/jwt/create/', {'username': USER1_USERNAME, 'password': USER1_PASSWORD})
+    def test_success_login(self):
+        response = self.c.post('/auth/jwt/create/', {'username': USER1_USERNAME, 'password': USER1_PASSWORD})
         self.assertEqual(response.status_code, 200)
 
+    def test_failure_login(self):
+        response = self.c.post('/auth/jwt/create/', {'username': USER1_USERNAME, 'password': USER2_PASSWORD})
+        self.assertEqual(response.status_code, 401)
+
     def test_success_registration(self):
-        c = Client()
-        response = c.post('/auth/users/', {'username': USER2_USERNAME, 'password': USER2_PASSWORD, 're_password': USER2_PASSWORD, 'email': USER2_EMAIL, 'first_name': USER2_FIRST_NAME, 'last_name': USER2_LAST_NAME})
+        response = self.c.post('/auth/users/', {'username': USER2_USERNAME, 'password': USER2_PASSWORD, 're_password': USER2_PASSWORD, 'email': USER2_EMAIL, 'first_name': USER2_FIRST_NAME, 'last_name': USER2_LAST_NAME})
         self.assertEqual(response.status_code, 201)
 
     def test_failure_registration(self):
-        c = Client()
-        response = c.post('/auth/users/', {'username': USER1_USERNAME, 'password': USER1_PASSWORD, 're_password': USER1_PASSWORD, 'email': USER1_EMAIL, 'first_name': USER1_FIRST_NAME, 'last_name': USER1_LAST_NAME})
+        response = self.c.post('/auth/users/', {'username': USER1_USERNAME, 'password': USER1_PASSWORD, 're_password': USER1_PASSWORD, 'email': USER1_EMAIL, 'first_name': USER1_FIRST_NAME, 'last_name': USER1_LAST_NAME})
         self.assertEqual(response.status_code, 400)
 
     def test_get_all_users(self):

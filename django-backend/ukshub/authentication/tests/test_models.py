@@ -52,3 +52,43 @@ class TestUserAccountModel(TestCase):
         user = get_user()
         verbose_name = user._meta.get_field('username').verbose_name
         self.assertEquals(verbose_name, 'username')
+
+    def test_first_name_max_length(self):
+        user = get_user()
+        max_length = user._meta.get_field('first_name').max_length
+        self.assertEquals(max_length, 255)
+
+    def test_last_name_max_length(self):
+        user = get_user()
+        max_length = user._meta.get_field('last_name').max_length
+        self.assertEquals(max_length, 255)
+
+    def test_username_max_length(self):
+        user = get_user()
+        max_length = user._meta.get_field('username').max_length
+        self.assertEquals(max_length, 255) 
+   
+    def test_email_max_length(self):
+        user = get_user()
+        max_length = user._meta.get_field('email').max_length
+        self.assertEquals(max_length, 255) 
+    
+    def test_is_active_default(self):
+        user = get_user()
+        default = user._meta.get_field('is_active').default
+        self.assertEquals(default, True) 
+    
+    def test_is_staff_default(self):
+        user = get_user()
+        default = user._meta.get_field('is_staff').default
+        self.assertEquals(default, False) 
+    
+    def test_username_unique(self):
+        user = get_user()
+        unique = user._meta.get_field('username').unique
+        self.assertEquals(unique, True) 
+   
+    def test_email_unique(self):
+        user = get_user()
+        unique = user._meta.get_field('email').unique
+        self.assertEquals(unique, True) 
