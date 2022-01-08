@@ -30,10 +30,7 @@ const UserLanding = ({ userId }) => {
                 <UserOverview userFirstName={user.first_name} />
               </Tab>
               <Tab eventKey="repositories" title="Repositories">
-                <UserRepositories
-                  userFirstName={user.first_name}
-                  author_id={userId}
-                />
+                <UserRepositories author_id={userId} />
               </Tab>
             </Tabs>
           </Col>

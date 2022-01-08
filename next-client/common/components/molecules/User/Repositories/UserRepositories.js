@@ -11,7 +11,7 @@ import {
 import { createBranch } from '../../../../services/versioning/branchService';
 import { getParsedToken } from '../../../../services/authentication/token';
 
-const UserRepositories = ({ userFirstName, author_id }) => {
+const UserRepositories = ({ author_id }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
