@@ -50,6 +50,7 @@ const ManageAccess = ({ repository }) => {
       (collaborator) => collaborator.username == user.title
     );
   };
+  console.log('repository: ', repository);
 
   return (
     <>
@@ -87,22 +88,27 @@ const ManageAccess = ({ repository }) => {
                       ({collaborator.role})
                     </p>
                   </div>
-                  <div>
-                    <MdEdit
-                      style={{ marginRight: '15px', cursor: 'pointer' }}
-                      onClick={() => {
-                        setEditCollaborator(collaborator);
-                        handleShowEditModal();
-                      }}
-                    />
-                    <AiFillDelete
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => {
-                        setRemoveCandidate(collaborator);
-                        handleShowDeleteModal();
-                      }}
-                    />
-                  </div>
+                  {/* Disable changing and deleting author collaboration type */}
+                  {repository.author != collaborator.collaborator_id && (
+                    <div>
+                      <MdEdit
+                        style={{ marginRight: '15px', cursor: 'pointer' }}
+                        onClick={() => {
+                          setEditCollaborator(collaborator);
+                          handleShowEditModal();
+                        }}
+                      />
+                      {repositoryCollaborators.length > 1 && (
+                        <AiFillDelete
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            setRemoveCandidate(collaborator);
+                            handleShowDeleteModal();
+                          }}
+                        />
+                      )}
+                    </div>
+                  )}
                 </ListGroup.Item>
               );
             })}
