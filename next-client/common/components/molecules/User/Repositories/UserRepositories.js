@@ -9,6 +9,7 @@ import {
   updateRepositoryDefaultBranch,
 } from '../../../../services/versioning/repositoryService';
 import { createBranch } from '../../../../services/versioning/branchService';
+import { getParsedToken } from '../../../../services/authentication/token';
 
 const UserRepositories = ({ username, author_id }) => {
   const [show, setShow] = useState(false);
@@ -63,6 +64,11 @@ const UserRepositories = ({ username, author_id }) => {
     }
   };
 
+  const showAddRepoButton = (profileUserId) => {
+    let loggedInUserId = getParsedToken().user_id;
+    return profileUserId == loggedInUserId;
+  };
+
   useEffect(async () => {
     if (!author_id) return;
     setNewRepositoryList(await getAllRepositoriesByAuthor(author_id));
@@ -71,10 +77,11 @@ const UserRepositories = ({ username, author_id }) => {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button variant="outline-primary" onClick={handleShow}>
-          {' '}
-          <MdAddCircle size={24} /> Add repository
-        </Button>
+        {showAddRepoButton(author_id) && (
+          <Button variant="outline-primary" onClick={handleShow}>
+            <MdAddCircle size={24} /> Add repository
+          </Button>
+        )}
 
         <Modal show={show} onHide={handleClose} backdrop="static">
           <Modal.Header closeButton>

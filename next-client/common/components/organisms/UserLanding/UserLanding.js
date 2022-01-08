@@ -11,7 +11,6 @@ const UserLanding = ({ userId }) => {
     if (!userId) return;
     let userById = await getUserById(userId);
     setUser(userById);
-    console.log(userById);
   }, [userId]);
 
   return (
