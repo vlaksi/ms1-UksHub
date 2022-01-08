@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getToken } from '../authentication/token';
 
 export const getAllUsers = async () => {
 	let users;
@@ -7,7 +8,7 @@ export const getAllUsers = async () => {
 			url: `/useractivity/users/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
+			headers: {'Authorization': 'JWT '+ getToken()},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -44,7 +45,7 @@ export const getUserById = async (authorId) => {
 			url: `/useractivity/users/${authorId}`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ localStorage.getItem('token')},
+			headers: {'Authorization': 'JWT '+ getToken()},
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',

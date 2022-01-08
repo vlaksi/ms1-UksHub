@@ -3,10 +3,11 @@ import styles from './Navbar.module.scss';
 import Image from 'next/image';
 import SearchBar from '../../atoms/Search/SearchBar';
 import { getDataForSearch } from '../../../mocks/dataForSearch';
+import { getToken, saveToken } from '../../../services/authentication/token';
 
 const Navbar = () => {
 	if (typeof window !== "undefined") {
-		var token = localStorage.getItem('token')
+		var token = getToken()
 	}
 	if (token) {
 		return (
@@ -26,9 +27,8 @@ const Navbar = () => {
 						<Link href="/">
 							<a onClick={() => {
 								if (typeof window !== "undefined") {
-									localStorage.setItem('token', '')
+									saveToken('')
 								}
-								console.log('aaa')
 							}}>
 								<h5>Logout</h5>
 							</a>
