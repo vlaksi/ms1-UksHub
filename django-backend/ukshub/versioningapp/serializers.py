@@ -26,10 +26,22 @@ class RepositorySerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        repository = Repository.objects.create( author=validated_data.get('author'),name=validated_data.get('name'),description=validated_data.get('description'))
+        # Create repository
+        author = validated_data.get('author')
+        name = validated_data.get('name')
+        description = validated_data.get('description')
+        repository = Repository.objects.create( author=author, name=name, description=description)
         repository.save()
-        # TODO: Add creation of branch and set is as default branch
-        # TODO: Add collaborator
+
+        # Create default main branch of this repository & update default branch of the repository
+        default_branch = Branch.objects.create(name='main', repository=repository)
+        default_branch.save()
+        repository.default_branch=default_branch
+        repository.save()
+
+        # Create author of the repository to the collaboration table connected to his repository
+        collaboration_type_default = CollaborationType.objects.get(pk=1)
+        collaboration = Collaboration.objects.create(collaboration_type=collaboration_type_default, collaborator=author, repository=repository)
 
         return repository
 
