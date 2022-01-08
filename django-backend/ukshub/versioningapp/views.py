@@ -9,7 +9,7 @@ from .dtos import CollaboratorDto
 
 class RepositoryList(generics.ListCreateAPIView):
     queryset = Repository.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     serializer_class = RepositorySerializer
 
 class RepositoryDetail(generics.RetrieveUpdateDestroyAPIView):

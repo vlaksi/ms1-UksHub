@@ -25,6 +25,14 @@ class RepositorySerializer(serializers.ModelSerializer):
              "actions": {"required": False},
         }
 
+    def create(self, validated_data):
+        repository = Repository.objects.create( author=validated_data.get('author'),name=validated_data.get('name'),description=validated_data.get('description'))
+        repository.save()
+        # TODO: Add creation of branch and set is as default branch
+        # TODO: Add collaborator
+
+        return repository
+
 class CollaborationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collaboration
