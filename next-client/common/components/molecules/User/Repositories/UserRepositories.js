@@ -6,9 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import {
   addRepository,
   getAllRepositoriesByAuthor,
-  updateRepositoryDefaultBranch,
 } from '../../../../services/versioning/repositoryService';
-import { createBranch } from '../../../../services/versioning/branchService';
 import { getParsedToken } from '../../../../services/authentication/token';
 
 const UserRepositories = ({ author_id }) => {
@@ -41,20 +39,7 @@ const UserRepositories = ({ author_id }) => {
       newRepositoryDescription,
       author_id
     );
-    if (!createdRepository) {
-      notifyError();
-      return;
-    }
-    let createdDefaultBranch = await createBranch(createdRepository.pk);
-    if (!createdDefaultBranch) {
-      notifyError();
-      return;
-    }
-    let updatedRepository = await updateRepositoryDefaultBranch(
-      createdDefaultBranch.repository,
-      createdDefaultBranch.pk
-    );
-    if (updatedRepository) {
+    if (createdRepository) {
       notify();
       handleClose();
       setNewRepositoryList(await getAllRepositoriesByAuthor(author_id));
