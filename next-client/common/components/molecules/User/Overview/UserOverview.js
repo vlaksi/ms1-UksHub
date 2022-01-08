@@ -1,11 +1,11 @@
 import { Accordion } from 'react-bootstrap';
 
-const UserOverview = ({ username }) => {
+const UserOverview = ({ userFirstName }) => {
   return (
     <>
       <Accordion defaultActiveKey="0">
         <Accordion.Item eventKey="0">
-          <Accordion.Header> Overview about {username} </Accordion.Header>
+          <Accordion.Header> Overview about {userFirstName} </Accordion.Header>
           <Accordion.Body>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim

@@ -27,12 +27,11 @@ const UserLanding = ({ userId }) => {
               className="mb-3"
             >
               <Tab eventKey="profile" title="Overview">
-                {/* TODO: Change to the username instead of the first_name */}
-                <UserOverview username={user.first_name} />
+                <UserOverview userFirstName={user.first_name} />
               </Tab>
               <Tab eventKey="repositories" title="Repositories">
                 <UserRepositories
-                  username={user.first_name}
+                  userFirstName={user.first_name}
                   author_id={userId}
                 />
               </Tab>

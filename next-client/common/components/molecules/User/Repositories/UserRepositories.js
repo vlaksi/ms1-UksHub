@@ -11,7 +11,7 @@ import {
 import { createBranch } from '../../../../services/versioning/branchService';
 import { getParsedToken } from '../../../../services/authentication/token';
 
-const UserRepositories = ({ username, author_id }) => {
+const UserRepositories = ({ userFirstName, author_id }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -132,7 +132,7 @@ const UserRepositories = ({ username, author_id }) => {
         return (
           <RepositoryListItem
             key={repository.pk}
-            username={username}
+            authorId={author_id}
             repository={repository}
           />
         );
