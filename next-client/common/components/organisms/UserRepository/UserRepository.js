@@ -11,6 +11,7 @@ import { getRepositoryById } from '../../../services/versioning/repositoryServic
 import { getRepositoryBranches } from '../../../services/versioning/branchService';
 import Actions from '../../atoms/Actions/Actions';
 import { getUserById } from '../../../services/useractivity/userService';
+import { getParsedToken } from '../../../services/authentication/token';
 
 const UserRepository = ({ userId, repositoryId }) => {
   const [user, setUser] = useState();
@@ -75,15 +76,19 @@ const UserRepository = ({ userId, repositoryId }) => {
               <Tab eventKey="pullRequests" title="Pull requests">
                 <PullRequestsOverview dbRepository={repository} />
               </Tab>
-              <Tab eventKey="insights" title="Insights">
-                <RepositoryInsights />
-              </Tab>
-              <Tab eventKey="settings" title="Settings">
-                <RepositorySettings
-                  repository={repository}
-                  repositoryBranches={repositoryBranches}
-                />
-              </Tab>
+              {userId == getParsedToken().user_id && (
+                <Tab eventKey="insights" title="Insights">
+                  <RepositoryInsights />
+                </Tab>
+              )}
+              {userId == getParsedToken().user_id && (
+                <Tab eventKey="settings" title="Settings">
+                  <RepositorySettings
+                    repository={repository}
+                    repositoryBranches={repositoryBranches}
+                  />
+                </Tab>
+              )}
             </Tabs>
           </Col>
         </Row>
