@@ -9,7 +9,7 @@ import { getParsedToken, saveToken } from '../../common/services/authentication/
 const Login = () => {
 	const [passsword, setPassword] = useState();
 	const [username, setUsername] = useState();
-	const [validated, setValidated] = useState(false);
+	const [loader, setLoader] = useState(false);
 
 	const handleSubmit = (event) => {
 		const form = event.currentTarget;
@@ -20,31 +20,33 @@ const Login = () => {
 		if (form.checkValidity() === true) {
 			event.preventDefault();
 			event.stopPropagation();
+			setLoader(true)
 			document.body.style.cursor = 'wait';
 			login(username, passsword).then((response) => {
 				if (typeof window !== "undefined") {
 					saveToken(response.data.access)
 				}
-				setValidated(true);
 				document.body.style.cursor = 'default';
-				Router.push('/home')
+				let loggedInUserId = getParsedToken().user_id;
+				Router.push(`/${loggedInUserId}`)
+				setLoader(false)
 			}).catch((error) => {
 				document.body.style.cursor = 'default';
 				console.log(error.response)
 				if (error.response.data.detail) {
 					toast.error('' + error.response.data.detail)
 				}
+				setLoader(false)
 				return null;
 			});
 		}
-		setValidated(true);
 	};
 
 	return (
 		<Row className="justify-content-md-center">
 			<ToastContainer position="top-right" autoClose={3000}></ToastContainer>
 			<Col md={4}>
-				<Form className="mt-5" noValidate validated={validated} onSubmit={handleSubmit}>
+				<Form className="mt-5" onSubmit={handleSubmit}>
 					<Form.Group className="mb-3" controlId="formBasicEmail">
 						<Form.Label>Username</Form.Label>
 						<Form.Control required type="username" placeholder="Enter username" onChange={(event) => setUsername(event.target.value)} />
@@ -65,6 +67,15 @@ const Login = () => {
 					>
 						Login
 					</Button>
+					{loader ? (
+						<div class="d-flex justify-content-center">
+							<div class="spinner-border" role="status">
+							</div>
+						</div>
+					) : (
+						<div></div>
+					)}
+
 				</Form>
 			</Col>
 		</Row >

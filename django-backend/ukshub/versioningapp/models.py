@@ -40,7 +40,6 @@ class Branch(models.Model):
 
 class Repository(models.Model):
     author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True)
-    members = models.ManyToManyField(UserAccount, blank=True, related_name='member_of_repositorys')
     actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, blank=True)

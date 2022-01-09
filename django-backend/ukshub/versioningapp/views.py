@@ -1,15 +1,18 @@
 from django.shortcuts import render
+from django.http import Http404
+from django.contrib.auth.models import User
+
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.models import User
+
 from .models import CollaborationType, Branch, Commit, File, Folder, Repository, Collaboration
 from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
 from .dtos import CollaboratorDto
 
 class RepositoryList(generics.ListCreateAPIView):
     queryset = Repository.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     serializer_class = RepositorySerializer
 
 class RepositoryDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -70,6 +73,7 @@ class FileDetail(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 def all_repositories_by_user(request, user_id):
     repositories= Repository.objects.filter(author_id=user_id)
+    if(len(repositories) == 0): raise Http404('No repositories matches the given query.')
     serializers=RepositorySerializer(repositories,many=True)
     return Response(serializers.data)
 
@@ -91,6 +95,6 @@ def repository_collaborators(request, repo_id):
     collaborators = []
     collaborations = Collaboration.objects.filter(repository_id = repo_id)
     for collaboration in collaborations:
-        collaborators.append(CollaboratorDto.create(collaboration.pk, collaboration.collaborator.username, collaboration.collaboration_type.name))
+        collaborators.append(CollaboratorDto.create(collaboration.pk,collaboration.collaborator.pk, collaboration.collaborator.username, collaboration.collaboration_type.name))
     serializers = CollaboratorSerializer(collaborators, many=True)
     return Response(serializers.data)

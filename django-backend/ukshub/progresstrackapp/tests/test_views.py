@@ -4,13 +4,14 @@ from django.utils import timezone
 from django.http import Http404
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER1_PASSWORD, PULL_REQUEST_1_TITLE
 from ..models import Issue, Label, Milestone, PullRequest
 from versioningapp.models import Branch, Repository
-from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-User = get_user_model()
+
 
 from rest_framework.test import APIClient
 
@@ -90,8 +91,8 @@ class TestPullRequestListView(TestCase):
         self.assertEqual(res_obj['comments'], [])
 
     def test_get_HTTP404_wrong_endpoint_call_pull_request_by_id(self):
-        # wrong is because we should not have / on the end of the endpoint !
         pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE) 
+        # wrong is because we should not have / on the end of the endpoint !
         response = self.c.get('/progresstrack/pullrequests/'+str(pr.pk)+'/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
     
