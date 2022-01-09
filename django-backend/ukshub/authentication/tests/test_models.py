@@ -11,13 +11,24 @@ USER1_PASSWORD = 'Ovojejakasifra!'
 USER1_FIRST_NAME = 'Ivana'
 USER1_LAST_NAME = 'Perisic'
 USER1_EMAIL = 'ica@gmail.com'
+USER1_IS_SUPERUSER = True
+USER1_IS_STAFF = True
 
+USER3_USERNAME = 'user3'
+USER3_PASSWORD = 'Ovojejakasifra!'
+USER3_FIRST_NAME = 'Milovan'
+USER3_LAST_NAME = 'Mikic'
+USER3_EMAIL = 'user3@gmail.com'
+USER3_IS_SUPERUSER = False
+USER3_IS_STAFF = False
 
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
     # Create users
-    user1 = User.objects.create_user(username=USER1_USERNAME, password=USER1_PASSWORD,first_name=USER1_FIRST_NAME,last_name=USER1_LAST_NAME,email=USER1_EMAIL)
+    user1 = User.objects.create_user(username=USER1_USERNAME, password=USER1_PASSWORD,first_name=USER1_FIRST_NAME,last_name=USER1_LAST_NAME,email=USER1_EMAIL, is_superuser=USER1_IS_SUPERUSER, is_staff=USER1_IS_STAFF)
+    user3 = User.objects.create_user(username=USER3_USERNAME, password=USER3_PASSWORD,first_name=USER3_FIRST_NAME,last_name=USER3_LAST_NAME,email=USER3_EMAIL, is_superuser=USER3_IS_SUPERUSER, is_staff=USER3_IS_STAFF)
     user1.save()
+    user3.save()
 
 def get_user(index=0):
     return User.objects.all()[index]
