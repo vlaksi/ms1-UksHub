@@ -1,0 +1,122 @@
+from django.utils import timezone
+from django.test import TestCase
+
+from ..models import ActionType, ReactionType, Action, Reaction, Comment
+from versioningapp.models import Repository
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+# User init consts
+USER1_USERNAME = 'dusan'
+USER1_PASSWORD = 'Passw0rd!.'
+USER1_FIRST_NAME = 'Dusan'
+USER1_LAST_NAME = 'Miljkovic'
+USER1_EMAIL = 'dusan@gmail.com'
+
+REPO1_NAME = 'RepoUKS'
+ACTION_TYPE_NAME = 'Action'
+REACTION_TYPE_NAME = 'Reaction'
+
+# INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
+def initialize_db_with_test_data():
+    # Create users
+    user1 = User.objects.create_user(username=USER1_USERNAME, password=USER1_PASSWORD,first_name=USER1_FIRST_NAME,last_name=USER1_LAST_NAME,email=USER1_EMAIL)
+    user1.save()
+
+    # Create repositories
+    repository1 = Repository.objects.create(author=user1, name=REPO1_NAME)
+    
+    repository1.save()
+
+    # Create ActionType
+    actionType1 = ActionType.objects.create(name=ACTION_TYPE_NAME)
+
+    actionType1.save()
+
+    # Create ReactionType
+    reactionType1 = ReactionType.objects.create(name=REACTION_TYPE_NAME)
+
+    reactionType1.save()
+
+    # Create actions
+    action1 = Action.objects.create(author=user1, repository=repository1, action_type=ACTION_TYPE_NAME, new_forked_repository=repository1)
+
+    action1.save()
+
+    # Create reactions
+    # reaction1 = Reaction.objects.create()
+
+    # reaction1.save()
+
+    # Create comment
+    # comment1 = Comment.objects.create()
+
+    # comment1.save()
+
+def get_action_type(index=0):
+    return ActionType.objects.all()[index]
+
+def get_reaction_type(index=0):
+    return ReactionType.objects.all()[index]
+
+def get_action(index=0):
+    return Action.objects.all()[index]
+
+def get_reaction(index=0):
+    return Reaction.objects.all()[index]
+
+def get_comment(index=0):
+    return Comment.objects.all()[index]
+
+class TestActionTypeModel(TestCase):
+    
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def test_action_type_name(self):
+        action_type = get_action_type()
+        verbose_name = action_type._meta.get_field('name').verbose_name
+        self.assertEquals(verbose_name, 'name')
+
+    def test_action_name_max_length(self):
+        action_type = get_action_type()
+        max_length = action_type._meta.get_field('name').max_length
+        self.assertEquals(max_length, 200)
+
+class TestReactionTypeModel(TestCase):
+    
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def test_reaction_type_name(self):
+        reaction_type = get_reaction_type()
+        verbose_name = reaction_type._meta.get_field('name').verbose_name
+        self.assertEquals(verbose_name, 'name')
+
+    def test_reaction_name_max_length(self):
+        reaction_type = get_reaction_type()
+        max_length = reaction_type._meta.get_field('name').max_length
+        self.assertEquals(max_length, 200)
+
+class TestActionModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def test_action_author_username(self):
+        action = get_action()
+        self.assertEqual(action.author.username, USER1_USERNAME)
+
+    def test_action_repository_name(self):
+        action = get_action()
+        self.assertEqual(action.repository.name, REPO1_NAME)
+
+    def test_action_new_forked_repository_name(self):
+        action = get_action()
+        self.assertEqual(action.repository.name, REPO1_NAME)
+
+    # TODO: Add other test cases watch out on the action type
