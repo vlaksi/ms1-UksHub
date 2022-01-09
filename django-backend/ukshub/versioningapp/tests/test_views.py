@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER2_USERNAME, USER1_PASSWORD, REPOSITORY_1_NAME, REPOSITORY_2_NAME
+from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER2_USERNAME, USER1_PASSWORD, REPOSITORY_1_NAME, REPOSITORY_2_NAME, COLLABORATION_TYPE_OWNER
 from ..models import Branch, Repository, CollaborationType, Collaboration
 
 JSON = 'application/json'
@@ -26,6 +26,23 @@ def get_mocked_repository(test_repository_name='Some_Repository_Test'):
     }
 
     return repository
+
+def get_mocked_collaboration(
+        test_user_username=USER2_USERNAME,
+        test_repository_name=REPOSITORY_1_NAME,
+        test_collaboration_type_name=COLLABORATION_TYPE_OWNER
+    ):
+    user_id = User.objects.get(username=test_user_username).pk
+    repository_id = Repository.objects.get(name=test_repository_name).pk
+    collaboration_type_id = CollaborationType.objects.get(name=test_collaboration_type_name).pk
+
+    collaboration = {
+        "collaborator": user_id,
+        "repository": repository_id,
+        "collaboration_type": collaboration_type_id
+    }
+
+    return collaboration
 
 class TestRepositoryListView(TestCase):
 
@@ -241,3 +258,105 @@ class TestRepositoryDetailView(TestCase):
         )
 
         self.assertEquals(response.status_code, 404)
+
+
+class TestCollaborationListVies(TestCase):
+    
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_all_collaborations(self):
+        response = self.c.get('/versioning/collaborations/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj), 3)
+
+    def test_get_all_collaborations_wrong_url(self):
+        response = self.c.get('/versioning/collaboratins', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_all_collaboration_types(self):
+        response = self.c.get('/versioning/collaboration/types/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj), 2)
+
+    def test_get_all_collaboration_types_wrong_url(self):
+        response = self.c.get('/versioning/collaborations/types/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_create_collaboration_successfully(self):
+        user_id = User.objects.get(username=USER1_USERNAME).pk
+        collaboration = get_mocked_collaboration(USER1_USERNAME)
+
+        response = self.c.post(
+            '/versioning/collaborations/',
+            data=json.dumps(collaboration),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['collaborator'], user_id)
+
+    def test_post_HTTP404_create_collaboration(self):
+        collaboration = get_mocked_collaboration(USER1_USERNAME)
+
+        response = self.c.post(
+            '/versioning/collaboratns/',
+            data=json.dumps(collaboration),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_post_create_collaboration_without_existed_user(self):
+        with self.assertRaises(User.DoesNotExist):
+            collaboration = get_mocked_collaboration("Not Existed Username")
+
+            # Will not pass here because of the raised exception
+            response = self.c.post(
+                '/versioning/collaborations/',
+                data=json.dumps(collaboration),
+                HTTP_AUTHORIZATION=self.token,
+                content_type=JSON
+            )
+
+            self.assertEquals(response.status_code, 201)
+
+    def test_post_create_collaboration_without_existed_repository(self):
+        with self.assertRaises(Repository.DoesNotExist):
+            collaboration = get_mocked_collaboration(USER1_USERNAME, "Not Existed Repository")
+
+            # Will not pass here because of the raised exception
+            response = self.c.post(
+                '/versioning/collaborations/',
+                data=json.dumps(collaboration),
+                HTTP_AUTHORIZATION=self.token,
+                content_type=JSON
+            )
+
+            self.assertEquals(response.status_code, 201)
+
+    def test_post_create_collaboration_without_existed_collaboration_type(self):
+        with self.assertRaises(CollaborationType.DoesNotExist):
+            collaboration = get_mocked_collaboration(USER1_USERNAME, REPOSITORY_1_NAME, "Not Existed CollaborationType")
+
+            # Will not pass here because of the raised exception
+            response = self.c.post(
+                '/versioning/collaborations/',
+                data=json.dumps(collaboration),
+                HTTP_AUTHORIZATION=self.token,
+                content_type=JSON
+            )
+
+            self.assertEquals(response.status_code, 201)
+        
+    
