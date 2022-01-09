@@ -91,7 +91,7 @@ class TestLabelModel(TestCase):
         max_length = label._meta.get_field('decription').max_length
         self.assertEquals(max_length, 200)
 
-    def test_decription_name(self):
+    def test_label_decription_name(self):
         label = get_label()
         verbose_name = label._meta.get_field('decription').verbose_name
         self.assertEquals(verbose_name, 'decription')

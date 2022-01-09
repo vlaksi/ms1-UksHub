@@ -43,3 +43,34 @@ class TestRepositoryModel(TestCase):
         repository = get_repository()
         verbose_name = repository._meta.get_field('name').verbose_name
         self.assertEquals(verbose_name, 'name')
+
+    def test_repository_name_max_length(self):
+        repository = get_repository()
+        max_length = repository._meta.get_field('name').max_length
+        self.assertEquals(max_length, 200)
+
+    def test_repository_description_name(self):
+        repository = get_repository()
+        verbose_name = repository._meta.get_field('description').verbose_name
+        self.assertEquals(verbose_name, 'description')
+
+    def test_repository_description_max_length(self):
+        repository = get_repository()
+        max_length = repository._meta.get_field('description').max_length
+        self.assertEquals(max_length, 200)
+
+    def test_empty_repository_actions(self):
+        repository = get_repository()
+        self.assertEqual(repository.actions.count(),0)
+
+    def test_repository_author_username(self):
+        repository = get_repository()
+        self.assertEqual(repository.author.username, USER1_USERNAME)
+
+    def test_repository_default_branch_name(self):
+        repository = get_repository()
+        self.assertEqual(repository.default_branch, None)
+    
+    def test_repository_forked_from_author(self):
+        repository = get_repository()
+        self.assertEqual(repository.forked_from_author, None)
