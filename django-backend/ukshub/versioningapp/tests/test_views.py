@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER1_PASSWORD
+from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER1_PASSWORD, REPOSITORY_1_NAME, REPOSITORY_2_NAME
 from ..models import Branch, Repository, CollaborationType, Collaboration
 
 JSON = 'application/json'
@@ -76,4 +76,88 @@ class TestRepositoryListView(TestCase):
         self.assertEquals(response.status_code, 400)
 
 
+class TestRepositoryDetailView(TestCase):
 
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_repository_by_id_successfully(self):
+        repository = Repository.objects.get(name=REPOSITORY_1_NAME)
+        response = self.c.get(
+            '/versioning/repositories/'+str(repository.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['name'], REPOSITORY_1_NAME)
+        self.assertEqual(res_obj['actions'], [])
+
+    def test_get_HTTP404_repository_by_id(self):
+        response = self.c.get(
+            '/versioning/repositories/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_repository_change_name(self):
+        repository = Repository.objects.get(name=REPOSITORY_1_NAME)
+        new_repository_name = 'New_Repository_Name'
+        new_repository = get_mocked_repository(new_repository_name)
+
+        response = self.c.put(
+            '/versioning/repositories/'+str(repository.pk),
+            data=json.dumps(new_repository),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['name'], repository.name)
+        self.assertEqual(res_obj['name'], new_repository_name)
+
+    def test_put_HTTP404_repository_change_name(self):
+        repository = Repository.objects.get(name=REPOSITORY_1_NAME)
+        new_repository_name = 'New_Repository_Name'
+        new_repository = get_mocked_repository(new_repository_name)
+
+        response = self.c.put(
+            '/versioning/repositories/99999',
+            data=json.dumps(new_repository),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+
+
+    def test_delete_repository(self):
+        repository = Repository.objects.get(name=REPOSITORY_1_NAME)
+
+        response = self.c.delete(
+            '/versioning/repositories/'+str(repository.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP404_repository(self):
+        repository = Repository.objects.get(name=REPOSITORY_1_NAME)
+
+        response = self.c.delete(
+            '/versioning/repositories/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
