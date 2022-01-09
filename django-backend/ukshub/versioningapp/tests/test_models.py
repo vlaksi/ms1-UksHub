@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.test import TestCase
 
-from ..models import Branch, Repository
+from ..models import Branch, Repository, CollaborationType, Collaboration
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -17,6 +17,10 @@ USER1_EMAIL = 'ica@gmail.com'
 REPOSITORY_1_NAME = "UksHub"
 REPOSITORY_2_NAME = "MatHub"
 
+# Collaboration types init consts
+COLLABORATION_TYPE_OWNER = "owner"
+COLLABORATION_TYPE_DEVELOPER= "developer"
+
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
     # Create users
@@ -30,8 +34,20 @@ def initialize_db_with_test_data():
     repository1.save()
     repository2.save()
 
+    # Create collaboration types
+    collaboration_type_1 = CollaborationType.objects.create(name=COLLABORATION_TYPE_OWNER)
+    collaboration_type_2 = CollaborationType.objects.create(name=COLLABORATION_TYPE_DEVELOPER)
+
+    collaboration_type_1.save()
+    collaboration_type_2.save()
+
+
+
 def get_repository(index=0):
     return Repository.objects.all()[index]
+
+def get_collaboration_type(index=0):
+    return CollaborationType.objects.all()[index]
 
 class TestRepositoryModel(TestCase):
 
@@ -74,3 +90,27 @@ class TestRepositoryModel(TestCase):
     def test_repository_forked_from_author(self):
         repository = get_repository()
         self.assertEqual(repository.forked_from_author, None)
+
+class TestCollaborationTypeModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def test_collaboration_type_name(self):
+        collaboration_type = get_collaboration_type()
+        verbose_name = collaboration_type._meta.get_field('name').verbose_name
+        self.assertEquals(verbose_name, 'name')
+
+    def test_collaboration_type_name_max_length(self):
+        collaboration_type = get_collaboration_type()
+        max_length = collaboration_type._meta.get_field('name').max_length
+        self.assertEquals(max_length, 200)
+
+    def test_collaboration_type_owner_name(self):
+        collaboration_type = get_collaboration_type()
+        self.assertEqual(collaboration_type.name, COLLABORATION_TYPE_OWNER)
+
+    def test_collaboration_type_developer_name(self):
+        collaboration_type = get_collaboration_type(1)
+        self.assertEqual(collaboration_type.name, COLLABORATION_TYPE_DEVELOPER)
