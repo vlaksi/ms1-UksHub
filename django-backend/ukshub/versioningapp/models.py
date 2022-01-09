@@ -1,32 +1,57 @@
 from django.db import models
-
-class Repository(models.Model):
-    name= models.CharField(max_length=200)
-    description= models.CharField(max_length=200)
+from authentication.models import UserAccount
+from useractivityapp.models import Action,Comment
 
 class File(models.Model):  
     name= models.CharField(max_length=200)
     path= models.CharField(max_length=200)
     creation_date= models.DateTimeField('date of creation')
-
-class Commit(models.Model):
-    files = models.ManyToManyField(File)
-    message= models.CharField(max_length=200)
-    creation_date= models.DateTimeField('date of creation')
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-
-class Branch(models.Model):
-    repository = models.ForeignKey(Repository, on_delete=models.CASCADE)
-    child_branchs = models.ForeignKey('self', on_delete=models.CASCADE, related_name='child_branches')
-    parent_branch = models.ForeignKey('self', on_delete=models.CASCADE)
-    files = models.ManyToManyField(File)
-    name= models.CharField(max_length=200)
-    commits = models.ManyToManyField(Commit)
+    def __str__(self):
+        return 'Name of object: ' + self.name
 
 class Folder(models.Model):
-    parent_directory = models.ForeignKey('self', on_delete=models.CASCADE, related_name='parent_directory')
-    sub_folders = models.ForeignKey('self', on_delete=models.CASCADE, related_name='sub_folders')
-    branch = models.ManyToManyField(Branch)
+    parent_directory = models.ForeignKey('self', on_delete=models.CASCADE, related_name='parent_folder', blank=True, null=True)
+    sub_directories = models.ManyToManyField('self',blank=True)
+    files = models.ManyToManyField(File, blank=True)
+    name = models.CharField(max_length=200)
+    last_change = models.DateTimeField('last change')
+    def __str__(self):
+        return 'Name of object: ' + self.name
+    
+class Commit(models.Model):
+    autor = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, related_name='created_commits')
     files = models.ManyToManyField(File)
-    name= models.CharField(max_length=200)
-    last_change= models.DateTimeField('last change')
+    message = models.CharField(max_length=200)
+    creation_date = models.DateTimeField('date of creation')
+    comments = models.ManyToManyField(Comment,blank=True, related_name='commit')
+    def __str__(self):
+        return 'Name of object: ' + self.message
+
+class Branch(models.Model):
+    repository = models.ForeignKey('Repository', on_delete=models.CASCADE, blank=True, related_name = "repositoryBranches")
+    child_branchs = models.ManyToManyField('self', blank=True)
+    parent_branch = models.ForeignKey('self', on_delete=models.CASCADE,blank=True, null=True)
+    files = models.ManyToManyField(File,blank=True)
+    folders = models.ManyToManyField(Folder, blank=True)
+    name = models.CharField(max_length=200)
+    commits = models.ManyToManyField(Commit, blank=True)
+    def __str__(self):
+        return 'Name of object: ' + self.name
+
+class Repository(models.Model):
+    author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True)
+    actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, blank=True)
+    default_branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True, related_name='default_branch')
+    forked_from_author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True, related_name='authorRepositoryForkedFrom')
+    def __str__(self):
+        return 'Name of object: ' + self.name
+
+class CollaborationType(models.Model):
+    name = models.CharField(max_length=200, blank=False, null=False)
+
+class Collaboration(models.Model):
+    collaborator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=False, null=False)
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False, related_name = "repositoryCollaborations")
+    collaboration_type = models.ForeignKey(CollaborationType, on_delete=models.CASCADE, blank=False, null=False)
