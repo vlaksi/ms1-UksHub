@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER2_USERNAME, USER1_PASSWORD, REPOSITORY_1_NAME, REPOSITORY_2_NAME, COLLABORATION_TYPE_OWNER
+from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER2_USERNAME,USER1_PASSWORD, REPOSITORY_1_NAME,REPOSITORY_2_NAME, COLLABORATION_TYPE_OWNER, COLLABORATION_TYPE_DEVELOPER
 from ..models import Branch, Repository, CollaborationType, Collaboration
 
 JSON = 'application/json'
@@ -43,6 +43,12 @@ def get_mocked_collaboration(
     }
 
     return collaboration
+
+def get_collaboration(index=0):
+    return Collaboration.objects.all()[index]
+
+def get_repository(index=0):
+    return Repository.objects.all()[index]
 
 class TestRepositoryListView(TestCase):
 
@@ -260,7 +266,7 @@ class TestRepositoryDetailView(TestCase):
         self.assertEquals(response.status_code, 404)
 
 
-class TestCollaborationListVies(TestCase):
+class TestCollaborationListView(TestCase):
     
     @classmethod
     def setUpTestData(cls):
@@ -360,3 +366,87 @@ class TestCollaborationListVies(TestCase):
             self.assertEquals(response.status_code, 201)
         
     
+class TestCollaborationDetailView(TestCase):
+    
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_collaboration_by_id_successfully(self):
+        collaboration = get_collaboration()
+        repository = get_repository()
+
+        response = self.c.get(
+            '/versioning/collaborations/'+str(collaboration.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['repository'], repository.pk)
+
+    def test_get_HTTP404_collaboration_by_id(self):
+
+        response = self.c.get(
+            '/versioning/collaborations/9999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_change_collaboration_collaboration_type(self):
+        collaboration = get_collaboration()
+        new_collaboration_type = CollaborationType.objects.get(name=COLLABORATION_TYPE_DEVELOPER)
+        new_collaboration_type_name = new_collaboration_type.name
+        mocked_collaboration = get_mocked_collaboration(USER1_USERNAME, REPOSITORY_1_NAME, new_collaboration_type_name)
+
+        response = self.c.put(
+            '/versioning/collaborations/'+str(collaboration.pk),
+            data=json.dumps(mocked_collaboration),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEquals(res_obj['collaboration_type'], collaboration.collaboration_type)
+        self.assertEquals(res_obj['collaboration_type'], new_collaboration_type.pk)
+
+    def test_put_HTTP404_change_collaboration_collaboration_type(self):
+        mocked_collaboration = get_mocked_collaboration()
+
+        response = self.c.put(
+            '/versioning/collaborations/9999',
+            data=json.dumps(mocked_collaboration),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_delete_collaboration(self):
+        collaboration = get_collaboration()
+
+        response = self.c.delete(
+            '/versioning/collaborations/'+str(collaboration.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP404_collaboration(self):
+
+        response = self.c.delete(
+            '/versioning/collaborations/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
