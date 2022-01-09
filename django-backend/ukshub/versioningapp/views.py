@@ -1,8 +1,11 @@
 from django.shortcuts import render
+from django.http import Http404
+from django.contrib.auth.models import User
+
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.models import User
+
 from .models import CollaborationType, Branch, Commit, File, Folder, Repository, Collaboration
 from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
 from .dtos import CollaboratorDto
@@ -70,6 +73,7 @@ class FileDetail(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 def all_repositories_by_user(request, user_id):
     repositories= Repository.objects.filter(author_id=user_id)
+    if(len(repositories) == 0): raise Http404('No repositories matches the given query.')
     serializers=RepositorySerializer(repositories,many=True)
     return Response(serializers.data)
 

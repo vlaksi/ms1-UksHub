@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER1_PASSWORD, REPOSITORY_1_NAME, REPOSITORY_2_NAME
+from .test_models import initialize_db_with_test_data, USER1_USERNAME, USER2_USERNAME, USER1_PASSWORD, REPOSITORY_1_NAME, REPOSITORY_2_NAME
 from ..models import Branch, Repository, CollaborationType, Collaboration
 
 JSON = 'application/json'
@@ -75,6 +75,40 @@ class TestRepositoryListView(TestCase):
 
         self.assertEquals(response.status_code, 400)
 
+    def test_post_create_repository_with_default_branch_and_collaborators(self):
+        test_repository_name = 'Test_Repository'
+        repository = get_mocked_repository(test_repository_name)
+
+        # Create repository
+        created_repository_response = self.c.post(
+            '/versioning/repositories/',
+            data=json.dumps(repository),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        repository_res_obj = json.loads(created_repository_response.content.decode('UTF-8'))
+        self.assertEquals(created_repository_response.status_code, 201)
+        self.assertEquals(repository_res_obj['name'], test_repository_name)
+
+        # Check repository branches
+        repository_branches_response = self.c.get(
+            '/versioning/repository/'+str(repository_res_obj['pk'])+'/branches/',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        repository_branches_res_obj = json.loads(repository_branches_response.content.decode('UTF-8'))
+        self.assertEquals(repository_branches_response.status_code, 200)
+        self.assertEqual(len(repository_branches_res_obj),1) # only default branch should be created ie. main, and because of that is len == 1
+
+        # Check repository collaborators
+        repository_collaborators_response = self.c.get(
+            '/versioning/repository/'+str(repository_res_obj['pk'])+'/collaborators/',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        repository_collaborators_res_obj = json.loads(repository_collaborators_response.content.decode('UTF-8'))
+        self.assertEquals(repository_collaborators_response.status_code, 200)
+        self.assertEqual(len(repository_collaborators_res_obj),1) # only author should be collaborator, and because of that is len == 1
 
 class TestRepositoryDetailView(TestCase):
 
@@ -107,6 +141,53 @@ class TestRepositoryDetailView(TestCase):
         )
         self.assertEqual(response.status_code, 404)
 
+    def test_get_user_repositories_by_user_id(self):
+        user = User.objects.get(username=USER1_USERNAME)
+
+        response = self.c.get(
+            '/versioning/users/'+str(user.pk)+'/repositories',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+
+    def test_get_repository_branches(self):
+        repository = Repository.objects.get(name=REPOSITORY_1_NAME)
+        response = self.c.get(
+            '/versioning/repository/'+str(repository.pk)+'/branches/',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+
+    def test_get_user_repositories_by_user_id_with_no_repositories(self):
+        user = User.objects.get(username=USER2_USERNAME)
+
+        response = self.c.get(
+            '/versioning/users/'+str(user.pk)+'/repositories',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        
+        self.assertEquals(response.status_code, 404)
+
+    def test_get_HTTP404_user_repositories_by_user_id(self):
+        user = User.objects.get(username=USER1_USERNAME)
+
+        response = self.c.get(
+            '/versioning/users/9999/repositories',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        
+        self.assertEquals(response.status_code, 404)
+
     def test_put_repository_change_name(self):
         repository = Repository.objects.get(name=REPOSITORY_1_NAME)
         new_repository_name = 'New_Repository_Name'
@@ -138,7 +219,6 @@ class TestRepositoryDetailView(TestCase):
         res_obj = json.loads(response.content.decode('UTF-8'))
 
         self.assertEquals(response.status_code, 404)
-
 
     def test_delete_repository(self):
         repository = Repository.objects.get(name=REPOSITORY_1_NAME)

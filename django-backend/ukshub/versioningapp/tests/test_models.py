@@ -43,6 +43,17 @@ def initialize_db_with_test_data():
     repository1.save()
     repository2.save()
 
+    # Create branches
+    branch1 = Branch.objects.create(repository=repository1, name='main')
+    branch2 = Branch.objects.create(repository=repository1, name='develop')
+    branch3 = Branch.objects.create(repository=repository2, name='main')
+    branch4 = Branch.objects.create(repository=repository2, name='develop')
+
+    branch1.save()
+    branch2.save()
+    branch3.save()
+    branch4.save()
+
     # Create collaboration types
     collaboration_type_1 = CollaborationType.objects.create(name=COLLABORATION_TYPE_OWNER)
     collaboration_type_2 = CollaborationType.objects.create(name=COLLABORATION_TYPE_DEVELOPER)
