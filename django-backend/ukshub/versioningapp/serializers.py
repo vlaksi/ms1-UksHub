@@ -19,7 +19,7 @@ class CollaboratorSerializer(serializers.ModelSerializer):
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
-        fields = [ "pk", "author", "members", "actions" , "name", "description", "default_branch","forked_from_author"]
+        fields = [ "pk", "author", "actions" , "name", "description", "default_branch","forked_from_author"]
         extra_kwargs = {
              "members": {"required": False},
              "actions": {"required": False},
@@ -40,8 +40,9 @@ class RepositorySerializer(serializers.ModelSerializer):
         repository.save()
 
         # Create author of the repository to the collaboration table connected to his repository
-        collaboration_type_default = CollaborationType.objects.get(pk=1)
+        collaboration_type_default = CollaborationType.objects.all()[0]
         collaboration = Collaboration.objects.create(collaboration_type=collaboration_type_default, collaborator=author, repository=repository)
+        collaboration.save()
 
         return repository
 
