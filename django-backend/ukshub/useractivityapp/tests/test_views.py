@@ -70,13 +70,6 @@ def get_jwt_token(is_admin):
         response =c.post('/auth/jwt/create/', {'username': USER2_USERNAME, 'password': USER2_PASSWORD})
     return json.loads(response.content.decode('UTF-8'))['access']
 
-def get_mocked_users():
-    return {
-        User.objects.get(username=USER1_USERNAME).pk,
-        User.objects.get(username=USER2_USERNAME).pk,
-        User.objects.get(username=USER3_USERNAME).pk
-    }
-
 def get_mocked_user(username, password, first_name, last_name, email):
     user = {
         "username": username, 
