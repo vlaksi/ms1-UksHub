@@ -116,7 +116,7 @@ class TestUserAdminListView(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_post_user_successfully(self):
-        test_user_username = 'Test user'
+        test_user_username = 'test_user'
         test_user_email = 'testuser@gmail.com'
         test_user_password = 'U63rT3st'
         test_user_first_name = 'Petar'
