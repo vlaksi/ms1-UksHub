@@ -1,0 +1,16 @@
+[
+  {
+    "model": "versioningapp.CollaborationType",
+    "pk": 1,
+    "fields": {
+      "name": "owner"
+    }
+  },
+  {
+    "model": "versioningapp.CollaborationType",
+    "pk": 2,
+    "fields": {
+      "name": "developer"
+    }
+  }
+]

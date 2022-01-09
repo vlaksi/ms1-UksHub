@@ -27,7 +27,8 @@ const Login = () => {
 					saveToken(response.data.access)
 				}
 				document.body.style.cursor = 'default';
-				Router.push('/home')
+				let loggedInUserId = getParsedToken().user_id;
+				Router.push(`/${loggedInUserId}`)
 				setLoader(false)
 			}).catch((error) => {
 				document.body.style.cursor = 'default';
