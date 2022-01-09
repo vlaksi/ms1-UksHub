@@ -2,8 +2,10 @@ from django.utils import timezone
 from django.test import TestCase
 
 from django.contrib.auth.models import User
+from ..models import UserAccountManager
 from django.contrib.auth import get_user_model
 User = get_user_model()
+from django.contrib.auth.models import BaseUserManager
 
 # User init consts
 USER1_USERNAME = 'user1'
@@ -103,3 +105,27 @@ class TestUserAccountModel(TestCase):
         user = get_user()
         unique = user._meta.get_field('email').unique
         self.assertEquals(unique, True) 
+
+class TestUserAccountModelMethods(BaseUserManager):
+
+    def test_create_user(self):
+        user = UserAccountManager.create_user(self, username='mikica', first_name='Milan', last_name='Mirkovic', email='mikiliii@gmail.com', password='Mnogojakasifra123!')
+        uniqueUsername = user._meta.get_field('username').unique
+        uniqueEmail = user._meta.get_field('email').unique
+        is_staff = user._meta.get_field('is_staff').is_staff
+        is_superuser = user._meta.get_field('is_staff').is_superuser
+        self.assertEquals(uniqueUsername, True) 
+        self.assertEquals(uniqueEmail, True) 
+        self.assertEquals(is_staff, False) 
+        self.assertEquals(is_superuser, False) 
+    
+    def test_create_superuser(self):
+        user = UserAccountManager.create_user(self, username='mikica', first_name='Milan', last_name='Mirkovic', email='mikiliii@gmail.com', password='Mnogojakasifra123!')
+        uniqueUsername = user._meta.get_field('username').unique
+        uniqueEmail = user._meta.get_field('email').unique
+        is_staff = user._meta.get_field('is_staff').is_staff
+        is_superuser = user._meta.get_field('is_staff').is_superuser
+        self.assertEquals(uniqueUsername, True) 
+        self.assertEquals(uniqueEmail, True) 
+        self.assertEquals(is_staff, True) 
+        self.assertEquals(is_superuser, True) 
