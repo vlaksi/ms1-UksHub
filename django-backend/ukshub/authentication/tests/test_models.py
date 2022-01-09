@@ -24,6 +24,13 @@ USER3_EMAIL = 'user3@gmail.com'
 USER3_IS_SUPERUSER = False
 USER3_IS_STAFF = False
 
+USER4_USERNAME = 'mikica'
+USER4_PASSWORD = 'Mnogojakasifra123!'
+USER4_FIRST_NAME = 'Milan'
+USER4_LAST_NAME = 'Mirkovic'
+USER4_EMAIL = 'mikiliii@gmail.com'
+
+
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
     # Create users
@@ -109,7 +116,7 @@ class TestUserAccountModel(TestCase):
 class TestUserAccountModelMethods(BaseUserManager):
 
     def test_create_user(self):
-        user = UserAccountManager.create_user(self, username='mikica', first_name='Milan', last_name='Mirkovic', email='mikiliii@gmail.com', password='Mnogojakasifra123!')
+        user = UserAccountManager.create_user(self, username=USER4_USERNAME, first_name=USER4_FIRST_NAME, last_name=USER1_LAST_NAME, email=USER4_EMAIL, password=USER4_PASSWORD)
         uniqueUsername = user._meta.get_field('username').unique
         uniqueEmail = user._meta.get_field('email').unique
         is_staff = user._meta.get_field('is_staff').is_staff
@@ -120,7 +127,7 @@ class TestUserAccountModelMethods(BaseUserManager):
         self.assertEquals(is_superuser, False) 
     
     def test_create_superuser(self):
-        user = UserAccountManager.create_user(self, username='mikica', first_name='Milan', last_name='Mirkovic', email='mikiliii@gmail.com', password='Mnogojakasifra123!')
+        user = UserAccountManager.create_user(self, username=USER4_USERNAME, first_name=USER4_FIRST_NAME, last_name=USER1_LAST_NAME, email=USER4_EMAIL, password=USER4_PASSWORD)
         uniqueUsername = user._meta.get_field('username').unique
         uniqueEmail = user._meta.get_field('email').unique
         is_staff = user._meta.get_field('is_staff').is_staff
