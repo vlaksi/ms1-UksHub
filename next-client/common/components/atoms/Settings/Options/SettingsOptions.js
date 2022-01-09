@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Card,
   FormControl,
@@ -6,14 +6,14 @@ import {
   Button,
   Modal,
   Form,
-} from "react-bootstrap";
-import { ToastContainer, toast } from "react-toastify";
+} from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
 import {
   deleteRepository,
   updateRepositoryDescription,
   updateRepositoryName,
-} from "../../../../services/versioning/repositoryService";
-import { useRouter } from "next/router";
+} from '../../../../services/versioning/repositoryService';
+import { useRouter } from 'next/router';
 
 const SettingsOptions = ({
   repositoryId,
@@ -21,8 +21,8 @@ const SettingsOptions = ({
   repositoryDescription,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [newRepositoryName, setNewRepositoryName] = useState("");
-  const [newRepositoryDescription, setNewRepositoryDescription] = useState("");
+  const [newRepositoryName, setNewRepositoryName] = useState('');
+  const [newRepositoryDescription, setNewRepositoryDescription] = useState('');
 
   const handleRepositoryNameChanging = (newName) => {
     setNewRepositoryName(newName);
@@ -32,11 +32,11 @@ const SettingsOptions = ({
     setNewRepositoryDescription(newDescription);
   };
 
-  const notifyName = () => toast.success("Successfully changed name!");
+  const notifyName = () => toast.success('Successfully changed name!');
   const notifyDescription = () =>
-    toast.success("Successfully changed description!");
-  const notifyDeleted = () => toast.success("Successfully deleted repository!");
-  const notifyError = () => toast.error("Check if you entered all fields!");
+    toast.success('Successfully changed description!');
+  const notifyDeleted = () => toast.success('Successfully deleted repository!');
+  const notifyError = () => toast.error('Check if you entered all fields!');
 
   const updateNewRepositoryName = async () => {
     let isSuccessfulUpdated = await updateRepositoryName(
@@ -45,7 +45,6 @@ const SettingsOptions = ({
     );
     if (isSuccessfulUpdated) {
       notifyName();
-      // TODO: change this link
       window.location.href = `http://localhost:3000/${user}/${repositoryId}`;
     } else {
       notifyError();
@@ -61,6 +60,7 @@ const SettingsOptions = ({
   const deleteChosenRepository = async () => {
     let isSuccessfulDeleted = await deleteRepository(repositoryId);
     if (isSuccessfulDeleted) {
+      window.location.href = `http://localhost:3000/${user}`;
       notifyDeleted();
     }
   };
@@ -73,7 +73,7 @@ const SettingsOptions = ({
 
   return (
     <>
-      <Card border="light" style={{ width: "100%" }}>
+      <Card border="light" style={{ width: '100%' }}>
         <Card.Header>Settings</Card.Header>
         <Card.Body>
           <Card.Title>Repository details</Card.Title>
@@ -121,13 +121,13 @@ const SettingsOptions = ({
       </Card>
       <br />
 
-      <Card border="danger" style={{ width: "100%" }}>
+      <Card border="danger" style={{ width: '100%' }}>
         <Card.Header>Danger Zone</Card.Header>
         <Card.Body
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <Card.Title>Delete this repository</Card.Title>
@@ -146,9 +146,9 @@ const SettingsOptions = ({
         </Modal.Header>
         <Modal.Body
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: " baseline",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: ' baseline',
           }}
         >
           <p>Are you sure you want to delete this repository ?</p>
@@ -160,8 +160,6 @@ const SettingsOptions = ({
             onClick={async () => {
               await deleteChosenRepository();
               handleDeleteModalClose();
-              // TODO: change this link
-              window.location.href = `http://localhost:3000/${user}`;
             }}
           >
             Delete
