@@ -1,7 +1,7 @@
 const Milestones = () => {
 	return (
 		<>
-			<p> all milestones </p>
+			<p> Show here all milestones </p>
 		</>
 	);
 };

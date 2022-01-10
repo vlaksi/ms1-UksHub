@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Card,
 	ListGroup,
@@ -8,13 +8,20 @@ import {
 	Button,
 } from 'react-bootstrap';
 import { BiTransfer } from 'react-icons/bi';
-import { branches } from '../../../../mocks/repository';
+import { getDefaultBranch } from '../../../../services/versioning/branchService';
+import { updateRepositoryDefaultBranch } from '../../../../services/versioning/repositoryService';
 
-const BranchesSettings = () => {
-	// TODO: Get a name of default branch
-	const [defaultBranch, setDefaultBranch] = useState('main');
+const BranchesSettings = ({ repository, repositoryBranches }) => {
+	const [defaultBranch, setDefaultBranch] = useState('');
 	const [bufferBranch, setBufferBranch] = useState(defaultBranch);
 	const [show, setShow] = useState(false);
+
+	useEffect(async () => {
+		if (!repository) return;
+		let branch = await getDefaultBranch(repository.default_branch);
+		setDefaultBranch(branch);
+		setBufferBranch(branch);
+	}, [repository]);
 
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
@@ -37,7 +44,7 @@ const BranchesSettings = () => {
 								alignItems: 'center',
 							}}
 						>
-							<Badge bg="secondary"> {defaultBranch} </Badge>
+							<Badge bg="secondary"> {defaultBranch.name} </Badge>
 							<BiTransfer
 								style={{ marginRight: '5px', cursor: 'pointer' }}
 								onClick={handleShow}
@@ -66,23 +73,25 @@ const BranchesSettings = () => {
 							variant="secondary"
 							id="dropdown-basic"
 						>
-							{bufferBranch}
+							{bufferBranch.name}
 						</Dropdown.Toggle>
 
-						<Dropdown.Menu>
-							{branches.map((branch) => {
-								return (
-									<Dropdown.Item
-										key={branch.branchName}
-										onClick={() => {
-											setBufferBranch(branch.branchName);
-										}}
-									>
-										{branch.branchName}
-									</Dropdown.Item>
-								);
-							})}
-						</Dropdown.Menu>
+						{repositoryBranches && (
+							<Dropdown.Menu>
+								{repositoryBranches?.map((branch) => {
+									return (
+										<Dropdown.Item
+											key={branch.name}
+											onClick={() => {
+												setBufferBranch(branch);
+											}}
+										>
+											{branch.name}
+										</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+						)}
 					</Dropdown>
 				</Modal.Body>
 
@@ -92,9 +101,8 @@ const BranchesSettings = () => {
 						onClick={() => {
 							setDefaultBranch(bufferBranch);
 							handleClose();
-							alert(
-								'TODO: Add an API call to update default branch of this repository'
-							);
+							updateRepositoryDefaultBranch(repository.pk, bufferBranch.pk);
+							// TODO: Add toaster here
 						}}
 					>
 						Update
