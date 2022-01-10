@@ -9,7 +9,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [ "pk", "username", "email", "first_name", "last_name", "is_superuser", "is_staff"]
+        fields = [ "pk", "username", "email", "password", "first_name", "last_name", "is_superuser", "is_staff"]
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
