@@ -116,6 +116,18 @@ DATABASES = {
 
 }
 
+if os.environ.get('GITHUB_WORKFLOW'):
+    DATABASES = {
+        'default': {
+           'ENGINE': 'django.db.backends.postgresql',
+           'NAME': 'github_actions',
+           'USER': 'postgres',
+           'PASSWORD': 'postgres',
+           'HOST': os.getenv('POSTGRES_HOST'),
+           'PORT': os.getenv('POSTGRES_PORT'),
+        }
+    }
+    
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
