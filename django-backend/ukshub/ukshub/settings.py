@@ -116,6 +116,18 @@ DATABASES = {
 
 }
 
+if os.environ.get('GITHUB_WORKFLOW'):
+    DATABASES = {
+        'default': {
+           'ENGINE': 'django.db.backends.postgresql',
+           'NAME': 'github_actions',
+           'USER': 'postgres',
+           'PASSWORD': 'postgres',
+           'HOST': os.getenv('POSTGRES_HOST'),
+           'PORT': os.getenv('POSTGRES_PORT'),
+        }
+    }
+    
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -159,9 +171,9 @@ SIMPLE_JWT = {
 DJOSER = {
     'LOGIN_FIELD': 'username',
     'USER_CREATE_PASSWORD_RETYPE': True,
-    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
-    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
-    'SEND_CONFIRMATION_EMAIL': True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,
+    'SEND_CONFIRMATION_EMAIL': False,
     'SET_USERNAME_RETYPE': True,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
@@ -201,3 +213,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'authentication.UserAccount'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField' 

@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
-import UserRepository from "./../../../common/components/organisms/UserRepository/UserRepository";
+import { useRouter } from 'next/router';
+import UserRepository from './../../../common/components/organisms/UserRepository/UserRepository';
 
 const UserRepositoryLanding = () => {
   const router = useRouter();
@@ -7,7 +7,7 @@ const UserRepositoryLanding = () => {
 
   return (
     <>
-      <UserRepository username={user} repositoryId={repository} />
+      <UserRepository userId={user} repositoryId={repository} />
     </>
   );
 };

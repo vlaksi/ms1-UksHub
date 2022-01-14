@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('manageusers/', views.UserAdminList.as_view()),
+    path('manageusers/<int:pk>', views.UserAdminDetail.as_view()),   
     path('users/', views.UserList.as_view()),
     path('users/<int:pk>', views.UserDetail.as_view()),   
     path('users/<int:repo_id>/<str:action_name>/',views.all_users_by_repo_and_action,name="all-users-by-repo-action"),

@@ -16,6 +16,7 @@ class UserAccountManager(BaseUserManager):
         user.save(using=self._db)
 
         return user
+        
     def create_superuser(self, username, first_name, last_name, email,  password, **extra_fields):
         """
          Creates and saves a superuser with the given email and password.
@@ -46,12 +47,6 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'username'
     
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
-
-    def get_full_name(self):
-        return self.first_name
-
-    def get_short_name(self):
-        return self.first_name
     
     def __str__(self):
         return self.email

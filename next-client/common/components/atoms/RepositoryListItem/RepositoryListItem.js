@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getUserById } from '../../../services/useractivity/userService';
 import { BiGitRepoForked } from 'react-icons/bi';
 
-const RepositoryListItem = ({ username, repository }) => {
+const RepositoryListItem = ({ authorId, repository }) => {
 	const [forkedFromUser, setForkedFromUser] = useState();
 
 	useEffect(async () => {
@@ -18,7 +18,7 @@ const RepositoryListItem = ({ username, repository }) => {
 			<Container className="mt-4">
 				<Row>
 					<Col>
-						<Link href={`/${username}/${repository.pk}`}>
+						<Link href={`/${authorId}/${repository.pk}`}>
 							<a style={{ textDecoration: 'none', color: '#444' }}>
 								<h5>{repository.name}</h5>
 								{repository.forked_from_author && forkedFromUser && (

@@ -1,17 +1,18 @@
-import { Button, Modal, Form } from "react-bootstrap";
-import { BsFillTagsFill } from "react-icons/bs";
-import { GoMilestone } from "react-icons/go";
-import { MdAddCircle } from "react-icons/md";
-import { useEffect, useState } from "react";
-import PullRequestList from "../../../atoms/PullRequestList/PullRequestList";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { getRepositoryBranches } from "../../../../services/versioning/branchService";
+import { Button, Modal, Form } from 'react-bootstrap';
+import { BsFillTagsFill } from 'react-icons/bs';
+import { GoMilestone } from 'react-icons/go';
+import { MdAddCircle } from 'react-icons/md';
+import { useEffect, useState } from 'react';
+import PullRequestList from '../../../atoms/PullRequestList/PullRequestList';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { getRepositoryBranches } from '../../../../services/versioning/branchService';
 import {
   addPullRequest,
   getPullRequestsByRepository,
-} from "../../../../services/progresstrackapp/pullRequestService";
-import { ToastContainer, toast } from "react-toastify";
+} from '../../../../services/progresstrackapp/pullRequestService';
+import { ToastContainer, toast } from 'react-toastify';
+import { getParsedToken } from '../../../../services/authentication/token';
 
 const PullRequestsOverview = ({ dbRepository }) => {
   const router = useRouter();
@@ -20,27 +21,26 @@ const PullRequestsOverview = ({ dbRepository }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
-    setNewPullRequestName("");
-    //TODO: add for other fields
+    setNewPullRequestName('');
   };
   const handleShow = () => setShow(true);
 
-  const notify = () => toast.success("Successfully created new pull request!");
-  const notifyError = () => toast.error("Check if you entered all fields!");
+  const notify = () => toast.success('Successfully created new pull request!');
+  const notifyError = () => toast.error('Check if you entered all fields!');
 
   const [newPullRequest, setNewPullRequest] = useState([]);
 
-  const [newPullRequestName, setNewPullRequestName] = useState("");
+  const [newPullRequestName, setNewPullRequestName] = useState('');
   const handlePullRequestNameAdding = (newName) => {
     setNewPullRequestName(newName);
   };
 
-  const [newCompareBranch, setNewCompareBranch] = useState("");
+  const [newCompareBranch, setNewCompareBranch] = useState('');
   const handleCompareBranchAdding = (newCompareBranch) => {
     setNewCompareBranch(newCompareBranch);
   };
 
-  const [newBaseBranch, setNewBaseBranch] = useState("");
+  const [newBaseBranch, setNewBaseBranch] = useState('');
   const handleBaseBranchAdding = (newBaseBranch) => {
     setNewBaseBranch(newBaseBranch);
   };
@@ -60,9 +60,8 @@ const PullRequestsOverview = ({ dbRepository }) => {
       newBaseBranch,
       newCompareBranch,
       dbRepository.pk,
-      "1"
+      getParsedToken().user_id
     );
-    // TODO: Change author ID to the logged user id !
     if (createdPullRequest) {
       notify();
       handleClose();
@@ -79,31 +78,31 @@ const PullRequestsOverview = ({ dbRepository }) => {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
-          style={{ marginRight: "5px" }}
+          style={{ marginRight: '5px' }}
           variant="primary"
           variant="outline-primary"
         >
           <Link href={`/${user}/${repository}/labels`}>
-            <a style={{ textDecoration: "none" }}>
+            <a style={{ textDecoration: 'none' }}>
               <BsFillTagsFill size={18} /> Labels
             </a>
           </Link>
         </Button>
         <Button
-          style={{ marginRight: "5px", marginLeft: "5px" }}
+          style={{ marginRight: '5px', marginLeft: '5px' }}
           variant="primary"
           variant="outline-primary"
         >
           <Link href={`/${user}/${repository}/milestones`}>
-            <a style={{ textDecoration: "none" }}>
+            <a style={{ textDecoration: 'none' }}>
               <GoMilestone size={18} /> Milestones
             </a>
           </Link>
         </Button>
         <Button
-          style={{ marginLeft: "5px" }}
+          style={{ marginLeft: '5px' }}
           variant="primary"
           onClick={() => {
             handleShow();

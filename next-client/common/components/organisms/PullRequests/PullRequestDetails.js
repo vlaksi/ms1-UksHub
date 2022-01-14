@@ -5,35 +5,35 @@ import {
   Badge,
   InputGroup,
   FormControl,
-} from "react-bootstrap";
-import { useState, useEffect } from "react";
+} from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 import {
   deletePullRequest,
   getPullRequestById,
   updatePullRequestName,
-} from "../../../services/progresstrackapp/pullRequestService";
-import { ToastContainer, toast } from "react-toastify";
-import { useRouter } from "next/router";
+} from '../../../services/progresstrackapp/pullRequestService';
+import { ToastContainer, toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [pullRequest, setPullRequest] = useState("");
-  const [newPullRequestName, setNewPullRequestName] = useState("");
+  const [pullRequest, setPullRequest] = useState('');
+  const [newPullRequestName, setNewPullRequestName] = useState('');
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
   const router = useRouter();
-  const { user } = router.query;
+  const { user, repository } = router.query;
 
   const notifyDeleted = () =>
-    toast.success("Successfully deleted pull request!");
+    toast.success('Successfully deleted pull request!');
 
   const notifyName = () => {
-    toast.success("Successfully changed title!");
+    toast.success('Successfully changed title!');
   };
 
   const notifyError = () => {
-    toast.error("Check if you entered all fields!");
+    toast.error('Check if you entered all fields!');
   };
   const handlePullRequestNameChanging = (newName) => {
     setNewPullRequestName(newName);
@@ -41,6 +41,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
   const deleteChosenPullRequest = async () => {
     let isSuccessfulDeleted = await deletePullRequest(pullRequestId);
     if (isSuccessfulDeleted) {
+      window.location.href = `http://localhost:3000/${user}/${repository}`;
       notifyDeleted();
     }
   };
@@ -57,8 +58,6 @@ const PullRequestDetails = ({ pullRequestId }) => {
     );
     if (isSuccessfulUpdated) {
       notifyName();
-      // TODO: change this link
-      //window.location.href = `http://localhost:3000/${user}/2/pulls/${pullRequestId}`;
     } else {
       notifyError();
     }
@@ -68,10 +67,10 @@ const PullRequestDetails = ({ pullRequestId }) => {
     <>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
       <h2>
-        <div style={{ display: "flex" }}>
-          <Badge pill bg="primary" text="light" style={{ marginRight: "10px" }}>
+        <div style={{ display: 'flex' }}>
+          <Badge pill bg="primary" text="light" style={{ marginRight: '10px' }}>
             #{pullRequest.pk}
-          </Badge>{" "}
+          </Badge>{' '}
           {pullRequest.title}
         </div>
       </h2>
@@ -89,20 +88,21 @@ const PullRequestDetails = ({ pullRequestId }) => {
           variant="success"
           id="button-addon2"
           onClick={async () => {
-            updateNewPullRequestName();
+            await updateNewPullRequestName();
+            setPullRequest(await getPullRequestById(pullRequestId));
           }}
         >
           Change
         </Button>
       </InputGroup>
 
-      <Card border="danger" style={{ width: "50%" }}>
+      <Card border="danger" style={{ width: '50%' }}>
         <Card.Header>Danger Zone</Card.Header>
         <Card.Body
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <Card.Title>Delete this pull request</Card.Title>
@@ -119,9 +119,9 @@ const PullRequestDetails = ({ pullRequestId }) => {
         </Modal.Header>
         <Modal.Body
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: " baseline",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: ' baseline',
           }}
         >
           <p>Are you sure you want to delete this pull request ?</p>
@@ -133,8 +133,6 @@ const PullRequestDetails = ({ pullRequestId }) => {
             onClick={async () => {
               await deleteChosenPullRequest();
               handleDeleteModalClose();
-              // TODO: change this link
-              window.location.href = `http://localhost:3000/${user}`;
             }}
           >
             Delete
