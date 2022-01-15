@@ -1,4 +1,4 @@
-import { ListGroup, Badge, Button, Modal, Form } from "react-bootstrap";
+import { ListGroup, Button, Modal, Form } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
 
@@ -37,6 +37,7 @@ const LabelListItem = ({ label }) => {
               borderRadius: "15px",
               padding: "2px",
               color: "white",
+              display: "flex",
             }}
           >
             {label.name}

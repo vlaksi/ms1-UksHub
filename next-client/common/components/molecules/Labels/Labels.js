@@ -50,7 +50,7 @@ const Labels = () => {
     setShow(false);
     setNewLabelName("");
     setNewDescriptionName("");
-    setNewColor("");
+    setNewColor("#563d7c");
   };
   const handleShow = () => setShow(true);
   const notify = () => toast.success("Successfully created new label!");
