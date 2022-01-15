@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "../authentication/token";
 
 export const addLabel = async (newLabelName, newLabelDescription, newColor) => {
   let label = null;
@@ -10,7 +11,7 @@ export const addLabel = async (newLabelName, newLabelDescription, newColor) => {
       headers: { Authorization: "JWT " + getToken() },
       data: {
         name: newLabelName,
-        description: newLabelDescription,
+        decription: newLabelDescription,
         color: newColor,
         grant_type: "client_credentials",
         scope: "public",

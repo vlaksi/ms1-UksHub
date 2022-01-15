@@ -35,7 +35,7 @@ const Labels = () => {
   const handleAddingDescriptionName = (newDescriptionName) => {
     setNewDescriptionName(newDescriptionName);
   };
-  const [newColor, setNewColor] = useState("");
+  const [newColor, setNewColor] = useState("#563d7c");
   const handleAddingColor = (newColor) => {
     setNewColor(newColor);
   };
