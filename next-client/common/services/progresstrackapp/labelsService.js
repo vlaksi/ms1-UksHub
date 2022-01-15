@@ -70,3 +70,34 @@ export const deleteLabel = async (labelId) => {
     });
   return success;
 };
+export const updateLabel = async (
+  newLabelName,
+  newLabelDescription,
+  newLabelColor,
+  labelId
+) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/labels/${labelId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        name: newLabelName,
+        decription: newLabelDescription,
+        color: newLabelColor,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};

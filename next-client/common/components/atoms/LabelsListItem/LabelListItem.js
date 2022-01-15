@@ -1,7 +1,10 @@
 import { ListGroup, Button, Modal, Form } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
-import { deleteLabel } from "../../../services/progresstrackapp/labelsService";
+import {
+  deleteLabel,
+  updateLabel,
+} from "../../../services/progresstrackapp/labelsService";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 
@@ -16,17 +19,17 @@ const LabelListItem = ({ label }) => {
     setShow(false);
   };
 
-  const [labelName, setLabelName] = useState("");
+  const [labelName, setLabelName] = useState(label.name);
   const handleChangingLabelName = (labelName) => {
     setLabelName(labelName);
   };
 
-  const [labelDescription, setLabelDescription] = useState("");
+  const [labelDescription, setLabelDescription] = useState(label.decription);
   const handleChangingLabelDescription = (labelDescription) => {
     setLabelDescription(labelDescription);
   };
 
-  const [labelColor, setLabelColor] = useState("");
+  const [labelColor, setLabelColor] = useState(label.color);
   const handleChangingLabelColor = (labelColor) => {
     setLabelColor(labelColor);
   };
@@ -43,6 +46,19 @@ const LabelListItem = ({ label }) => {
     if (isSuccessfulDeleted) {
       window.location.href = `http://localhost:3000/${user}/${repository}/labels`;
       notifyDeleted();
+    }
+  };
+  const updateNewLabel = async () => {
+    let isSuccessfulUpdated = await updateLabel(
+      labelName,
+      labelDescription,
+      labelColor,
+      label.pk
+    );
+    if (isSuccessfulUpdated) {
+      notifyUpdated();
+    } else {
+      notifyError();
     }
   };
   return (
@@ -129,7 +145,15 @@ const LabelListItem = ({ label }) => {
               </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="success">Save Changes</Button>
+              <Button
+                variant="success"
+                onClick={async () => {
+                  await updateNewLabel();
+                  //set(await getPullRequestById(pullRequestId));
+                }}
+              >
+                Save Changes
+              </Button>
               <Button variant="danger" onClick={handleClose}>
                 Cancel
               </Button>
