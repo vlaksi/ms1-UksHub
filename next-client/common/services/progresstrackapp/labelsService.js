@@ -26,3 +26,25 @@ export const addLabel = async (newLabelName, newLabelDescription, newColor) => {
 
   return label;
 };
+
+export const getAllLabels = async () => {
+  let labels;
+  await axios
+    .request({
+      url: `/progresstrack/labels/`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      labels = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return labels;
+};

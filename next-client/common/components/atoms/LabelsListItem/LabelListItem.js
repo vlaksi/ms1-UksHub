@@ -13,12 +13,12 @@ const LabelListItem = ({ label }) => {
     setShow(false);
   };
 
-  const [labelName, setLabelName] = useState("magarac");
+  const [labelName, setLabelName] = useState("");
   const handleChangingLabelName = (labelName) => {
     setLabelName(labelName);
   };
 
-  const [labelDescription, setLabelDescription] = useState("konj");
+  const [labelDescription, setLabelDescription] = useState("");
   const handleChangingLabelDescription = (labelDescription) => {
     setLabelDescription(labelDescription);
   };
@@ -29,14 +29,22 @@ const LabelListItem = ({ label }) => {
         as="li"
         className="d-flex justify-content-between align-items-start"
       >
-        <div className="ms-2 me-auto">
-          <div className="fw-bold">
-            <Badge bg={label.color} pill>
-              {label.name}
-            </Badge>
+        <div className="ms-2">
+          <div
+            className="fw-bold"
+            style={{
+              background: label.color,
+              borderRadius: "15px",
+              padding: "2px",
+              color: "white",
+            }}
+          >
+            {label.name}
           </div>
-          {label.description}
+          {label.decription}
         </div>
+        <br></br>
+
         <div style={{ display: "flex" }}>
           <Button
             variant="outline-success"

@@ -1,31 +1,34 @@
 import LabelListItem from "../../atoms/LabelsListItem/LabelListItem";
 import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { addLabel } from "../../../services/progresstrackapp/labelsService";
+import {
+  addLabel,
+  getAllLabels,
+} from "../../../services/progresstrackapp/labelsService";
 
 const Labels = () => {
-  const labels = [
-    {
-      pk: 1,
-      name: "frontend",
-      description: "very nice",
-      color: "primary",
-    },
-    {
-      pk: 2,
-      name: "backend",
-      description: "important label",
-      color: "danger",
-    },
-    {
-      pk: 3,
-      name: "devops",
-      description: "must do",
-      color: "#563d7c",
-    },
-  ];
+  // const labels = [
+  //   {
+  //     pk: 1,
+  //     name: "frontend",
+  //     description: "very nice",
+  //     color: "primary",
+  //   },
+  //   {
+  //     pk: 2,
+  //     name: "backend",
+  //     description: "important label",
+  //     color: "danger",
+  //   },
+  //   {
+  //     pk: 3,
+  //     name: "devops",
+  //     description: "must do",
+  //     color: "#563d7c",
+  //   },
+  // ];
 
   const [newLabelName, setNewLabelName] = useState("");
   const handleAddingLabelName = (newLabelName) => {
@@ -39,6 +42,9 @@ const Labels = () => {
   const handleAddingColor = (newColor) => {
     setNewColor(newColor);
   };
+
+  const [labels, setNewLabelList] = useState([]);
+
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -50,6 +56,10 @@ const Labels = () => {
   const notify = () => toast.success("Successfully created new label!");
   const notifyError = () => toast.error("Check if you entered all fields!");
 
+  useEffect(async () => {
+    setNewLabelList(await getAllLabels());
+  }, []);
+
   const addNewLabel = async () => {
     let createdLabel = await addLabel(
       newLabelName,
@@ -59,7 +69,7 @@ const Labels = () => {
     if (createdLabel) {
       notify();
       handleClose();
-      //setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
+      setNewLabelList(await getAllLabels());
     } else {
       notifyError();
     }
