@@ -1,6 +1,8 @@
 import { ListGroup, Button, Modal, Form } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
+import { deleteLabel } from "../../../services/progresstrackapp/labelsService";
+import { ToastContainer, toast } from "react-toastify";
 
 const LabelListItem = ({ label }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -23,6 +25,15 @@ const LabelListItem = ({ label }) => {
     setLabelDescription(labelDescription);
   };
 
+  const notifyDeleted = () => toast.success("Successfully deleted label!");
+
+  const deleteChosenLabel = async () => {
+    let isSuccessfulDeleted = await deleteLabel(label.pk);
+    if (isSuccessfulDeleted) {
+      //window.location.href = `http://localhost:3000/${user}/${repository}`;
+      notifyDeleted();
+    }
+  };
   return (
     <ListGroup as="ol">
       <ListGroup.Item
@@ -125,6 +136,7 @@ const LabelListItem = ({ label }) => {
               <Button
                 variant="success"
                 onClick={async () => {
+                  await deleteChosenLabel();
                   handleDeleteModalClose();
                 }}
               >
@@ -142,6 +154,7 @@ const LabelListItem = ({ label }) => {
           </Modal>
         </div>
       </ListGroup.Item>
+      <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
     </ListGroup>
   );
 };

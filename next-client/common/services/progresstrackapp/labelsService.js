@@ -48,3 +48,25 @@ export const getAllLabels = async () => {
     });
   return labels;
 };
+export const deleteLabel = async (labelId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/labels/${labelId}`,
+      method: "delete",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return success;
+};
