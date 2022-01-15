@@ -3,6 +3,7 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { addLabel } from "../../../services/progresstrackapp/labelsService";
 
 const Labels = () => {
   const labels = [
@@ -22,9 +23,10 @@ const Labels = () => {
       pk: 3,
       name: "devops",
       description: "must do",
-      color: "success",
+      color: "#563d7c",
     },
   ];
+
   const [newLabelName, setNewLabelName] = useState("");
   const handleAddingLabelName = (newLabelName) => {
     setNewLabelName(newLabelName);
@@ -33,17 +35,35 @@ const Labels = () => {
   const handleAddingDescriptionName = (newDescriptionName) => {
     setNewDescriptionName(newDescriptionName);
   };
-
+  const [newColor, setNewColor] = useState("");
+  const handleAddingColor = (newColor) => {
+    setNewColor(newColor);
+  };
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
     setNewLabelName("");
-    //TODO: add for other fields
+    setNewDescriptionName("");
+    setNewColor("");
   };
   const handleShow = () => setShow(true);
   const notify = () => toast.success("Successfully created new label!");
   const notifyError = () => toast.error("Check if you entered all fields!");
 
+  const addNewLabel = async () => {
+    let createdLabel = await addLabel(
+      newLabelName,
+      newDescriptionName,
+      newColor
+    );
+    if (createdLabel) {
+      notify();
+      handleClose();
+      //setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
+    } else {
+      notifyError();
+    }
+  };
   return (
     <>
       <Button
@@ -83,11 +103,27 @@ const Labels = () => {
                   handleAddingDescriptionName(e.target.value);
                 }}
               ></Form.Control>
+              <Form.Label
+                style={{ marginTop: "15px" }}
+                htmlFor="exampleColorInput"
+              >
+                Colour of label
+              </Form.Label>
+
+              <Form.Control
+                type="color"
+                id="exampleColorInput"
+                defaultValue="#563d7c"
+                title="Choose your color"
+                onChange={(e) => {
+                  handleAddingColor(e.target.value);
+                }}
+              />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" onClick={notify}>
+          <Button variant="success" onClick={addNewLabel}>
             Save Changes
           </Button>
           <Button variant="danger" onClick={handleClose}>
