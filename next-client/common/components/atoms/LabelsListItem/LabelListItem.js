@@ -26,7 +26,14 @@ const LabelListItem = ({ label }) => {
     setLabelDescription(labelDescription);
   };
 
+  const [labelColor, setLabelColor] = useState("");
+  const handleChangingLabelColor = (labelColor) => {
+    setLabelColor(labelColor);
+  };
+
   const notifyDeleted = () => toast.success("Successfully deleted label!");
+  const notifyUpdated = () => toast.success("Successfully updated label!");
+  const notifyError = () => toast.error("Check if you entered all fields!");
 
   const router = useRouter();
   const { user, repository } = router.query;
@@ -86,7 +93,7 @@ const LabelListItem = ({ label }) => {
                   <Form.Label>Name of label</Form.Label>
                   <Form.Control
                     type="name"
-                    defaultValue={labelName}
+                    defaultValue={label.name}
                     onChange={(e) => {
                       handleChangingLabelName(e.target.value);
                     }}
@@ -96,13 +103,28 @@ const LabelListItem = ({ label }) => {
                   </Form.Label>
                   <Form.Control
                     type="name"
-                    defaultValue={labelDescription}
+                    defaultValue={label.decription}
                     as="textarea"
                     rows={2}
                     onChange={(e) => {
                       handleChangingLabelDescription(e.target.value);
                     }}
                   ></Form.Control>
+                  <Form.Label
+                    style={{ marginTop: "15px" }}
+                    htmlFor="exampleColorInput"
+                  >
+                    Colour of label
+                  </Form.Label>
+                  <Form.Control
+                    type="color"
+                    id="exampleColorInput"
+                    defaultValue={label.color}
+                    title="Choose your color"
+                    onChange={(e) => {
+                      handleChangingLabelColor(e.target.value);
+                    }}
+                  />
                 </Form.Group>
               </Form>
             </Modal.Body>
