@@ -3,6 +3,7 @@ import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
 import { deleteLabel } from "../../../services/progresstrackapp/labelsService";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const LabelListItem = ({ label }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -27,10 +28,13 @@ const LabelListItem = ({ label }) => {
 
   const notifyDeleted = () => toast.success("Successfully deleted label!");
 
+  const router = useRouter();
+  const { user, repository } = router.query;
+
   const deleteChosenLabel = async () => {
     let isSuccessfulDeleted = await deleteLabel(label.pk);
     if (isSuccessfulDeleted) {
-      //window.location.href = `http://localhost:3000/${user}/${repository}`;
+      window.location.href = `http://localhost:3000/${user}/${repository}`;
       notifyDeleted();
     }
   };
