@@ -34,7 +34,7 @@ const LabelListItem = ({ label }) => {
   const deleteChosenLabel = async () => {
     let isSuccessfulDeleted = await deleteLabel(label.pk);
     if (isSuccessfulDeleted) {
-      window.location.href = `http://localhost:3000/${user}/${repository}`;
+      window.location.href = `http://localhost:3000/${user}/${repository}/labels`;
       notifyDeleted();
     }
   };
