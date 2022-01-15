@@ -57,6 +57,7 @@ const LabelListItem = ({ label }) => {
     );
     if (isSuccessfulUpdated) {
       notifyUpdated();
+      handleClose();
     } else {
       notifyError();
     }
