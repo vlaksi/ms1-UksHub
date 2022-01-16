@@ -27,7 +27,7 @@ RUN python manage.py collectstatic --noinput
 
 # CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "ukshub.wsgi:application"]
 
-# CMD gunicorn ukshub.wsgi:application --bind 0.0.0.0:$PORT
+CMD gunicorn ukshub.wsgi:application --bind 0.0.0.0:$PORT
 
 # RUN ["chmod", "+x", "waitforpostgres.sh"]
 # RUN ["chmod", "+x", "start.sh"]
