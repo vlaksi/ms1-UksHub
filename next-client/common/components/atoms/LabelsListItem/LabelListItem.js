@@ -58,6 +58,7 @@ const LabelListItem = ({ label }) => {
     if (isSuccessfulUpdated) {
       notifyUpdated();
       handleClose();
+      window.location.href = `http://localhost:3000/${user}/${repository}/labels`;
     } else {
       notifyError();
     }
