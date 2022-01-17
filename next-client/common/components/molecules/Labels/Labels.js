@@ -10,27 +10,6 @@ import {
 } from "../../../services/progresstrackapp/labelsService";
 
 const Labels = () => {
-  // const labels = [
-  //   {
-  //     pk: 1,
-  //     name: "frontend",
-  //     description: "very nice",
-  //     color: "primary",
-  //   },
-  //   {
-  //     pk: 2,
-  //     name: "backend",
-  //     description: "important label",
-  //     color: "danger",
-  //   },
-  //   {
-  //     pk: 3,
-  //     name: "devops",
-  //     description: "must do",
-  //     color: "#563d7c",
-  //   },
-  // ];
-
   const [newLabelName, setNewLabelName] = useState("");
   const handleAddingLabelName = (newLabelName) => {
     setNewLabelName(newLabelName);
@@ -81,7 +60,6 @@ const Labels = () => {
       <Button
         style={{ marginBottom: "10px" }}
         variant="primary"
-        size="sm"
         onClick={() => {
           handleShow();
         }}

@@ -1,4 +1,4 @@
-import { ListGroup, Button, Modal, Form } from "react-bootstrap";
+import { ListGroup, Button, Modal, Form, Badge } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
 import {
@@ -69,19 +69,25 @@ const LabelListItem = ({ label }) => {
         as="li"
         className="d-flex justify-content-between align-items-start"
       >
-        <div className="ms-2">
-          <div
-            className="fw-bold"
-            style={{
-              background: label.color,
-              borderRadius: "15px",
-              padding: "2px",
-              color: "white",
-              display: "flex",
-            }}
-          >
-            {label.name}
-          </div>
+        <div
+          className="fw-bold"
+          style={{
+            background: label.color,
+            borderRadius: "15px",
+            padding: "4px",
+            color: "white",
+            display: "flex",
+          }}
+        >
+          {label.name}
+        </div>
+        <div
+          style={{
+            padding: "2px",
+            display: "flex",
+            marginLeft: "15px",
+          }}
+        >
           {label.decription}
         </div>
         <br></br>
@@ -90,7 +96,6 @@ const LabelListItem = ({ label }) => {
           <Button
             variant="outline-success"
             style={{ marginRight: "15px" }}
-            size="sm"
             onClick={() => {
               handleShow();
             }}
@@ -151,7 +156,6 @@ const LabelListItem = ({ label }) => {
                 variant="success"
                 onClick={async () => {
                   await updateNewLabel();
-                  //set(await getPullRequestById(pullRequestId));
                 }}
               >
                 Save Changes
@@ -163,7 +167,6 @@ const LabelListItem = ({ label }) => {
           </Modal>
           <Button
             variant="outline-danger"
-            size="sm"
             style={{ marginRight: "15px" }}
             onClick={handleShowDeleteModal}
           >
