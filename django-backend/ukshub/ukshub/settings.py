@@ -104,36 +104,32 @@ DATABASES = {
     'default': {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
         'NAME': os.getenv('POSTGRES_DBNAME'),
-
         'USER': os.getenv('POSTGRES_USER'),
-
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-
         'HOST':  os.getenv('POSTGRES_DBHOST'),
-
         'PORT': os.getenv('POSTGRES_PORT'),
 
     }
 
 }
 
-if os.environ.get('GITHUB_WORKFLOW'):
-    DATABASES = {
-        'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': 'github_actions',
-           'USER': 'postgres',
-           'PASSWORD': 'postgres',
-           'HOST': os.getenv('POSTGRES_HOST'),
-           'PORT': os.getenv('POSTGRES_PORT'),
-        }
-    }
+# if os.environ.get('GITHUB_WORKFLOW'):
+#     DATABASES = {
+#         'default': {
+#            'ENGINE': 'django.db.backends.postgresql',
+#            'NAME': 'github_actions',
+#            'USER': 'postgres',
+#            'PASSWORD': 'postgres',
+#            'HOST': os.getenv('POSTGRES_HOST'),
+#            'PORT': os.getenv('POSTGRES_PORT'),
+#         }
+#     }
     
-import dj_database_url
+# import dj_database_url
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+# if os.environ.get('DATABASE_URL'):
+#     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
