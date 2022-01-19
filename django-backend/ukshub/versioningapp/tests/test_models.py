@@ -45,7 +45,7 @@ def initialize_db_with_test_data():
 
     # Create branches
     branch1 = Branch.objects.create(repository=repository1, name='main')
-    branch2 = Branch.objects.create(repository=repository1, name='develop')
+    branch2 = Branch.objects.create(repository=repository1, name='repo1-develop')
     branch3 = Branch.objects.create(repository=repository2, name='main')
     branch4 = Branch.objects.create(repository=repository2, name='develop')
 
@@ -79,6 +79,8 @@ def get_collaboration_type(index=0):
 def get_collaboration(index=0):
     return Collaboration.objects.all()[index]
 
+def get_branch(index=0):
+    return Branch.objects.all()[index]
 
 class TestRepositoryModel(TestCase):
 
@@ -163,3 +165,19 @@ class TestCollaborationModel(TestCase):
     def test_collaboration_collaboration_type_owner(self):
         collaboration = get_collaboration()
         self.assertEqual(collaboration.collaboration_type.name, COLLABORATION_TYPE_OWNER)
+
+class TestBranchModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def test_branch_name(self):
+        branch = get_branch()
+        verbose_name = branch._meta.get_field('name').verbose_name
+        self.assertEquals(verbose_name, 'name')
+
+    def test_branch_name_max_length(self):
+        branch = get_branch()
+        max_length = branch._meta.get_field('name').max_length
+        self.assertEquals(max_length, 200)
