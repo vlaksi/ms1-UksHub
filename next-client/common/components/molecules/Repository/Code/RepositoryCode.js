@@ -182,7 +182,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
               <div>
                 <Button variant="outline-primary" onClick={showAddBranch}>
                   {' '}
-                  <MdAddCircle size={24} /> Add new branch
+                  <MdAddCircle size={24} /> Manage branches
                 </Button>
               </div>
             )}
