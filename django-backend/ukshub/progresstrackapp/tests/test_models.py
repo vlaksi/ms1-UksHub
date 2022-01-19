@@ -19,6 +19,7 @@ PULL_REQUEST_1_TITLE = 'feature[pull-request]: crud'
 PULL_REQUEST_2_TITLE = 'test[pull-request]: progresstrackapp'
 PULL_REQUEST_3_TITLE = 'feature[grammar]: init grammar'
 
+
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
     # Create users
