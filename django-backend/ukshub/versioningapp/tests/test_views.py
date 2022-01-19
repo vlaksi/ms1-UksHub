@@ -507,7 +507,7 @@ class TestBranchListView(TestCase):
 
         self.assertEquals(response.status_code, 400)
 
-class TestRepositoryDetailView(TestCase):
+class TestBranchDetailView(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -517,7 +517,28 @@ class TestRepositoryDetailView(TestCase):
         self.c = Client()
         self.token = f'JWT {get_jwt_token()}'
 
-    def test_delete_repository(self):
+    def test_get_branch_by_id_successfully(self):
+        branch = Branch.objects.get(name='repo1-develop')
+        response = self.c.get(
+            '/versioning/branchs/'+str(branch.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['name'], 'repo1-develop')
+
+    def test_get_HTTP404_branch_by_id(self):
+        response = self.c.get(
+            '/versioning/branchs/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+
+
+    def test_delete_branch(self):
         branch = Branch.objects.get(name='repo1-develop')
 
         response = self.c.delete(
@@ -528,7 +549,7 @@ class TestRepositoryDetailView(TestCase):
 
         self.assertEquals(response.status_code, 204)
 
-    def test_delete_HTTP404_repository(self):
+    def test_delete_HTTP404_branch(self):
         response = self.c.delete(
             '/versioning/branchs/999',
             HTTP_AUTHORIZATION=self.token,
