@@ -46,6 +46,14 @@ def get_mocked_pr(test_pr_name='Some_PR_Test'):
     }
     return pull_request
 
+def get_mocked_label(test_label_name='Some_Label_Test', test_label_color='Some_Label_Color',test_label_decription="Some_Label_Description"):
+    
+    label = {
+        "name": test_label_name,
+        "color":test_label_color,
+        "decription":test_label_decription
+    }
+    return label
 
 class TestPullRequestListView(TestCase):
 
@@ -182,6 +190,61 @@ class TestLabelListView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(res_obj),2)
 
-    def test_get_all_repositories_wrong_url(self):
+    def test_get_all_labels_wrong_url(self):
         response = self.c.get('/progresstrack/label', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
+
+    def test_post_create_label_successfully(self):
+        test_label_name = 'Test_Label'
+        label = get_mocked_label(test_label_name)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['name'], test_label_name)
+    
+    def test_post_create_label_with_missing_name(self):
+        test_label_name = None
+        label = get_mocked_label(test_label_name)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+    def test_post_create_label_with_missing_color(self):
+        test_label_color = None
+        label = get_mocked_label(test_label_color)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+    
+    def test_post_create_label_with_missing_description(self):
+        test_label_decription = None
+        label = get_mocked_label(test_label_decription)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
