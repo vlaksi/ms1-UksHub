@@ -4,7 +4,7 @@ import { BsFillFolderFill } from 'react-icons/bs';
 import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
 import styles from './RepositoryCode.module.scss';
 
-import { getBranchFiles, getBranchFolders } from '../../../../services/versioning/folderService';
+import { getBranchCommit } from '../../../../services/versioning/repositoryService';
 
 const RepositoryCode = ({ repository, repositoryBranches }) => {
   const [activeBranch, setActiveBranch] = useState();
@@ -15,9 +15,9 @@ const RepositoryCode = ({ repository, repositoryBranches }) => {
   const setCurrentBrach = async (branch) => {
     setActiveBranch(branch);
     console.log(branch.pk);
-    var x = await getBranchFolders(branch.pk);
+    var x = await getBranchCommit(branch.pk);
     console.log(x);
-    setActiveFolders(x);
+    // setActiveFolders(x);
     // setActiveFolders(await getBranchFolders(branch.pk));
     // setActiveFiles(await getBranchFiles(branch.pk));
   };
