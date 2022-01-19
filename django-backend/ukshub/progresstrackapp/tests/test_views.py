@@ -46,6 +46,15 @@ def get_mocked_pr(test_pr_name='Some_PR_Test'):
     }
     return pull_request
 
+def get_mocked_label(test_label_name='Some_Label_Test', test_label_color='Some_Label_Color',test_label_decription="Some_Label_Description"):
+    
+    label = {
+        "name": test_label_name,
+        "color":test_label_color,
+        "decription":test_label_decription
+    }
+    return label
+
 class TestPullRequestListView(TestCase):
 
     @classmethod
@@ -60,10 +69,6 @@ class TestPullRequestListView(TestCase):
         repo_id = get_repo_id(repository_id)
         response = self.client.get(reverse('all-repository-pull-requests', kwargs={'repo_id': repo_id}))
         return response, repo_id
-
-    def test_get_all_repository_pull_requests(self):
-        response, _ = self.get_repository_pull_requests()
-        self.assertEqual(response.status_code, 200)
 
     def test_get_all_repository_pull_requests(self):
         response, _ = self.get_repository_pull_requests()
@@ -169,3 +174,168 @@ class TestPullRequestListView(TestCase):
         )
         
         self.assertEquals(response.status_code, 404)
+
+class TestLabelListView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_all_labels(self):
+        response = self.c.get('/progresstrack/labels/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+
+    def test_get_all_labels_wrong_url(self):
+        response = self.c.get('/progresstrack/label', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_create_label_successfully(self):
+        test_label_name = 'Test_Label'
+        label = get_mocked_label(test_label_name)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['name'], test_label_name)
+    
+    def test_post_create_label_with_missing_name(self):
+        test_label_name = None
+        label = get_mocked_label(test_label_name)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+    def test_post_create_label_with_missing_color(self):
+        test_label_color = None
+        label = get_mocked_label(test_label_color)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+    
+    def test_post_create_label_with_missing_description(self):
+        test_label_decription = None
+        label = get_mocked_label(test_label_decription)
+
+        response = self.c.post(
+            '/progresstrack/labels/',
+            data=json.dumps(label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+
+class TestLabelDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_HTTP404_label_by_id(self):
+        response = self.c.get(
+            '/progresstrack/labels/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_label_by_id_successfully(self):
+        label = Label.objects.get(name='label1')
+        response = self.c.get(
+            '/progresstrack/labels/'+str(label.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['name'], 'label1')
+       
+
+    def test_delete_label(self):
+        label = Label.objects.get(name='label1')
+
+        response = self.c.delete(
+            '/progresstrack/labels/'+str(label.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP404_label(self):
+        label = Label.objects.get(name='label1')
+
+        response = self.c.delete(
+            '/progresstrack/labels/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+    
+    def test_put_HTTP404_label_change_name(self):
+        label = Label.objects.get(name='label1')
+        new_label_name = 'New_Label_Name'
+        new_label = get_mocked_label(new_label_name)
+
+        response = self.c.put(
+            '/progresstrack/labels/99999',
+            data=json.dumps(new_label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_put_label_change_label(self):
+        label = Label.objects.get(name='label1')
+        new_label_name = 'New_Label_Name'
+        new_label_color = 'New_Label_Color'
+        new_label_decription = 'New_Label_Description'
+        new_label = get_mocked_label(new_label_name,new_label_color,new_label_decription)
+
+        response = self.c.put(
+             '/progresstrack/labels/'+str(label.pk),
+            data=json.dumps(new_label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['name'], label.name)
+        self.assertEqual(res_obj['name'], new_label_name)
+        self.assertNotEqual(res_obj['color'], label.color)
+        self.assertEqual(res_obj['color'], new_label_color)
+        self.assertNotEqual(res_obj['decription'], label.decription)
+        self.assertEqual(res_obj['decription'], new_label_decription)
+   
