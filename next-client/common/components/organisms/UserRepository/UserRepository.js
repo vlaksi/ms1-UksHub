@@ -67,7 +67,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 
             <Tabs defaultActiveKey="code" id="uncontrolled-tab-example" className="mb-3">
               <Tab eventKey="code" title="Code">
-                <RepositoryCode repository={repository} repositoryBranches={repositoryBranches} />
+                <RepositoryCode repository={repository} repositoryBranches={repositoryBranches} isLoggedInUserCollaborator={isLoggedInUserCollaborator()} />
               </Tab>
               <Tab eventKey="issues" title="Issues">
                 <IssuesOverview />
