@@ -301,4 +301,41 @@ class TestLabelDetailView(TestCase):
 
         self.assertEquals(response.status_code, 404)
     
-    
+    def test_put_HTTP404_label_change_name(self):
+        label = Label.objects.get(name='label1')
+        new_label_name = 'New_Label_Name'
+        new_label = get_mocked_label(new_label_name)
+
+        response = self.c.put(
+            '/progresstrack/labels/99999',
+            data=json.dumps(new_label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_put_label_change_label(self):
+        label = Label.objects.get(name='label1')
+        new_label_name = 'New_Label_Name'
+        new_label_color = 'New_Label_Color'
+        new_label_decription = 'New_Label_Description'
+        new_label = get_mocked_label(new_label_name,new_label_color,new_label_decription)
+
+        response = self.c.put(
+             '/progresstrack/labels/'+str(label.pk),
+            data=json.dumps(new_label),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['name'], label.name)
+        self.assertEqual(res_obj['name'], new_label_name)
+        self.assertNotEqual(res_obj['color'], label.color)
+        self.assertEqual(res_obj['color'], new_label_color)
+        self.assertNotEqual(res_obj['decription'], label.decription)
+        self.assertEqual(res_obj['decription'], new_label_decription)
+   
