@@ -7,12 +7,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import styles from './RepositoryCode.module.scss';
 
 import { getBranchCommit } from '../../../../services/versioning/repositoryService';
-import { createBranch, getRepositoryBranches } from '../../../../services/versioning/branchService';
+import { createBranch, deleteBranch, getRepositoryBranches } from '../../../../services/versioning/branchService';
 
 const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollaborator }) => {
   const [show, setShow] = useState(false);
   const [branches, setBranches] = useState(repositoryBranches);
   const [newBranchName, setNewBranchName] = useState('');
+  const [deleteBranchId, setDeleteBranch] = useState('');
   const [activeBranch, setActiveBranch] = useState();
   const [activeFolders, setActiveFolders] = useState([]);
   const [activeFiles, setActiveFiles] = useState([]);
@@ -29,6 +30,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
   };
 
   const notify = () => toast.success('Successfully created new branch!');
+  const notifyDeletedBranch = () => toast.success('Successfully deleted branch!');
   const notifyError = () => toast.error('Check if you entered all fields!');
 
   const showAddBranch = () => {
@@ -44,6 +46,10 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     setNewBranchName(newBranchName);
   };
 
+  const handleDeleteBranchChange = (deleteBranchId) => {
+    setDeleteBranch(deleteBranchId);
+  };
+
   const addBranch = async () => {
     let createdBranch = await createBranch(repository.pk, newBranchName);
 
@@ -57,36 +63,77 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     }
   };
 
+  const removeBranch = async () => {
+    await deleteBranch(deleteBranchId);
+    notifyDeletedBranch();
+    setBranches(await getRepositoryBranches(repository.pk));
+  };
+
   return (
     <>
       <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
-          <Modal.Title>Add branch</Modal.Title>
+          <Modal.Title>Manage branches</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Branch name</Form.Label>
-              <Form.Control
-                type="name"
-                placeholder="Enter branch name"
-                value={newBranchName}
-                onChange={(e) => {
-                  handleBranchNameChange(e.target.value);
+          <div>
+            <h5>Add new branch</h5>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="name"
+                  placeholder="Enter branch name"
+                  value={newBranchName}
+                  onChange={(e) => {
+                    handleBranchNameChange(e.target.value);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+            </Form>
+            <div align="right">
+              <Button
+                variant="success"
+                onClick={() => {
+                  addBranch();
                 }}
-              ></Form.Control>
-            </Form.Group>
-          </Form>
+              >
+                Add Branch
+              </Button>
+            </div>
+          </div>
+          <div>
+            <h5>Delete branch</h5>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Select
+                  aria-label="Default select example"
+                  onChange={(e) => {
+                    handleDeleteBranchChange(e.target.value);
+                  }}
+                >
+                  {branches?.map((branch) => {
+                    return (
+                      <option key={branch.pk} value={branch.pk}>
+                        {branch.name}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </Form.Group>
+            </Form>
+            <div align="right">
+              <Button
+                variant="warning"
+                onClick={() => {
+                  removeBranch();
+                }}
+              >
+                Delete Branch
+              </Button>
+            </div>
+          </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="success"
-            onClick={() => {
-              addBranch();
-            }}
-          >
-            Save Changes
-          </Button>
           <Button variant="danger" onClick={handleClose}>
             Cancel
           </Button>

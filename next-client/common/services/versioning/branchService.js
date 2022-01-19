@@ -8,7 +8,7 @@ export const getDefaultBranch = async (branchId) => {
       url: `/versioning/branchs/${branchId}`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
-      headers: { "Authorization": 'JWT ' + getToken() },
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         grant_type: 'client_credentials',
         scope: 'public',
@@ -30,7 +30,7 @@ export const getRepositoryBranches = async (repositoryId) => {
       url: `/versioning/repository/${repositoryId}/branches/`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
-      headers: { "Authorization": 'JWT ' + getToken() },
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         grant_type: 'client_credentials',
         scope: 'public',
@@ -52,10 +52,32 @@ export const createBranch = async (repositoryId, branchName = 'main') => {
       url: `/versioning/branchs/`,
       method: 'post',
       baseURL: 'http://127.0.0.1:8000/',
-      headers: { "Authorization": 'JWT ' + getToken() },
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         name: branchName,
         repository: repositoryId,
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      branch = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return branch;
+};
+
+export const deleteBranch = async (branchId) => {
+  let branch = null;
+  await axios
+    .request({
+      url: `/versioning/branchs/${branchId}`,
+      method: 'delete',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
         grant_type: 'client_credentials',
         scope: 'public',
       },
