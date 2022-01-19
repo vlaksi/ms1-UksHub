@@ -3,12 +3,15 @@ import { Button, Modal, Form, Card, Dropdown, ListGroup } from 'react-bootstrap'
 import { BsFillFolderFill } from 'react-icons/bs';
 import { MdAddCircle } from 'react-icons/md';
 import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
+import { ToastContainer, toast } from 'react-toastify';
 import styles from './RepositoryCode.module.scss';
 
 import { getBranchCommit } from '../../../../services/versioning/repositoryService';
+import { createBranch, getRepositoryBranches } from '../../../../services/versioning/branchService';
 
 const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollaborator }) => {
   const [show, setShow] = useState(false);
+  const [branches, setBranches] = useState(repositoryBranches);
   const [newBranchName, setNewBranchName] = useState('');
   const [activeBranch, setActiveBranch] = useState();
   const [activeFolders, setActiveFolders] = useState([]);
@@ -25,6 +28,9 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     // setActiveFiles(await getBranchFiles(branch.pk));
   };
 
+  const notify = () => toast.success('Successfully created new branch!');
+  const notifyError = () => toast.error('Check if you entered all fields!');
+
   const showAddBranch = () => {
     setShow(true);
   };
@@ -36,6 +42,19 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
 
   const handleBranchNameChange = (newBranchName) => {
     setNewBranchName(newBranchName);
+  };
+
+  const addBranch = async () => {
+    let createdBranch = await createBranch(repository.pk, newBranchName);
+
+    if (!createdBranch) {
+      notifyError();
+      return;
+    } else {
+      notify();
+      handleClose();
+      setBranches(await getRepositoryBranches(repository.pk));
+    }
   };
 
   return (
@@ -88,7 +107,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  {repositoryBranches.map((branch) => {
+                  {branches.map((branch) => {
                     return (
                       <Dropdown.Item
                         key={branch.name}
