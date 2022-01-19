@@ -3,10 +3,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { MdAddCircle } from 'react-icons/md';
 import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import {
-  addRepository,
-  getAllRepositoriesByAuthor,
-} from '../../../../services/versioning/repositoryService';
+import { addRepository, getAllRepositoriesByAuthor } from '../../../../services/versioning/repositoryService';
 import { getParsedToken } from '../../../../services/authentication/token';
 
 const UserRepositories = ({ author_id }) => {
@@ -34,11 +31,7 @@ const UserRepositories = ({ author_id }) => {
   const [newRepositoryList, setNewRepositoryList] = useState([]);
 
   const addNewRepository = async () => {
-    let createdRepository = await addRepository(
-      newRepositoryName,
-      newRepositoryDescription,
-      author_id
-    );
+    let createdRepository = await addRepository(newRepositoryName, newRepositoryDescription, author_id);
     if (createdRepository) {
       notify();
       handleClose();
@@ -114,13 +107,7 @@ const UserRepositories = ({ author_id }) => {
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
 
       {newRepositoryList?.map((repository) => {
-        return (
-          <RepositoryListItem
-            key={repository.pk}
-            authorId={author_id}
-            repository={repository}
-          />
-        );
+        return <RepositoryListItem key={repository.pk} authorId={author_id} repository={repository} />;
       })}
     </>
   );

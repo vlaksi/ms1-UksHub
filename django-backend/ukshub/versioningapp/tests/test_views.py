@@ -27,6 +27,16 @@ def get_mocked_repository(test_repository_name='Some_Repository_Test'):
 
     return repository
 
+def get_mocked_branch(test_branch_name='Some_Branch_Test'):
+    repository_id = Repository.objects.get(name=REPOSITORY_1_NAME).pk
+
+    branch = {
+        "name": test_branch_name,
+        "repository": repository_id
+    }
+
+    return branch
+
 def get_mocked_collaboration(
         test_user_username=USER2_USERNAME,
         test_repository_name=REPOSITORY_1_NAME,
@@ -265,7 +275,6 @@ class TestRepositoryDetailView(TestCase):
 
         self.assertEquals(response.status_code, 404)
 
-
 class TestCollaborationListView(TestCase):
     
     @classmethod
@@ -364,7 +373,6 @@ class TestCollaborationListView(TestCase):
             )
 
             self.assertEquals(response.status_code, 201)
-        
     
 class TestCollaborationDetailView(TestCase):
     
@@ -445,6 +453,105 @@ class TestCollaborationDetailView(TestCase):
 
         response = self.c.delete(
             '/versioning/collaborations/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+
+class TestBranchListView(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_all_branches(self):
+        response = self.c.get('/versioning/branchs/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj), 4)
+
+    def test_get_all_branches_wrong_url(self):
+        response = self.c.get('/versioning/branches', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_create_branch_successfully(self):
+        test_branch_name = 'Test_Branch'
+        branch = get_mocked_branch(test_branch_name)
+
+        response = self.c.post(
+            '/versioning/branchs/',
+            data=json.dumps(branch),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['name'], test_branch_name)
+    
+    def test_post_create_branch_with_missing_field(self):
+        test_branch_name = None
+        branch = get_mocked_branch(test_branch_name)
+
+        response = self.c.post(
+            '/versioning/branchs/',
+            data=json.dumps(branch),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+class TestBranchDetailView(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_branch_by_id_successfully(self):
+        branch = Branch.objects.get(name='repo1-develop')
+        response = self.c.get(
+            '/versioning/branchs/'+str(branch.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['name'], 'repo1-develop')
+
+    def test_get_HTTP404_branch_by_id(self):
+        response = self.c.get(
+            '/versioning/branchs/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+
+
+    def test_delete_branch(self):
+        branch = Branch.objects.get(name='repo1-develop')
+
+        response = self.c.delete(
+            '/versioning/branchs/'+str(branch.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP404_branch(self):
+        response = self.c.delete(
+            '/versioning/branchs/999',
             HTTP_AUTHORIZATION=self.token,
             content_type=JSON
         )

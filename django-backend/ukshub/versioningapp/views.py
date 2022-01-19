@@ -6,8 +6,8 @@ from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import CollaborationType, Branch, Commit, File, Folder, Repository, Collaboration
-from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, FileSerializer, FolderSerializer, RepositorySerializer, CollaborationSerializer
+from .models import CollaborationType, Branch, Commit, Repository, Collaboration
+from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, RepositorySerializer, CollaborationSerializer
 from .dtos import CollaboratorDto
 
 class RepositoryList(generics.ListCreateAPIView):
@@ -50,26 +50,6 @@ class CommitDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CommitSerializer
 
-class FolderList(generics.ListCreateAPIView):
-    queryset = Folder.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = FolderSerializer
-
-class FolderDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Folder.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = FolderSerializer
-
-class FileList(generics.ListCreateAPIView):
-    queryset = File.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = FileSerializer
-
-class FileDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = File.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = FileSerializer
-
 @api_view(['GET'])
 def all_repositories_by_user(request, user_id):
     repositories= Repository.objects.filter(author_id=user_id)
@@ -90,6 +70,13 @@ def repository_branches(request, pk):
     serializers = BranchSerializer(repositories, many=True)
     return Response(serializers.data)
 
+@api_view(['GET'])
+def branch_last_commit(request, pk):
+    branch = Branch.objects.get(id = pk)
+    commit = branch.commits.last()
+    serializers = CommitSerializer(commit, many=True)
+    return Response(serializers.data)
+    
 @api_view(['GET'])
 def repository_collaborators(request, repo_id):
     collaborators = []
