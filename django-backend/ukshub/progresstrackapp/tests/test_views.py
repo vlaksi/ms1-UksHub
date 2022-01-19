@@ -248,3 +248,34 @@ class TestLabelListView(TestCase):
 
         self.assertEquals(response.status_code, 400)
 
+
+class TestLabelDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_HTTP404_label_by_id(self):
+        response = self.c.get(
+            '/progresstrack/labels/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_label_by_id_successfully(self):
+        label = Label.objects.get(name='label1')
+        response = self.c.get(
+            '/progresstrack/labels/'+str(label.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['name'], 'label1')
+       
+    
