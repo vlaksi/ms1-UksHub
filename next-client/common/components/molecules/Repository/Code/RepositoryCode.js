@@ -11,8 +11,10 @@ import { createBranch, deleteBranch, getRepositoryBranches } from '../../../../s
 
 const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollaborator }) => {
   const [show, setShow] = useState(false);
+  const [showAddCommitModal, setShowAddCommitModal] = useState(false);
   const [branches, setBranches] = useState(repositoryBranches);
   const [newBranchName, setNewBranchName] = useState('');
+  const [newCommitName, setNewCommitName] = useState('');
   const [deleteBranchId, setDeleteBranch] = useState('');
   const [activeBranch, setActiveBranch] = useState();
   const [activeFolders, setActiveFolders] = useState([]);
@@ -42,12 +44,25 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     setNewBranchName('');
   };
 
+  const showAddCommit = () => {
+    setShowAddCommitModal(true);
+  };
+
+  const handleCloseAddCommitModal = () => {
+    setShowAddCommitModal(false);
+    setNewCommitName('');
+  };
+
   const handleBranchNameChange = (newBranchName) => {
     setNewBranchName(newBranchName);
   };
 
   const handleDeleteBranchChange = (deleteBranchId) => {
     setDeleteBranch(deleteBranchId);
+  };
+
+  const handleCommitNameChange = (newCommitName) => {
+    setNewCommitName(newCommitName);
   };
 
   const addBranch = async () => {
@@ -139,6 +154,41 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
           </Button>
         </Modal.Footer>
       </Modal>
+      <Modal show={showAddCommitModal} onHide={handleCloseAddCommitModal} backdrop="static">
+        <Modal.Header closeButton>
+          <Modal.Title>Add commit</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Control
+                type="name"
+                placeholder="Enter commit message"
+                value={newCommitName}
+                onChange={(e) => {
+                  handleCommitNameChange(e.target.value);
+                }}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <input directory="" webkitdirectory="" type="file" />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="success"
+            onClick={() => {
+              addBranch();
+            }}
+          >
+            Add Commit
+          </Button>
+          <Button variant="danger" onClick={handleCloseAddCommitModal}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Card>
         <Card.Header>
           <div className={styles.repositoryHeader}>
@@ -181,8 +231,12 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
             {isLoggedInUserCollaborator && (
               <div>
                 <Button variant="outline-primary" onClick={showAddBranch}>
+                  Manage branches
+                </Button>
+                <span> </span>
+                <Button variant="outline-primary" onClick={showAddCommit}>
                   {' '}
-                  <MdAddCircle size={24} /> Manage branches
+                  <MdAddCircle size={24} /> Add commit
                 </Button>
               </div>
             )}
