@@ -278,4 +278,27 @@ class TestLabelDetailView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(res_obj['name'], 'label1')
        
+
+    def test_delete_label(self):
+        label = Label.objects.get(name='label1')
+
+        response = self.c.delete(
+            '/progresstrack/labels/'+str(label.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP404_label(self):
+        label = Label.objects.get(name='label1')
+
+        response = self.c.delete(
+            '/progresstrack/labels/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+    
     
