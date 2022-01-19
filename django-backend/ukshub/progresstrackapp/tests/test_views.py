@@ -46,6 +46,7 @@ def get_mocked_pr(test_pr_name='Some_PR_Test'):
     }
     return pull_request
 
+
 class TestPullRequestListView(TestCase):
 
     @classmethod
@@ -60,10 +61,6 @@ class TestPullRequestListView(TestCase):
         repo_id = get_repo_id(repository_id)
         response = self.client.get(reverse('all-repository-pull-requests', kwargs={'repo_id': repo_id}))
         return response, repo_id
-
-    def test_get_all_repository_pull_requests(self):
-        response, _ = self.get_repository_pull_requests()
-        self.assertEqual(response.status_code, 200)
 
     def test_get_all_repository_pull_requests(self):
         response, _ = self.get_repository_pull_requests()
@@ -169,3 +166,22 @@ class TestPullRequestListView(TestCase):
         )
         
         self.assertEquals(response.status_code, 404)
+
+class TestLabelListView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_all_labels(self):
+        response = self.c.get('/progresstrack/labels/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+
+    def test_get_all_repositories_wrong_url(self):
+        response = self.c.get('/progresstrack/label', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
