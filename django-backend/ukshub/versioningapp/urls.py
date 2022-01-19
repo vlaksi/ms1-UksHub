@@ -18,5 +18,7 @@ urlpatterns = [
     path('users/<int:user_id>/repositories',views.all_repositories_by_user,name="all-repositories"),
     path('repository/<int:pk>/branches/', views.repository_branches, name="repository-branches"), 
     path('repository/<int:repo_id>/collaborators/', views.repository_collaborators, name="repository-collaborators"),
+    path('branch/<int:pk>/folders/', views.branch_folders, name="branch-folders"), 
+    path('branch/<int:pk>/files/', views.branch_files, name="branch-files"), 
 
 ]

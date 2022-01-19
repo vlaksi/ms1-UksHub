@@ -19,7 +19,7 @@ class CollaboratorSerializer(serializers.ModelSerializer):
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
-        fields = [ "pk", "author", "actions" , "name", "description", "default_branch","forked_from_author"]
+        fields = [ "pk", "author", "actions" , "name", "description", "default_branch", "forked_from_author"]
         extra_kwargs = {
              "members": {"required": False},
              "actions": {"required": False},

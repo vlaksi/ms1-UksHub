@@ -91,6 +91,21 @@ def repository_branches(request, pk):
     return Response(serializers.data)
 
 @api_view(['GET'])
+def branch_folders(request, pk):
+    branch = Branch.objects.get(id = pk)
+    folders = branch.folders.all()
+    serializers = FolderSerializer(folders, many=True)
+    return Response(serializers.data)
+    
+
+@api_view(['GET'])
+def branch_files(request, pk):
+    branch = Branch.objects.get(id = pk)
+    files = branch.files.all()
+    serializers = FileSerializer(files, many=True)
+    return Response(serializers.data)
+    
+@api_view(['GET'])
 def repository_collaborators(request, repo_id):
     collaborators = []
     collaborations = Collaboration.objects.filter(repository_id = repo_id)

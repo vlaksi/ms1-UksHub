@@ -7,10 +7,7 @@ import IssuesOverview from '../../molecules/Repository/Issues/IssuesOverview';
 import PullRequestsOverview from '../../molecules/Repository/Pulls/PullRequestsOverview';
 import RepositoryInsights from '../../molecules/Repository/Insights/RepositoryInsights';
 import RepositorySettings from '../../molecules/Repository/Settings/RepositorySettings';
-import {
-  getRepositoryById,
-  getRepositoryCollaboratos,
-} from '../../../services/versioning/repositoryService';
+import { getRepositoryById, getRepositoryCollaboratos } from '../../../services/versioning/repositoryService';
 import { getRepositoryBranches } from '../../../services/versioning/branchService';
 import Actions from '../../atoms/Actions/Actions';
 import { getUserById } from '../../../services/useractivity/userService';
@@ -37,9 +34,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 
   const isLoggedInUserCollaborator = () => {
     let loggedInUserId = getParsedToken().user_id;
-    return repositoryCollaborators.find(
-      (collaborator) => collaborator.collaborator_id == loggedInUserId
-    );
+    return repositoryCollaborators.find((collaborator) => collaborator.collaborator_id == loggedInUserId);
   };
 
   return (
@@ -59,28 +54,20 @@ const UserRepository = ({ userId, repositoryId }) => {
               <div>
                 <h4>
                   <Link href={`/${userId}`}>
-                    <a style={{ textDecoration: 'none', color: '#444' }}>
-                      {user.username}
-                    </a>
+                    <a style={{ textDecoration: 'none', color: '#444' }}>{user.username}</a>
                   </Link>{' '}
                   /{' '}
                   <Link href={`/${userId}/${repository.pk}`}>
-                    <a style={{ textDecoration: 'none', color: '#444' }}>
-                      {repository.name}
-                    </a>
+                    <a style={{ textDecoration: 'none', color: '#444' }}>{repository.name}</a>
                   </Link>{' '}
                 </h4>
               </div>
               <Actions username={userId} repository={repository} />
             </div>
 
-            <Tabs
-              defaultActiveKey="code"
-              id="uncontrolled-tab-example"
-              className="mb-3"
-            >
+            <Tabs defaultActiveKey="code" id="uncontrolled-tab-example" className="mb-3">
               <Tab eventKey="code" title="Code">
-                <RepositoryCode />
+                <RepositoryCode repository={repository} repositoryBranches={repositoryBranches} />
               </Tab>
               <Tab eventKey="issues" title="Issues">
                 <IssuesOverview />
@@ -95,10 +82,7 @@ const UserRepository = ({ userId, repositoryId }) => {
               )}
               {isLoggedInUserCollaborator() && (
                 <Tab eventKey="settings" title="Settings">
-                  <RepositorySettings
-                    repository={repository}
-                    repositoryBranches={repositoryBranches}
-                  />
+                  <RepositorySettings repository={repository} repositoryBranches={repositoryBranches} />
                 </Tab>
               )}
             </Tabs>
