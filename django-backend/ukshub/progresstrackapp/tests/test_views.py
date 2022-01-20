@@ -490,6 +490,29 @@ class TestMilestoneDetailView(TestCase):
 
         self.assertEquals(response.status_code, 404)
 
+    def test_put_milestone_change_milestone(self):
+        milestone = Milestone.objects.get(title='milestone1')
+        new_milestone_name = 'New_Milestone_Name'
+        new_milestone_description = 'New_Milestone_Description'
+        new_milestone = get_mocked_milestone(new_milestone_name,new_milestone_description)
+
+        response = self.c.put(
+             '/progresstrack/milestones/'+str(milestone.pk),
+            data=json.dumps(new_milestone),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['title'], milestone.title)
+        self.assertEqual(res_obj['title'], new_milestone_name)
+        self.assertNotEqual(res_obj['description'], milestone.description)
+        self.assertEqual(res_obj['description'], new_milestone_description)
+    
+
+    
+
     
     
 
