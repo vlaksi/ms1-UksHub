@@ -78,3 +78,38 @@ export const deleteMilestone = async (milestoneId) => {
     });
   return success;
 };
+export const updateMilestone = async (
+  newMilestoneName,
+  newMilestoneDescription,
+  newMilestoneDate,
+  milestoneId
+) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        title: newMilestoneName,
+        description: newMilestoneDescription,
+        due_date: new Date(
+          newMilestoneDate.toString(
+            "YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]"
+          )
+        ),
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};

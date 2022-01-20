@@ -3,7 +3,10 @@ import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { deleteMilestone } from "../../../services/progresstrackapp/milestonesService";
+import {
+  deleteMilestone,
+  updateMilestone,
+} from "../../../services/progresstrackapp/milestonesService";
 
 const MilestoneListItem = ({ milestone }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -16,7 +19,7 @@ const MilestoneListItem = ({ milestone }) => {
     setShow(false);
   };
 
-  const [milestoneName, setMilestoneName] = useState(milestone.name);
+  const [milestoneName, setMilestoneName] = useState(milestone.title);
   const handleChangingMilestoneName = (milestoneName) => {
     setMilestoneName(milestoneName);
   };
@@ -47,21 +50,21 @@ const MilestoneListItem = ({ milestone }) => {
       notifyDeleted();
     }
   };
-  //   const updateNewLabel = async () => {
-  //     let isSuccessfulUpdated = await updateLabel(
-  //       labelName,
-  //       labelDescription,
-  //       labelColor,
-  //       label.pk
-  //     );
-  //     if (isSuccessfulUpdated) {
-  //       notifyUpdated();
-  //       handleClose();
-  //       window.location.href = `http://localhost:3000/${user}/${repository}/labels`;
-  //     } else {
-  //       notifyError();
-  //     }
-  //   };
+  const updateNewMilestone = async () => {
+    let isSuccessfulUpdated = await updateMilestone(
+      milestoneName,
+      milestoneDescription,
+      milestoneDate,
+      milestone.pk
+    );
+    if (isSuccessfulUpdated) {
+      notifyUpdated();
+      handleClose();
+      window.location.href = `http://localhost:3000/${user}/${repository}/milestones`;
+    } else {
+      notifyError();
+    }
+  };
   return (
     <ListGroup as="ol">
       <ListGroup.Item
@@ -107,9 +110,9 @@ const MilestoneListItem = ({ milestone }) => {
                   <Form.Control
                     type="name"
                     defaultValue={milestone.title}
-                    // onChange={(e) => {
-                    //   handleChangingLabelName(e.target.value);
-                    // }}
+                    onChange={(e) => {
+                      handleChangingMilestoneName(e.target.value);
+                    }}
                   ></Form.Control>
                   <Form.Label style={{ marginTop: "15px" }}>
                     Description of milestone
@@ -119,9 +122,9 @@ const MilestoneListItem = ({ milestone }) => {
                     defaultValue={milestone.description}
                     as="textarea"
                     rows={2}
-                    // onChange={(e) => {
-                    //   handleChangingLabelDescription(e.target.value);
-                    // }}
+                    onChange={(e) => {
+                      handleChangingMilestoneDescription(e.target.value);
+                    }}
                   ></Form.Control>
                   <Form.Label style={{ marginTop: "15px" }}>
                     Due date of milestone
@@ -130,9 +133,9 @@ const MilestoneListItem = ({ milestone }) => {
                     type="date"
                     defaultValue={milestone.due_date}
                     title="Choose date"
-                    // onChange={(e) => {
-                    //   handleChangingLabelColor(e.target.value);
-                    // }}
+                    onChange={(e) => {
+                      handleChangingMilestoneDate(e.target.value);
+                    }}
                   />
                 </Form.Group>
               </Form>
@@ -140,9 +143,9 @@ const MilestoneListItem = ({ milestone }) => {
             <Modal.Footer>
               <Button
                 variant="success"
-                // onClick={async () => {
-                //   await updateNewLabel();
-                // }}
+                onClick={async () => {
+                  await updateNewMilestone();
+                }}
               >
                 Save Changes
               </Button>
