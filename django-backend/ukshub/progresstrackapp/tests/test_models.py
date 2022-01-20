@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.test import TestCase
 
-from ..models import Label, PullRequest
+from ..models import Label, PullRequest, Milestone
 from versioningapp.models import Branch, Repository
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -60,11 +60,21 @@ def initialize_db_with_test_data():
     label1.save()
     label2.save()
 
+    #Create milestones
+    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01')
+    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01')
+
+    milestone1.save()
+    milestone2.save()
+
 def get_label(index=0):
     return Label.objects.all()[index]
 
 def get_pull_request(index=0):
     return PullRequest.objects.all()[index]
+
+def get_milestone(index=0):
+    return Milestone.objects.all()[index]
 
 class TestLabelModel(TestCase):
     
@@ -89,7 +99,7 @@ class TestLabelModel(TestCase):
 
     def test_label_color_max_length(self):
         label = get_label()
-        max_length = label._meta.get_field('decription').max_length
+        max_length = label._meta.get_field('color').max_length
         self.assertEquals(max_length, 200)
 
     def test_label_decription_name(self):
@@ -182,13 +192,29 @@ class TestIssueModel(TestCase):
         # extend init function with data needed for the Issue
 
 
-# TODO: Add test cases for the Milestone !!
 class TestMilestoneModel(TestCase):
 
     @classmethod
     def setUpTestData(cls):
         initialize_db_with_test_data()
-        # extend init function with data needed for the Milestone
 
+    def test_milestone_name(self):
+        milestone = get_milestone()
+        verbose_name = milestone._meta.get_field('title').verbose_name
+        self.assertEquals(verbose_name, 'title')
+    
+    def test_milestone_name_max_length(self):
+        milestone = get_milestone()
+        max_length = milestone._meta.get_field('title').max_length
+        self.assertEquals(max_length, 200)
 
+    def test_description_name(self):
+        milestone = get_milestone()
+        verbose_name = milestone._meta.get_field('description').verbose_name
+        self.assertEquals(verbose_name, 'description')
+    
+    def test_description_name_max_length(self):
+        milestone = get_milestone()
+        max_length = milestone._meta.get_field('description').max_length
+        self.assertEquals(max_length, 200)
     
