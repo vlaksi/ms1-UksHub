@@ -67,7 +67,132 @@ const MilestoneListItem = ({ milestone }) => {
         as="li"
         className="d-flex justify-content-between align-items-start"
       >
-        ANa
+        <div>
+          <h3>{milestone.title}</h3>
+          <Badge bg="primary">{milestone.due_date}</Badge>
+        </div>
+
+        <div
+          style={{
+            padding: "2px",
+            display: "flex",
+            marginLeft: "15px",
+          }}
+        >
+          {milestone.description}
+        </div>
+        <div style={{ display: "flex" }}>
+          <Button
+            variant="outline-success"
+            style={{ marginRight: "15px" }}
+            onClick={() => {
+              handleShow();
+            }}
+          >
+            <MdModeEditOutline
+              style={{ marginBottom: "4px" }}
+            ></MdModeEditOutline>
+            Edit milestone
+          </Button>
+
+          <Modal show={show} onHide={handleClose} backdrop="static">
+            <Modal.Header closeButton>
+              <Modal.Title>Edit this milestone</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Name of milestone</Form.Label>
+                  <Form.Control
+                    type="name"
+                    defaultValue={milestone.title}
+                    // onChange={(e) => {
+                    //   handleChangingLabelName(e.target.value);
+                    // }}
+                  ></Form.Control>
+                  <Form.Label style={{ marginTop: "15px" }}>
+                    Description of milestone
+                  </Form.Label>
+                  <Form.Control
+                    type="name"
+                    defaultValue={milestone.description}
+                    as="textarea"
+                    rows={2}
+                    // onChange={(e) => {
+                    //   handleChangingLabelDescription(e.target.value);
+                    // }}
+                  ></Form.Control>
+                  <Form.Label style={{ marginTop: "15px" }}>
+                    Due date of milestone
+                  </Form.Label>
+                  <Form.Control
+                    type="date"
+                    defaultValue={milestone.due_date}
+                    title="Choose date"
+                    // onChange={(e) => {
+                    //   handleChangingLabelColor(e.target.value);
+                    // }}
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="success"
+                // onClick={async () => {
+                //   await updateNewLabel();
+                // }}
+              >
+                Save Changes
+              </Button>
+              <Button variant="danger" onClick={handleClose}>
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <Button
+            variant="outline-danger"
+            style={{ marginRight: "15px" }}
+            onClick={handleShowDeleteModal}
+          >
+            <MdDelete style={{ marginBottom: "4px" }}></MdDelete>
+            Delete label
+          </Button>
+          <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Delete confirmation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: " baseline",
+              }}
+            >
+              <p>Are you sure you want to delete this milestone ?</p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button
+                variant="success"
+                // onClick={async () => {
+                //   await deleteChosenLabel();
+                //   handleDeleteModalClose();
+                // }}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  handleDeleteModalClose();
+                }}
+              >
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
       </ListGroup.Item>
     </ListGroup>
   );
