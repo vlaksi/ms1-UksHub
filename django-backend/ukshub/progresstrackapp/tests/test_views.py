@@ -423,7 +423,74 @@ class TestMilestoneListView(TestCase):
 
         self.assertEquals(response.status_code, 400)
 
+class TestMilestoneDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
 
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_HTTP404_milestone_by_id(self):
+        response = self.c.get(
+            '/progresstrack/milestones/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_milestone_by_id_successfully(self):
+        milestone = Milestone.objects.get(title='milestone1')
+        response = self.c.get(
+            '/progresstrack/milestones/'+str(milestone.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['title'], 'milestone1')
+       
+
+    def test_delete_milestone(self):
+        milestone = Milestone.objects.get(title='milestone1')
+
+        response = self.c.delete(
+            '/progresstrack/milestones/'+str(milestone.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP404_milestone(self):
+        milestone = Milestone.objects.get(title='milestone1')
+
+        response = self.c.delete(
+            '/progresstrack/milestones/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+    
+    def test_put_HTTP404_milestone_change_name(self):
+        milestone = Milestone.objects.get(title='milestone1')
+        new_milestone_name = 'New_Milestone_Name'
+        new_milestone = get_mocked_milestone(new_milestone_name)
+
+        response = self.c.put(
+            '/progresstrack/milestones/99999',
+            data=json.dumps(new_milestone),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+
+    
     
 
       
