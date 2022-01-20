@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.test import TestCase
 
-from ..models import Label, PullRequest
+from ..models import Label, PullRequest, Milestone
 from versioningapp.models import Branch, Repository
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -60,11 +60,21 @@ def initialize_db_with_test_data():
     label1.save()
     label2.save()
 
+    #Create milestones
+    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01')
+    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01')
+
+    milestone1.save()
+    milestone2.save()
+
 def get_label(index=0):
     return Label.objects.all()[index]
 
 def get_pull_request(index=0):
     return PullRequest.objects.all()[index]
+
+def get_milestone(index=0):
+    return Milestone.objects.all()[index]
 
 class TestLabelModel(TestCase):
     

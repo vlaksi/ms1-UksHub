@@ -338,4 +338,24 @@ class TestLabelDetailView(TestCase):
         self.assertEqual(res_obj['color'], new_label_color)
         self.assertNotEqual(res_obj['decription'], label.decription)
         self.assertEqual(res_obj['decription'], new_label_decription)
-   
+
+class TestMilestoneListView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_all_milestones(self):
+        response = self.c.get('/progresstrack/milestones/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+
+    def test_get_all_milestones_wrong_url(self):
+        response = self.c.get('/progresstrack/milestone', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+      
