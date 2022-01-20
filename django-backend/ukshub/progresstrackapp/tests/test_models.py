@@ -99,7 +99,7 @@ class TestLabelModel(TestCase):
 
     def test_label_color_max_length(self):
         label = get_label()
-        max_length = label._meta.get_field('decription').max_length
+        max_length = label._meta.get_field('color').max_length
         self.assertEquals(max_length, 200)
 
     def test_label_decription_name(self):
@@ -192,13 +192,29 @@ class TestIssueModel(TestCase):
         # extend init function with data needed for the Issue
 
 
-# TODO: Add test cases for the Milestone !!
 class TestMilestoneModel(TestCase):
 
     @classmethod
     def setUpTestData(cls):
         initialize_db_with_test_data()
-        # extend init function with data needed for the Milestone
 
+    def test_milestone_name(self):
+        milestone = get_milestone()
+        verbose_name = milestone._meta.get_field('title').verbose_name
+        self.assertEquals(verbose_name, 'title')
+    
+    def test_milestone_name_max_length(self):
+        milestone = get_milestone()
+        max_length = milestone._meta.get_field('title').max_length
+        self.assertEquals(max_length, 200)
 
+    def test_description_name(self):
+        milestone = get_milestone()
+        verbose_name = milestone._meta.get_field('description').verbose_name
+        self.assertEquals(verbose_name, 'description')
+    
+    def test_description_name_max_length(self):
+        milestone = get_milestone()
+        max_length = milestone._meta.get_field('description').max_length
+        self.assertEquals(max_length, 200)
     
