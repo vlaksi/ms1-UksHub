@@ -46,6 +46,15 @@ def get_mocked_pr(test_pr_name='Some_PR_Test'):
     }
     return pull_request
 
+def get_mocked_milestone(test_milestone_name='Some_Milestone_Test', test_milestone_description ='Some_Milestone_Desc',test_milestone_due_date="2022-01-29 01:00:00+01"):
+    
+    milestone = {
+        "title": test_milestone_name,
+        "description":test_milestone_description,
+        "due_date":test_milestone_due_date
+    }
+    return milestone
+
 def get_mocked_label(test_label_name='Some_Label_Test', test_label_color='Some_Label_Color',test_label_decription="Some_Label_Description"):
     
     label = {
@@ -357,5 +366,64 @@ class TestMilestoneListView(TestCase):
     def test_get_all_milestones_wrong_url(self):
         response = self.c.get('/progresstrack/milestone', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
+
+    def test_post_create_milestone_successfully(self):
+        test_milestone_name = 'Test_Milestonel'
+        test_milestone_description='Test_Milestone1_Desc'
+        milestone = get_mocked_milestone(test_milestone_name,test_milestone_description)
+
+        response = self.c.post(
+            '/progresstrack/milestones/',
+            data=json.dumps(milestone),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['title'], test_milestone_name)
+        self.assertEquals(res_obj['description'], test_milestone_description)
+
+    def test_post_create_milestone_with_missing_name(self):
+        test_milestone_name = None
+        milestone = get_mocked_milestone(test_milestone_name)
+
+        response = self.c.post(
+            '/progresstrack/milestones/',
+            data=json.dumps(milestone),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+    def test_post_create_milestone_with_missing_description(self):
+        test_milestone_description = None
+        milestone = get_mocked_milestone(test_milestone_description)
+
+        response = self.c.post(
+            '/progresstrack/milestones/',
+            data=json.dumps(milestone),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+    def test_post_create_milestone_with_missing_date(self):
+        test_milestone_due_date = None
+        milestone = get_mocked_milestone(test_milestone_due_date)
+
+        response = self.c.post(
+            '/progresstrack/milestones/',
+            data=json.dumps(milestone),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+
+    
 
       
