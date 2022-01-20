@@ -56,3 +56,25 @@ export const getAllMilestones = async () => {
     });
   return milestones;
 };
+export const deleteMilestone = async (milestoneId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "delete",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return success;
+};

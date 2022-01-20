@@ -3,6 +3,7 @@ import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { deleteMilestone } from "../../../services/progresstrackapp/milestonesService";
 
 const MilestoneListItem = ({ milestone }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -39,13 +40,13 @@ const MilestoneListItem = ({ milestone }) => {
   const router = useRouter();
   const { user, repository } = router.query;
 
-  //   const deleteChosenLabel = async () => {
-  //     let isSuccessfulDeleted = await deleteLabel(label.pk);
-  //     if (isSuccessfulDeleted) {
-  //       window.location.href = `http://localhost:3000/${user}/${repository}/labels`;
-  //       notifyDeleted();
-  //     }
-  //   };
+  const deleteChosenMilestone = async () => {
+    let isSuccessfulDeleted = await deleteMilestone(milestone.pk);
+    if (isSuccessfulDeleted) {
+      window.location.href = `http://localhost:3000/${user}/${repository}/milestones`;
+      notifyDeleted();
+    }
+  };
   //   const updateNewLabel = async () => {
   //     let isSuccessfulUpdated = await updateLabel(
   //       labelName,
@@ -156,7 +157,7 @@ const MilestoneListItem = ({ milestone }) => {
             onClick={handleShowDeleteModal}
           >
             <MdDelete style={{ marginBottom: "4px" }}></MdDelete>
-            Delete label
+            Delete milestone
           </Button>
           <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
             <Modal.Header closeButton>
@@ -175,10 +176,10 @@ const MilestoneListItem = ({ milestone }) => {
             <Modal.Footer>
               <Button
                 variant="success"
-                // onClick={async () => {
-                //   await deleteChosenLabel();
-                //   handleDeleteModalClose();
-                // }}
+                onClick={async () => {
+                  await deleteChosenMilestone();
+                  handleDeleteModalClose();
+                }}
               >
                 Delete
               </Button>
