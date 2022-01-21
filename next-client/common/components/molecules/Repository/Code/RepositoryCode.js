@@ -8,13 +8,15 @@ import styles from './RepositoryCode.module.scss';
 
 import { getBranchCommit } from '../../../../services/versioning/repositoryService';
 import { createBranch, deleteBranch, getRepositoryBranches } from '../../../../services/versioning/branchService';
+import { createCommit } from '../../../../services/versioning/commitService';
 
 const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollaborator }) => {
   const [show, setShow] = useState(false);
   const [showAddCommitModal, setShowAddCommitModal] = useState(false);
   const [branches, setBranches] = useState(repositoryBranches);
   const [newBranchName, setNewBranchName] = useState('');
-  const [newCommitName, setNewCommitName] = useState('');
+  const [newCommitSubject, setNewCommitSubject] = useState('');
+  const [newCommitDescription, setNewCommitDescription] = useState('');
   const [deleteBranchId, setDeleteBranch] = useState('');
   const [activeBranch, setActiveBranch] = useState();
   const [activeFolders, setActiveFolders] = useState([]);
@@ -50,7 +52,8 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
 
   const handleCloseAddCommitModal = () => {
     setShowAddCommitModal(false);
-    setNewCommitName('');
+    setNewCommitSubject('');
+    setNewCommitDescription('');
   };
 
   const handleBranchNameChange = (newBranchName) => {
@@ -61,8 +64,12 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     setDeleteBranch(deleteBranchId);
   };
 
-  const handleCommitNameChange = (newCommitName) => {
-    setNewCommitName(newCommitName);
+  const handleCommitSubjectChange = (newCommitSubject) => {
+    setNewCommitSubject(newCommitSubject);
+  };
+
+  const handleCommitDescriptionChange = (newCommitDescription) => {
+    setNewCommitDescription(newCommitDescription);
   };
 
   const addBranch = async () => {
@@ -82,6 +89,19 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     await deleteBranch(deleteBranchId);
     notifyDeletedBranch();
     setBranches(await getRepositoryBranches(repository.pk));
+  };
+
+  const addCommit = async () => {
+    let createdCommit = await createCommit(activeBranch.pk, newCommitSubject, newCommitDescription);
+
+    if (!createdCommit) {
+      notifyError();
+      return;
+    } else {
+      notify();
+      handleClose();
+      //TODO: update branch
+    }
   };
 
   return (
@@ -161,16 +181,30 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
+              <Form.Label>Commit subject</Form.Label>
               <Form.Control
                 type="name"
-                placeholder="Enter commit message"
-                value={newCommitName}
+                placeholder="Enter commit subject"
+                value={newCommitSubject}
                 onChange={(e) => {
-                  handleCommitNameChange(e.target.value);
+                  handleCommitSubjectChange(e.target.value);
                 }}
               ></Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
+              <Form.Label>Commit description</Form.Label>
+              <Form.Control
+                type="name"
+                placeholder="Enter commit description"
+                value={newCommitDescription}
+                onChange={(e) => {
+                  handleCommitDescriptionChange(e.target.value);
+                }}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Commit folder</Form.Label>
+              <br />
               <input directory="" webkitdirectory="" type="file" />
             </Form.Group>
           </Form>
@@ -179,7 +213,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
           <Button
             variant="success"
             onClick={() => {
-              addBranch();
+              addCommit();
             }}
           >
             Add Commit

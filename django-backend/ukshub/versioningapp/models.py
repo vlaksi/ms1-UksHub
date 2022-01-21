@@ -1,22 +1,24 @@
 from django.db import models
 from authentication.models import UserAccount
 from useractivityapp.models import Action,Comment
-    
-class Commit(models.Model):
-    autor = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, related_name='created_commits')
-    message = models.CharField(max_length=200)
-    hash = models.CharField('hash', max_length=1000)
-    creation_date = models.DateTimeField('date of creation')
-    comments = models.ManyToManyField(Comment,blank=True, related_name='commit')
-    def __str__(self):
-        return 'Name of object: ' + self.message
+import uuid    
 
 class Branch(models.Model):
     repository = models.ForeignKey('Repository', on_delete=models.CASCADE, blank=True, related_name = "repositoryBranches")
     name = models.CharField(max_length=200)
-    commits = models.ManyToManyField(Commit, blank=True)
     def __str__(self):
         return 'Name of object: ' + self.name
+
+class Commit(models.Model):
+    author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, related_name='created_commits')
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, related_name='branch_commits')
+    subject = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, blank=True, null=True)
+    hash = models.UUIDField(default=uuid.uuid4, editable=False)
+    creation_date = models.DateTimeField(auto_now_add=True, blank=True)
+    comments = models.ManyToManyField(Comment, blank=True, related_name='commit')
+    def __str__(self):
+        return 'Name of object: ' + self.hash
 
 class Repository(models.Model):
     author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True)

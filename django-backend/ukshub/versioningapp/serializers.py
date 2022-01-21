@@ -3,6 +3,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Branch, Commit, Repository, Collaboration, CollaborationType
 from .dtos import CollaboratorDto
+import hashlib
+import time
 
 User = get_user_model()
 
@@ -54,17 +56,28 @@ class CollaborationSerializer(serializers.ModelSerializer):
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
-        fields = [ "pk", "repository", "name", "commits"]
+        fields = [ "pk", "repository", "name"]
         extra_kwargs = {
              "repository": {"required": False},
-             "commits": {"required": False},   
         }
         
 class CommitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commit
-        fields = [ "pk", "autor", "hash", "message" , "creation_date", "comments"]
+        fields = [ "pk", "author", "branch", "hash", "subject", "description" , "creation_date", "comments"]
         extra_kwargs = {
              "comments": {"required": False},
         }
+
+    def create(self, validated_data):
+        # Create commit
+        author = validated_data.get('author')
+        branch = validated_data.get('branch')
+        subject = validated_data.get('subject')
+        description = validated_data.get('description')
+        commit = Commit.objects.create(author = author, branch = branch, subject = subject, description = description)
+        commit.save()
+       
+        return commit
+
 

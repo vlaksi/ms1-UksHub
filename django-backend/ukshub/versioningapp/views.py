@@ -72,10 +72,13 @@ def repository_branches(request, pk):
 
 @api_view(['GET'])
 def branch_last_commit(request, pk):
-    branch = Branch.objects.get(id = pk)
-    commit = branch.commits.last()
-    serializers = CommitSerializer(commit, many=True)
-    return Response(serializers.data)
+    commit = Commit.objects.filter(branch_id = pk)
+    if(len(commit) == 0): 
+        return Response('Branch has no commit.')
+    else :
+        myCommit = commit.order_by('-creation_date')[0]
+        serializers = CommitSerializer(myCommit, many=False)
+        return Response(serializers.data)
     
 @api_view(['GET'])
 def repository_collaborators(request, repo_id):
