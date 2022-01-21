@@ -89,7 +89,8 @@
   Action "0..*" -- UserAccount
   
   class Commit{
-    message
+    subject
+    description 
     hash
     creation_date
   }
