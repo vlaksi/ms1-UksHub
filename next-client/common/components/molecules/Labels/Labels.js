@@ -40,8 +40,10 @@ const Labels = () => {
   const { repository } = router.query;
 
   useEffect(async () => {
-    setNewLabelList(await getAllLabels());
-  }, []);
+    if (!repository) return;
+    let labels = await getAllLabels(repository);
+    setNewLabelList(labels);
+  }, [repository]);
 
   const addNewLabel = async () => {
     let createdLabel = await addLabel(
@@ -53,7 +55,7 @@ const Labels = () => {
     if (createdLabel) {
       notify();
       handleClose();
-      setNewLabelList(await getAllLabels());
+      setNewLabelList(await getAllLabels(repository));
     } else {
       notifyError();
     }

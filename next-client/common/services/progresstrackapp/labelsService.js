@@ -33,11 +33,11 @@ export const addLabel = async (
   return label;
 };
 
-export const getAllLabels = async () => {
+export const getAllLabels = async (repoId) => {
   let labels;
   await axios
     .request({
-      url: `/progresstrack/labels/`,
+      url: `/progresstrack/repository/${repoId}/labels`,
       method: "get",
       baseURL: "http://127.0.0.1:8000/",
       headers: { Authorization: "JWT " + getToken() },

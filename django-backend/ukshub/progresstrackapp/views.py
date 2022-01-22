@@ -55,3 +55,10 @@ def all_pull_requests_by_repository_id(request, repo_id):
     if(len(pull_requests) == 0): raise Http404('No PullRequest matches the given query.')
     serializers=PullRequestSerializer(pull_requests,many=True)
     return Response(serializers.data)
+
+@api_view(['GET'])
+def all_labels_by_repository_id(request, repo_id):
+    labels= Label.objects.filter(repository=repo_id)
+    if(len(labels) == 0): raise Http404('No Labels matches the given query.')
+    serializers=LabelSerializer(labels,many=True)
+    return Response(serializers.data)
