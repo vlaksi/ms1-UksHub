@@ -28,3 +28,24 @@ export const addIssue = async (newIssueName, authorId, repoId) => {
 
   return milestone;
 };
+export const getAllIssues = async (repoId) => {
+  let issues;
+  await axios
+    .request({
+      url: `/progresstrack/repository/${repoId}/issues`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
