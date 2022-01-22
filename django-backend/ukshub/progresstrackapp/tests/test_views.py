@@ -47,11 +47,14 @@ def get_mocked_pr(test_pr_name='Some_PR_Test'):
     return pull_request
 
 def get_mocked_milestone(test_milestone_name='Some_Milestone_Test', test_milestone_description ='Some_Milestone_Desc',test_milestone_due_date="2022-01-29 01:00:00+01"):
-    
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+    repo_id = Repository.objects.get(author=user_id, name="RepoUKS").pk
+
     milestone = {
         "title": test_milestone_name,
         "description":test_milestone_description,
-        "due_date":test_milestone_due_date
+        "due_date":test_milestone_due_date,
+        "repository":repo_id
     }
     return milestone
 
@@ -372,6 +375,19 @@ class TestMilestoneListView(TestCase):
     def setUp(self) -> None:
         self.c = Client()
         self.token = f'JWT {get_jwt_token()}'
+
+    def get_repository_milestones(self, repository_id=0):
+        repo_id = get_repo_id(repository_id)
+        response = self.client.get(reverse('all-repository-milestones', kwargs={'repo_id': repo_id}))
+        return response, repo_id
+
+    def test_get_all_repository_milestones(self):
+        response, _ = self.get_repository_milestones()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_HTTP404_if_milestone_does_not_exist(self):
+        response, _ = self.get_repository_milestones(-1)
+        self.assertEqual(response.status_code, 404)
 
     def test_get_all_milestones(self):
         response = self.c.get('/progresstrack/milestones/', HTTP_AUTHORIZATION=self.token, content_type=JSON)

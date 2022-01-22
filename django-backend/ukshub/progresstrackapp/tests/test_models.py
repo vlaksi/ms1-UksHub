@@ -61,8 +61,8 @@ def initialize_db_with_test_data():
     label2.save()
 
     #Create milestones
-    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01')
-    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01')
+    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01',repository=repository1)
+    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01',repository=repository1)
 
     milestone1.save()
     milestone2.save()
