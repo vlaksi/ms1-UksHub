@@ -70,6 +70,19 @@ def get_mocked_label(test_label_name='Some_Label_Test', test_label_color='Some_L
     }
     return label
 
+def get_mocked_issue(test_issue_name='Some_Issue_Test'):
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+    repo_id = Repository.objects.get(author=user_id, name="RepoUKS").pk
+
+    issue = {
+        "title": test_issue_name,
+        "creation_date":"2022-01-22 22:05:48.078+01",
+        "is_opened":True,
+        "author":user_id,
+        "repository":repo_id
+    }
+    return issue
+
 class TestPullRequestListView(TestCase):
 
     @classmethod
@@ -541,6 +554,30 @@ class TestMilestoneDetailView(TestCase):
         self.assertEqual(res_obj['title'], new_milestone_name)
         self.assertNotEqual(res_obj['description'], milestone.description)
         self.assertEqual(res_obj['description'], new_milestone_description)
+    
+class TestIssueListView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def get_repository_issues(self, repository_id=0):
+        repo_id = get_repo_id(repository_id)
+        response = self.client.get(reverse('all-repository-issues', kwargs={'repo_id': repo_id}))
+        return response, repo_id
+
+    def test_get_all_repository_issues(self):
+        response, _ = self.get_repository_issues()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_HTTP404_if_issue_does_not_exist(self):
+        response, _ = self.get_repository_issues(-1)
+        self.assertEqual(response.status_code, 404)
+    
+
     
 
     
