@@ -1,7 +1,12 @@
 import axios from "axios";
 import { getToken } from "../authentication/token";
 
-export const addLabel = async (newLabelName, newLabelDescription, newColor) => {
+export const addLabel = async (
+  newLabelName,
+  newLabelDescription,
+  newColor,
+  repoId
+) => {
   let label = null;
   await axios
     .request({
@@ -13,6 +18,7 @@ export const addLabel = async (newLabelName, newLabelDescription, newColor) => {
         name: newLabelName,
         decription: newLabelDescription,
         color: newColor,
+        repository: repoId,
         grant_type: "client_credentials",
         scope: "public",
       },
@@ -27,11 +33,11 @@ export const addLabel = async (newLabelName, newLabelDescription, newColor) => {
   return label;
 };
 
-export const getAllLabels = async () => {
+export const getAllLabels = async (repoId) => {
   let labels;
   await axios
     .request({
-      url: `/progresstrack/labels/`,
+      url: `/progresstrack/repository/${repoId}/labels`,
       method: "get",
       baseURL: "http://127.0.0.1:8000/",
       headers: { Authorization: "JWT " + getToken() },

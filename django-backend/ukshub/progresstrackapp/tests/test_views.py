@@ -56,11 +56,14 @@ def get_mocked_milestone(test_milestone_name='Some_Milestone_Test', test_milesto
     return milestone
 
 def get_mocked_label(test_label_name='Some_Label_Test', test_label_color='Some_Label_Color',test_label_decription="Some_Label_Description"):
-    
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+    repo_id = Repository.objects.get(author=user_id, name="RepoUKS").pk
+
     label = {
         "name": test_label_name,
         "color":test_label_color,
-        "decription":test_label_decription
+        "decription":test_label_decription,
+        "repository":repo_id
     }
     return label
 
@@ -192,6 +195,19 @@ class TestLabelListView(TestCase):
     def setUp(self) -> None:
         self.c = Client()
         self.token = f'JWT {get_jwt_token()}'
+
+    def get_repository_labels(self, repository_id=0):
+        repo_id = get_repo_id(repository_id)
+        response = self.client.get(reverse('all-repository-labels', kwargs={'repo_id': repo_id}))
+        return response, repo_id
+
+    def test_get_all_repository_labels(self):
+        response, _ = self.get_repository_labels()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_HTTP404_if_label_does_not_exist(self):
+        response, _ = self.get_repository_labels(-1)
+        self.assertEqual(response.status_code, 404)
 
     def test_get_all_labels(self):
         response = self.c.get('/progresstrack/labels/', HTTP_AUTHORIZATION=self.token, content_type=JSON)

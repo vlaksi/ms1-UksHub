@@ -3,6 +3,7 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/router";
 import {
   addLabel,
   getAllLabels,
@@ -35,20 +36,26 @@ const Labels = () => {
   const notify = () => toast.success("Successfully created new label!");
   const notifyError = () => toast.error("Check if you entered all fields!");
 
+  const router = useRouter();
+  const { repository } = router.query;
+
   useEffect(async () => {
-    setNewLabelList(await getAllLabels());
-  }, []);
+    if (!repository) return;
+    let labels = await getAllLabels(repository);
+    setNewLabelList(labels);
+  }, [repository]);
 
   const addNewLabel = async () => {
     let createdLabel = await addLabel(
       newLabelName,
       newDescriptionName,
-      newColor
+      newColor,
+      repository
     );
     if (createdLabel) {
       notify();
       handleClose();
-      setNewLabelList(await getAllLabels());
+      setNewLabelList(await getAllLabels(repository));
     } else {
       notifyError();
     }

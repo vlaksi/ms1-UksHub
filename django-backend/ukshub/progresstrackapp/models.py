@@ -7,6 +7,7 @@ class Label(models.Model):
     name = models.CharField(max_length=200)
     color = models.CharField(max_length=200)
     decription = models.CharField(max_length=200)
+    repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='labels')
     def __str__(self):
          return 'Name of object: ' + self.name 
 
