@@ -614,6 +614,47 @@ class TestIssueListView(TestCase):
         )
 
         self.assertEquals(response.status_code, 400)
+
+class TestIssueDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token()}'
+
+    def test_get_HTTP404_issue_by_id(self):
+        response = self.c.get(
+            '/progresstrack/issues/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_issue_by_id_successfully(self):
+        issue = Issue.objects.get(title='issue1')
+        response = self.c.get(
+            '/progresstrack/issues/'+str(issue.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['title'], 'issue1')
+       
+
+    def test_delete_issue(self):
+        issue = Issue.objects.get(title='issue1')
+
+        response = self.c.delete(
+            '/progresstrack/issues/'+str(issue.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
        
 
 
