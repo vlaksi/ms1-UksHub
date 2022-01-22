@@ -128,7 +128,7 @@ const Labels = () => {
         </Modal.Footer>
       </Modal>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
-      {labels.map((labelItem) => {
+      {labels?.map((labelItem) => {
         return (
           <div key={labelItem.pk}>
             <LabelListItem label={labelItem} />

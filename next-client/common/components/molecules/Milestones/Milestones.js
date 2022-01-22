@@ -7,6 +7,7 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const Milestones = () => {
   const [newMilestoneName, setNewMilestoneName] = useState("");
@@ -35,20 +36,26 @@ const Milestones = () => {
   const notify = () => toast.success("Successfully created new milestone!");
   const notifyError = () => toast.error("Check if you entered all fields!");
 
+  const router = useRouter();
+  const { repository } = router.query;
+
   useEffect(async () => {
-    setNewMilestoneList(await getAllMilestones());
-  }, []);
+    if (!repository) return;
+    let milestones = await getAllMilestones(repository);
+    setNewMilestoneList(milestones);
+  }, [repository]);
 
   const addNewMilestone = async () => {
     let createdMilestone = await addMilestone(
       newMilestoneName,
       newDescriptionName,
-      newDate
+      newDate,
+      repository
     );
     if (createdMilestone) {
       notify();
       handleClose();
-      setNewMilestoneList(await getAllMilestones());
+      setNewMilestoneList(await getAllMilestones(repository));
     } else {
       notifyError();
     }
@@ -116,7 +123,7 @@ const Milestones = () => {
         </Modal.Footer>
       </Modal>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
-      {milestones.map((milestoneItem) => {
+      {milestones?.map((milestoneItem) => {
         return (
           <div key={milestoneItem.pk}>
             <MilestoneListItem milestone={milestoneItem} />
