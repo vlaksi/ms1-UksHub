@@ -587,6 +587,35 @@ class TestIssueListView(TestCase):
         response = self.c.get('/progresstrack/issue', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
 
+    def test_post_create_issue_successfully(self):
+        test_issue_name = 'Test_Issuel'
+        issue = get_mocked_issue(test_issue_name)
+
+        response = self.c.post(
+            '/progresstrack/issues/',
+            data=json.dumps(issue),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['title'], test_issue_name)
+
+    def test_post_create_issue_with_missing_name(self):
+        test_issue_name = None
+        issue = get_mocked_issue(test_issue_name)
+
+        response = self.c.post(
+            '/progresstrack/issues/',
+            data=json.dumps(issue),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+       
+
 
     
     
