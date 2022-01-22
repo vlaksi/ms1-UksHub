@@ -1,14 +1,21 @@
 import { ListGroup, Button, Modal, Form, Badge } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
-import { useState } from "react";
-import {
-  deleteLabel,
-  updateLabel,
-} from "../../../services/progresstrackapp/labelsService";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { getUserById } from "../../../services/useractivity/userService";
 
 const IssueListItem = ({ issue }) => {
+  const router = useRouter();
+  const { user, repository } = router.query;
+
+  const [author, setAuthor] = useState();
+
+  useEffect(async () => {
+    let user = await getUserById(issue.author);
+    setAuthor(user);
+  }, []);
+
   return (
     <div>
       <ListGroup as="ol">
@@ -18,6 +25,14 @@ const IssueListItem = ({ issue }) => {
         >
           <div>
             <h3>{issue.title}</h3>
+            Opened
+            <Badge bg="light" text="dark" pill>
+              {issue.creation_date.substring(0, 10)}
+            </Badge>
+            by{" "}
+            <Badge pill bg="light" text="dark">
+              {author?.username}
+            </Badge>
           </div>
         </ListGroup.Item>
       </ListGroup>
