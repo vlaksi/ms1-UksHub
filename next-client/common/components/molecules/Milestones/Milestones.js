@@ -40,8 +40,10 @@ const Milestones = () => {
   const { repository } = router.query;
 
   useEffect(async () => {
-    setNewMilestoneList(await getAllMilestones());
-  }, []);
+    if (!repository) return;
+    let milestones = await getAllMilestones(repository);
+    setNewMilestoneList(milestones);
+  }, [repository]);
 
   const addNewMilestone = async () => {
     let createdMilestone = await addMilestone(
@@ -53,7 +55,7 @@ const Milestones = () => {
     if (createdMilestone) {
       notify();
       handleClose();
-      setNewMilestoneList(await getAllMilestones());
+      setNewMilestoneList(await getAllMilestones(repository));
     } else {
       notifyError();
     }
@@ -121,7 +123,7 @@ const Milestones = () => {
         </Modal.Footer>
       </Modal>
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
-      {milestones.map((milestoneItem) => {
+      {milestones?.map((milestoneItem) => {
         return (
           <div key={milestoneItem.pk}>
             <MilestoneListItem milestone={milestoneItem} />

@@ -37,11 +37,11 @@ export const addMilestone = async (
   return milestone;
 };
 
-export const getAllMilestones = async () => {
+export const getAllMilestones = async (repoId) => {
   let milestones;
   await axios
     .request({
-      url: `/progresstrack/milestones/`,
+      url: `/progresstrack/repository/${repoId}/milestones`,
       method: "get",
       baseURL: "http://127.0.0.1:8000/",
       headers: { Authorization: "JWT " + getToken() },

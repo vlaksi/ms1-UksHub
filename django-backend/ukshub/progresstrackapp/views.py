@@ -66,6 +66,6 @@ def all_labels_by_repository_id(request, repo_id):
 @api_view(['GET'])
 def all_milestones_by_repository_id(request, repo_id):
     milestones= Milestone.objects.filter(repository=repo_id)
-    if(len(labels) == 0): raise Http404('No Milestones matches the given query.')
+    if(len(milestones) == 0): raise Http404('No Milestones matches the given query.')
     serializers=MilestoneSerializer(milestones,many=True)
     return Response(serializers.data)
