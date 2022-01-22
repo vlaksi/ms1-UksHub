@@ -1,10 +1,13 @@
 import { ListGroup, Button, Modal, Form, Badge } from "react-bootstrap";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { getUserById } from "../../../services/useractivity/userService";
-import { deleteIssue } from "../../../services/progresstrackapp/issuesService";
+import {
+  deleteIssue,
+  updateIssue,
+} from "../../../services/progresstrackapp/issuesService";
 
 const IssueListItem = ({ issue }) => {
   const router = useRouter();
@@ -38,6 +41,16 @@ const IssueListItem = ({ issue }) => {
     if (isSuccessfulDeleted) {
       window.location.href = `http://localhost:3000/${user}/${repository}`;
       notifyDeleted();
+    }
+  };
+  const updateNewIssue = async () => {
+    let isSuccessfulUpdated = await updateIssue(issueName, issue.pk);
+    if (isSuccessfulUpdated) {
+      notifyUpdated();
+      handleClose();
+      window.location.href = `http://localhost:3000/${user}/${repository}`;
+    } else {
+      notifyError();
     }
   };
   return (
@@ -94,7 +107,7 @@ const IssueListItem = ({ issue }) => {
                 <Button
                   variant="success"
                   onClick={async () => {
-                    //await updateNewMilestone();
+                    await updateNewIssue();
                   }}
                 >
                   Save Changes

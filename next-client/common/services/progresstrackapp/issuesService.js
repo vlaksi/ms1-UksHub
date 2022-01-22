@@ -71,3 +71,27 @@ export const deleteIssue = async (issueId) => {
     });
   return success;
 };
+export const updateIssue = async (newIssueName, issueId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/issues/${issueId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        title: newIssueName,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};
