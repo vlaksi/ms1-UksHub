@@ -73,7 +73,9 @@ const MilestoneListItem = ({ milestone }) => {
       >
         <div>
           <h3>{milestone.title}</h3>
-          <Badge bg="primary">{milestone.due_date}</Badge>
+          <Badge bg="primary" pill>
+            {milestone.due_date.substring(0, 10)}
+          </Badge>
         </div>
 
         <div

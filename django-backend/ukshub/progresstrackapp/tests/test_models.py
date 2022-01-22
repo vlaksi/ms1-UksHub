@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.test import TestCase
 
-from ..models import Label, PullRequest, Milestone
+from ..models import Label, PullRequest, Milestone,Issue
 from versioningapp.models import Branch, Repository
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -67,6 +67,13 @@ def initialize_db_with_test_data():
     milestone1.save()
     milestone2.save()
 
+    #Create issues
+    issue1 = Issue.objects.create(title='issue1',creation_date='2022-01-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    issue1 = Issue.objects.create(title='issue2',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+
+    issue1.save()
+    issue1.save()
+
 def get_label(index=0):
     return Label.objects.all()[index]
 
@@ -75,6 +82,9 @@ def get_pull_request(index=0):
 
 def get_milestone(index=0):
     return Milestone.objects.all()[index]
+
+def get_issue(index=0):
+    return Issue.objects.all()[index]
 
 class TestLabelModel(TestCase):
     
@@ -189,7 +199,20 @@ class TestIssueModel(TestCase):
     @classmethod
     def setUpTestData(cls):
         initialize_db_with_test_data()
-        # extend init function with data needed for the Issue
+    
+    def test_issue_name(self):
+        issue = get_issue()
+        verbose_name = issue._meta.get_field('title').verbose_name
+        self.assertEquals(verbose_name, 'title')
+
+    def test_issue_name_max_length(self):
+        issue = get_issue()
+        max_length = issue._meta.get_field('title').max_length
+        self.assertEquals(max_length, 200)
+    
+    def test_issue_author_username(self):
+        issue = get_issue()
+        self.assertEqual(issue.author.username, USER1_USERNAME)
 
 
 class TestMilestoneModel(TestCase):
