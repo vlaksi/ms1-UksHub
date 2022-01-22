@@ -4,7 +4,7 @@ from .models import Issue, Label, Milestone, PullRequest
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label
-        fields = [ "pk", "name", "color", "decription" ]
+        fields = [ "pk", "name", "color", "decription","repository" ]
 
 
 class IssueSerializer(serializers.ModelSerializer):
