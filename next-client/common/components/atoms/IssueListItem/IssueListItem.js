@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { getUserById } from "../../../services/useractivity/userService";
+import { deleteIssue } from "../../../services/progresstrackapp/issuesService";
 
 const IssueListItem = ({ issue }) => {
   const router = useRouter();
@@ -24,12 +25,21 @@ const IssueListItem = ({ issue }) => {
   const handleChangingIssueName = (issueName) => {
     setIssueName(issueName);
   };
+  const notifyDeleted = () => toast.success("Successfully deleted issue!");
+  const notifyUpdated = () => toast.success("Successfully updated issue!");
+  const notifyError = () => toast.error("Check if you entered all fields!");
 
   useEffect(async () => {
     let user = await getUserById(issue.author);
     setAuthor(user);
   }, []);
-
+  const deleteChosenIssue = async () => {
+    let isSuccessfulDeleted = await deleteIssue(issue.pk);
+    if (isSuccessfulDeleted) {
+      window.location.href = `http://localhost:3000/${user}/${repository}`;
+      notifyDeleted();
+    }
+  };
   return (
     <div>
       <ListGroup as="ol">
@@ -38,7 +48,7 @@ const IssueListItem = ({ issue }) => {
           className="d-flex justify-content-between align-items-start"
         >
           <div>
-            <h3>{issue.title}</h3>
+            <h4>{issue.title}</h4>
             Opened
             <Badge bg="light" text="dark" pill>
               {issue.creation_date.substring(0, 10)}
@@ -120,7 +130,7 @@ const IssueListItem = ({ issue }) => {
                 <Button
                   variant="success"
                   onClick={async () => {
-                    //await deleteChosenMilestone();
+                    await deleteChosenIssue();
                     handleDeleteModalClose();
                   }}
                 >
