@@ -655,6 +655,50 @@ class TestIssueDetailView(TestCase):
         )
 
         self.assertEquals(response.status_code, 204)
+    
+    def test_delete_HTTP404_issue(self):
+        issue = Issue.objects.get(title='issue1')
+
+        response = self.c.delete(
+            '/progresstrack/issues/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+    
+    def test_put_HTTP404_issue_change_name(self):
+        issue = Issue.objects.get(title='issue1')
+        new_issue_name = 'New_Issue_Name'
+        new_issue = get_mocked_issue(new_issue_name)
+
+        response = self.c.put(
+            '/progresstrack/issues/99999',
+            data=json.dumps(new_issue),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_put_issue_change_name(self):
+        issue = Issue.objects.get(title='issue1')
+        new_issue_name = 'New_Issue_Name'
+        new_issue = get_mocked_issue(new_issue_name)
+
+        response = self.c.put(
+             '/progresstrack/issues/'+str(issue.pk),
+            data=json.dumps(new_issue),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['title'], issue.title)
+        self.assertEqual(res_obj['title'], new_issue_name)
+
        
 
 
