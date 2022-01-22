@@ -196,6 +196,19 @@ class TestLabelListView(TestCase):
         self.c = Client()
         self.token = f'JWT {get_jwt_token()}'
 
+    def get_repository_labels(self, repository_id=0):
+        repo_id = get_repo_id(repository_id)
+        response = self.client.get(reverse('all-repository-labels', kwargs={'repo_id': repo_id}))
+        return response, repo_id
+
+    def test_get_all_repository_labels(self):
+        response, _ = self.get_repository_labels()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_HTTP404_if_label_does_not_exist(self):
+        response, _ = self.get_repository_labels(-1)
+        self.assertEqual(response.status_code, 404)
+
     def test_get_all_labels(self):
         response = self.c.get('/progresstrack/labels/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         res_obj = json.loads(response.content.decode('UTF-8'))
