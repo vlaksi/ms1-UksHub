@@ -4,7 +4,8 @@ import { getToken } from "../authentication/token";
 export const addMilestone = async (
   newMilestoneName,
   newMilestoneDescription,
-  newMilestoneDate
+  newMilestoneDate,
+  repoId
 ) => {
   let milestone = null;
   await axios
@@ -21,6 +22,7 @@ export const addMilestone = async (
             "YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]"
           )
         ),
+        repository: repoId,
         grant_type: "client_credentials",
         scope: "public",
       },

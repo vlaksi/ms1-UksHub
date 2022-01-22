@@ -11,5 +11,6 @@ urlpatterns = [
     path('pullrequests/', views.PullRequestList.as_view()),
     path('pullrequests/<int:pk>', views.PullRequestDetail.as_view(), name="pull-request-detail"),
     path('repository/<int:repo_id>/pullrequests',views.all_pull_requests_by_repository_id,name="all-repository-pull-requests"),
-    path('repository/<int:repo_id>/labels',views.all_labels_by_repository_id,name="all-repository-labels")
+    path('repository/<int:repo_id>/labels',views.all_labels_by_repository_id,name="all-repository-labels"),
+    path('repository/<int:repo_id>/milestones',views.all_milestones_by_repository_id,name="all-repository-milestones")
 ]
