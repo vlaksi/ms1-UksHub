@@ -54,8 +54,8 @@ def initialize_db_with_test_data():
     pull_request3.save()
 
     # Create labels
-    label1 = Label.objects.create(name='label1', decription='desc1', color='red')
-    label2 = Label.objects.create(name='label2', decription='desc2', color='blue')
+    label1 = Label.objects.create(name='label1', decription='desc1', color='red', repository=repository1)
+    label2 = Label.objects.create(name='label2', decription='desc2', color='blue',repository=repository1)
 
     label1.save()
     label2.save()
