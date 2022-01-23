@@ -63,7 +63,7 @@ const IssueListItem = ({ issue }) => {
         >
           <div>
             <h4>
-              <Link href={`/${user}/${repository}/issues`}>
+              <Link href={`/${user}/${repository}/issues/${issue.pk}`}>
                 <a style={{ textDecoration: "none" }}>{issue.title}</a>
               </Link>
             </h4>
