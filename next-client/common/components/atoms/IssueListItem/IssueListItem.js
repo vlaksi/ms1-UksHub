@@ -3,6 +3,7 @@ import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { getUserById } from "../../../services/useractivity/userService";
 import {
   deleteIssue,
@@ -61,7 +62,11 @@ const IssueListItem = ({ issue }) => {
           className="d-flex justify-content-between align-items-start"
         >
           <div>
-            <h4>{issue.title}</h4>
+            <h4>
+              <Link href={`/${user}/${repository}/issues`}>
+                <a style={{ textDecoration: "none" }}>{issue.title}</a>
+              </Link>
+            </h4>
             Opened
             <Badge bg="light" text="dark" pill>
               {issue.creation_date.substring(0, 10)}
