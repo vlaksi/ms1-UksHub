@@ -3,6 +3,10 @@ from authentication.models import UserAccount
 from useractivityapp.models import Action,Comment
 import uuid    
 
+def upload_path(instance, filename):
+    return 'user_{0}/{1}'.format(instance.user.id, filename)
+    # return '/'.join([instance.author.username, instance.branch.repository.name, instance.branch.name, instance.hash])
+
 class Branch(models.Model):
     repository = models.ForeignKey('Repository', on_delete=models.CASCADE, blank=True, related_name = "repositoryBranches")
     name = models.CharField(max_length=200)
@@ -17,6 +21,7 @@ class Commit(models.Model):
     hash = models.UUIDField(default=uuid.uuid4, editable=False)
     creation_date = models.DateTimeField(auto_now_add=True, blank=True)
     comments = models.ManyToManyField(Comment, blank=True, related_name='commit')
+    files = models.FileField(blank=True, null=True, upload_to=upload_path)
     def __str__(self):
         return 'Name of object: ' + self.hash
 

@@ -15,5 +15,4 @@ urlpatterns = [
     path('repository/<int:pk>/branches/', views.repository_branches, name="repository-branches"), 
     path('repository/<int:repo_id>/collaborators/', views.repository_collaborators, name="repository-collaborators"),
     path('branch/<int:pk>/commit/', views.branch_last_commit, name="branch-last-commit"), 
-
 ]

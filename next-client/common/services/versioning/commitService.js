@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getParsedToken, getToken } from '../authentication/token';
 
-export const createCommit = async (branchId, subject, description) => {
+export const createCommit = async (branchId, subject, description, files) => {
   let commit = null;
   let author = getParsedToken();
   let author_id = author.user_id;
@@ -16,6 +16,7 @@ export const createCommit = async (branchId, subject, description) => {
         branch: branchId,
         subject: subject,
         description: description,
+        files: files,
         grant_type: 'client_credentials',
         scope: 'public',
       },

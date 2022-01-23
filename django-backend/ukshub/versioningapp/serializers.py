@@ -64,20 +64,7 @@ class BranchSerializer(serializers.ModelSerializer):
 class CommitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commit
-        fields = [ "pk", "author", "branch", "hash", "subject", "description" , "creation_date", "comments"]
+        fields = [ "pk", "author", "branch", "hash", "subject", "description" , "creation_date", "comments", "files"]
         extra_kwargs = {
              "comments": {"required": False},
         }
-
-    def create(self, validated_data):
-        # Create commit
-        author = validated_data.get('author')
-        branch = validated_data.get('branch')
-        subject = validated_data.get('subject')
-        description = validated_data.get('description')
-        commit = Commit.objects.create(author = author, branch = branch, subject = subject, description = description)
-        commit.save()
-       
-        return commit
-
-

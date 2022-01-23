@@ -1,6 +1,10 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.http import Http404
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+UserAccount = get_user_model()
+from django.core.files.storage import FileSystemStorage
 
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
@@ -44,6 +48,23 @@ class CommitList(generics.ListCreateAPIView):
     queryset = Commit.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CommitSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = UserAccount.objects.get(id = request.data['author'])
+        branch = Branch.objects.get(id = request.data['branch'])
+        author = user
+        branch = branch
+        subject = request.data['subject']
+        description = request.data['description']
+        files = request.data['files']
+        # if request.FILES['upload']:
+        #     upload = request.FILES['upload']
+        #     fss = FileSystemStorage()
+        #     file = fss.save(upload.name, upload)
+        #     file_url = fss.url(file)
+        #     # return render(request, 'main/upload.html', {'file_url': file_url})
+        Commit.objects.create(author = author, branch = branch, subject = subject, description = description, files=files)
+        return HttpResponse({'message': 'Commit created'}, status=200)
 
 class CommitDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Commit.objects.all()

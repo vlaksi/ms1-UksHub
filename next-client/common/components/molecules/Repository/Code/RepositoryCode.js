@@ -17,6 +17,8 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
   const [newBranchName, setNewBranchName] = useState('');
   const [newCommitSubject, setNewCommitSubject] = useState('');
   const [newCommitDescription, setNewCommitDescription] = useState('');
+  const [newCommitFiles, setNewCommitFiles] = useState();
+  const [newCommitDirectories, setNewCommitDirectories] = useState('');
   const [deleteBranchId, setDeleteBranch] = useState('');
   const [activeBranch, setActiveBranch] = useState();
   const [activeFolders, setActiveFolders] = useState([]);
@@ -25,7 +27,6 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
 
   const setCurrentBrach = async (branch) => {
     setActiveBranch(branch);
-    console.log(branch.pk);
     var x = await getBranchCommit(branch.pk);
     console.log(x);
     // setActiveFolders(x);
@@ -54,6 +55,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     setShowAddCommitModal(false);
     setNewCommitSubject('');
     setNewCommitDescription('');
+    setNewCommitFiles([]);
   };
 
   const handleBranchNameChange = (newBranchName) => {
@@ -72,6 +74,10 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     setNewCommitDescription(newCommitDescription);
   };
 
+  const handleCommitFilesChange = (newCommitFiles) => {
+    setNewCommitFiles(newCommitFiles);
+  };
+
   const addBranch = async () => {
     let createdBranch = await createBranch(repository.pk, newBranchName);
 
@@ -88,18 +94,19 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
   const removeBranch = async () => {
     await deleteBranch(deleteBranchId);
     notifyDeletedBranch();
+    handleClose();
     setBranches(await getRepositoryBranches(repository.pk));
   };
 
   const addCommit = async () => {
-    let createdCommit = await createCommit(activeBranch.pk, newCommitSubject, newCommitDescription);
+    let createdCommit = await createCommit(activeBranch.pk, newCommitSubject, newCommitDescription, newCommitFiles);
 
     if (!createdCommit) {
       notifyError();
       return;
     } else {
       notify();
-      handleClose();
+      handleCloseAddCommitModal();
       //TODO: update branch
     }
   };
@@ -205,7 +212,14 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
             <Form.Group className="mb-3">
               <Form.Label>Commit folder</Form.Label>
               <br />
-              <input directory="" webkitdirectory="" type="file" />
+              <input
+                directory=""
+                webkitdirectory=""
+                type="file"
+                onChange={(e) => {
+                  handleCommitFilesChange(e.target.files[0]);
+                }}
+              />
             </Form.Group>
           </Form>
         </Modal.Body>

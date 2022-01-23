@@ -215,3 +215,6 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'authentication.UserAccount'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField' 
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
