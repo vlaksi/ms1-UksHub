@@ -22,10 +22,28 @@ const IssueDetails = ({ issueId }) => {
         </div>
       </h3>
       <div>
-        <Card border="dark" style={{ width: "25%", marginLeft: "75%" }}>
+        <Card border="light" style={{ width: "25%", marginLeft: "75%" }}>
           <Card.Header>Assignees</Card.Header>
           <Card.Body>
             <UserSearch placeholder="Add an assignee..."></UserSearch>
+          </Card.Body>
+        </Card>
+        <Card
+          border="light"
+          style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
+        >
+          <Card.Header>Labels</Card.Header>
+          <Card.Body>
+            <UserSearch placeholder="Add a label..."></UserSearch>
+          </Card.Body>
+        </Card>
+        <Card
+          border="light"
+          style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
+        >
+          <Card.Header>Milestones</Card.Header>
+          <Card.Body>
+            <UserSearch placeholder="Add a milestone..."></UserSearch>
           </Card.Body>
         </Card>
       </div>
