@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+from django.db import IntegrityError
+
 # User init consts
 USER1_USERNAME = 'dusan'
 USER1_PASSWORD = 'Passw0rd!.'
@@ -15,7 +17,7 @@ USER1_LAST_NAME = 'Miljkovic'
 USER1_EMAIL = 'dusan@gmail.com'
 
 REPO1_NAME = 'RepoUKS'
-ACTION_TYPE_NAME = 'Action'
+ACTION_TYPE_NAME = 'fork'
 REACTION_TYPE_NAME = 'Reaction'
 
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
@@ -40,7 +42,7 @@ def initialize_db_with_test_data():
     reactionType1.save()
 
     # Create actions
-    action1 = Action.objects.create(author=user1, repository=repository1, action_type=ACTION_TYPE_NAME, new_forked_repository=repository1)
+    action1 = Action.objects.create(author=user1, repository=repository1, action_type=actionType1.name, new_forked_repository=repository1)
 
     action1.save()
 
@@ -118,5 +120,3 @@ class TestActionModel(TestCase):
     def test_action_new_forked_repository_name(self):
         action = get_action()
         self.assertEqual(action.repository.name, REPO1_NAME)
-
-    # TODO: Add other test cases watch out on the action type
