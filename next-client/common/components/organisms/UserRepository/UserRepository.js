@@ -8,7 +8,7 @@ import PullRequestsOverview from '../../molecules/Repository/Pulls/PullRequestsO
 import RepositoryInsights from '../../molecules/Repository/Insights/RepositoryInsights';
 import RepositorySettings from '../../molecules/Repository/Settings/RepositorySettings';
 import { getRepositoryById, getRepositoryCollaboratos } from '../../../services/versioning/repositoryService';
-import { getRepositoryBranches } from '../../../services/versioning/branchService';
+import { getMainBranchCommits, getRepositoryBranches } from '../../../services/versioning/branchService';
 import Actions from '../../atoms/Actions/Actions';
 import { getUserById } from '../../../services/useractivity/userService';
 import { getParsedToken } from '../../../services/authentication/token';
@@ -22,6 +22,7 @@ const UserRepository = ({ userId, repositoryId }) => {
   const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
   const [repositoryIssues, setRepositoryIssues] = useState([]);
   const [repositoryPRs, setRepositoryPRs] = useState([]);
+  const [commitsToMainBranch, setCommitsToMainBranch] = useState([]);
 
   useEffect(async () => {
     if (!repositoryId) return;
@@ -30,6 +31,7 @@ const UserRepository = ({ userId, repositoryId }) => {
     setRepositoryCollaborators(await getRepositoryCollaboratos(repositoryId));
     setRepositoryIssues(await getAllIssues(repositoryId));
     setRepositoryPRs(await getPullRequestsByRepository(repositoryId));
+    setCommitsToMainBranch(await getMainBranchCommits(repositoryId));
   }, [repositoryId]);
 
   useEffect(async () => {
@@ -83,7 +85,7 @@ const UserRepository = ({ userId, repositoryId }) => {
               </Tab>
               {isLoggedInUserCollaborator() && (
                 <Tab eventKey="insights" title="Insights">
-                  <RepositoryInsights repositoryIssues={repositoryIssues} repositoryPRs={repositoryPRs} />
+                  <RepositoryInsights repositoryIssues={repositoryIssues} repositoryPRs={repositoryPRs} commitsToMainBranch={commitsToMainBranch} />
                 </Tab>
               )}
               {isLoggedInUserCollaborator() && (
