@@ -12,18 +12,24 @@ import { getRepositoryBranches } from '../../../services/versioning/branchServic
 import Actions from '../../atoms/Actions/Actions';
 import { getUserById } from '../../../services/useractivity/userService';
 import { getParsedToken } from '../../../services/authentication/token';
+import { getAllIssues } from '../../../services/progresstrackapp/issuesService';
+import { getPullRequestsByRepository } from '../../../services/progresstrackapp/pullRequestService';
 
 const UserRepository = ({ userId, repositoryId }) => {
   const [user, setUser] = useState();
   const [repository, setRepository] = useState();
   const [repositoryBranches, setRepositoryBranches] = useState();
   const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
+  const [repositoryIssues, setRepositoryIssues] = useState([]);
+  const [repositoryPRs, setRepositoryPRs] = useState([]);
 
   useEffect(async () => {
     if (!repositoryId) return;
     setRepository(await getRepositoryById(repositoryId));
     setRepositoryBranches(await getRepositoryBranches(repositoryId));
     setRepositoryCollaborators(await getRepositoryCollaboratos(repositoryId));
+    setRepositoryIssues(await getAllIssues(repositoryId));
+    setRepositoryPRs(await getPullRequestsByRepository(repositoryId));
   }, [repositoryId]);
 
   useEffect(async () => {
@@ -77,7 +83,7 @@ const UserRepository = ({ userId, repositoryId }) => {
               </Tab>
               {isLoggedInUserCollaborator() && (
                 <Tab eventKey="insights" title="Insights">
-                  <RepositoryInsights />
+                  <RepositoryInsights repositoryIssues={repositoryIssues} repositoryPRs={repositoryPRs} />
                 </Tab>
               )}
               {isLoggedInUserCollaborator() && (
