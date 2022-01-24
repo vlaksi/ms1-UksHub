@@ -107,6 +107,12 @@ def get_mocked_user(username, password, first_name, last_name, email):
     }
     return user
 
+def get_action(index=0):
+    return Action.objects.all()[index]
+
+def get_repository(index=0):
+    return Repository.objects.all()[index]
+
 class TestUserAdminListView(TestCase):
 
     @classmethod
@@ -336,3 +342,102 @@ class TestActionListView(TestCase):
 
         self.assertEquals(response.status_code, 400)
 
+class TestActionDetailView(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
+
+    def test_get_actions_by_id_successfully(self):
+        action = get_action()
+        repository = get_repository()
+
+        response = self.c.get(
+            '/useractivity/actions/'+str(action.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['repository'], repository.pk)
+
+    def test_get_HTTP_404_actions_by_id(self):
+
+        response = self.c.get(
+            '/useractivity/actions/9999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEqual(response.status_code, 404)
+    
+    def test_put_action(self):
+        old_action = get_action()
+        user = User.objects.get(username=USER1_USERNAME)
+        repository = Repository.objects.get(name=REPO1_NAME)
+
+        action = {
+            "author": user.pk,
+            "repository": repository.pk,
+            "action_type": "fork"
+        }
+
+        response = self.c.put(
+            '/useractivity/actions/'+str(old_action.pk),
+            data=json.dumps(action),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEquals(res_obj['action_type'], "watch")
+        self.assertEquals(res_obj['action_type'], "fork")
+
+    def test_put_HTTP_404_action(self):
+        old_action = get_action()
+        user = User.objects.get(username=USER1_USERNAME)
+        repository = Repository.objects.get(name=REPO1_NAME)
+
+        action = {
+            "author": user.pk,
+            "repository": repository.pk,
+            "action_type": "fork"
+        }
+
+        response = self.c.put(
+            '/useractivity/actions/9999',
+            data=json.dumps(action),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_delete_action(self):
+        old_action = get_action()
+
+        response = self.c.delete(
+            '/useractivity/actions/'+str(old_action.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_HTTP_404_action(self):
+        old_action = get_action()
+
+        response = self.c.delete(
+            '/useractivity/actions/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
