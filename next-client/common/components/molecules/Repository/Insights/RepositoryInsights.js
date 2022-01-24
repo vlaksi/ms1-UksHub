@@ -12,7 +12,16 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 	Chart.register(LinearScale);
 	Chart.register(PointElement);
 	Chart.register(LineElement);
-	console.log(commitsToMainBranch)
+
+	const getCommitsDates = () => {
+		var commitsDates = []
+		commitsToMainBranch.map((item) => {
+			commitsDates.push(item.creation_date.substring(0, 10))
+		})
+		return commitsDates;
+	}
+	const counts = {};
+	getCommitsDates().forEach(function (x) { counts[x] = (counts[x] || 0) + 1; });
 
 	const getOpenedIssues = () => {
 		var numberOfOpenedIssues = 0;
@@ -53,11 +62,11 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 	};
 
 	const data = {
-		labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+		labels: Object.keys(counts),
 		datasets: [
 			{
 				label: 'My First dataset',
-				fill: false,
+				fill: true,
 				lineTension: 0.1,
 				backgroundColor: 'rgba(75,192,192,0.4)',
 				borderColor: 'rgba(75,192,192,1)',
@@ -74,7 +83,7 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 				pointHoverBorderWidth: 2,
 				pointRadius: 1,
 				pointHitRadius: 10,
-				data: [65, 59, 80, 81, 56, 55, 40]
+				data: Object.values(counts)
 			}
 		]
 	};
@@ -90,9 +99,7 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 							<ListGroup.Item action href="#link2">
 								Contributors
 							</ListGroup.Item>
-							<ListGroup.Item action href="#link3">
-								Commits
-							</ListGroup.Item>
+
 						</ListGroup>
 					</Col>
 					<Col sm={8}>
@@ -127,15 +134,14 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link2">
 								<h3>Commits</h3>
+								Contributions to main, excluding merge commits and bot accounts
 								<div className={styles.lineChart}>
 									<Line
 										data={data}
 									/>
 								</div>
 							</Tab.Pane>
-							<Tab.Pane eventKey="#link3">
 
-							</Tab.Pane>
 						</Tab.Content>
 					</Col>
 				</Row>
