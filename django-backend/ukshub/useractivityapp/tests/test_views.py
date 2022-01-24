@@ -294,3 +294,45 @@ class TestActionListView(TestCase):
         res_obj = json.loads(response.content.decode('UTF-8'))
 
         self.assertEquals(response.status_code, 400)
+
+    def test_get_all_action_types(self):
+        response = self.c.get('/useractivity/actiontypes/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_get_HTTP_404_all_action_types(self):
+        response = self.c.get('/useractivitrr/actiontypes', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_action_type_successfully(self):
+
+        action_type = {
+            "name": "watch"
+        }
+
+        response = self.c.post(
+            '/useractivity/actiontypes/',
+            data=json.dumps(action_type),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['name'], "watch")
+
+    def test_post_HTTP_400_action_type(self):
+
+        action_type = {
+            "ime": "watch"
+        }
+
+        response = self.c.post(
+            '/useractivity/actiontypes/',
+            data=json.dumps(action_type),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
