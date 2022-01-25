@@ -84,3 +84,10 @@ def all_assignes_by_issue_id(request, issue_id):
     assigness = issue.assigness.all()
     serializers = UserCreateSerializer(assigness, many=True)
     return Response(serializers.data)
+
+@api_view(['GET'])
+def all_labels_by_issue_id(request, issue_id):
+    issue = Issue.objects.get(id = issue_id)
+    labels = issue.labels.all()
+    serializers = UserCreateSerializer(labels, many=True)
+    return Response(serializers.data)

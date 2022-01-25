@@ -7,6 +7,7 @@ urlpatterns = [
     path('issues/', views.IssueList.as_view()),
     path('issues/<int:pk>', views.IssueDetail.as_view()),
     path('issue/<int:issue_id>/assignes', views.all_assignes_by_issue_id,name="all-issue-assignes"),
+    path('issue/<int:issue_id>/labels', views.all_labels_by_issue_id,name="all-issue-labels"),
     path('milestones/', views.MilestoneList.as_view()),
     path('milestones/<int:pk>', views.MilestoneDetail.as_view()),
     path('pullrequests/', views.PullRequestList.as_view()),
