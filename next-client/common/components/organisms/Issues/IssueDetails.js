@@ -9,14 +9,19 @@ import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { getUserDataForIssueAssigneesSearch } from "../../../services/useractivity/userService";
 import { useRouter } from "next/router";
 import { AiFillDelete } from "react-icons/ai";
+import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
 
 const IssueDetails = ({ issueId }) => {
   const [issue, setIssue] = useState("");
+
   const [userDataForSearch, setUserDataForSearch] = useState([]);
+  const [labelDataForSearch, setLabelDataForSearch] = useState([]);
+
   const [issueAssignees, setIssueAssignees] = useState([]);
   const [removeCandidate, setRemoveCandidate] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [issueAddedLabels, setIssueAddedLabels] = useState([]);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
@@ -32,6 +37,21 @@ const IssueDetails = ({ issueId }) => {
 
   const isUserAlreadyAssignee = (user) => {
     return issueAssignees.find((assignee) => assignee.username == user.title);
+  };
+
+  useEffect(async () => {
+    if (!repository) return;
+    //setIssueAssignees(await getAllIssueAssignees(issueId));
+
+    setLabelDataForSearch(
+      await getLabelDataForIssueLabellingSearch(repository)
+    );
+  }, [repository]);
+
+  const isLabelAlreadyAdded = (label) => {
+    return issueAddedLabels.find(
+      (addedLabel) => addedLabel.name == label.title
+    );
   };
 
   useEffect(async () => {
@@ -144,7 +164,12 @@ const IssueDetails = ({ issueId }) => {
             >
               <Card.Header>Labels</Card.Header>
               <Card.Body>
-                <UserSearch placeholder="Add a label..."></UserSearch>
+                <UserSearch
+                  placeholder="Add a label..."
+                  data={labelDataForSearch.filter(
+                    (label) => !isLabelAlreadyAdded(label)
+                  )}
+                ></UserSearch>
               </Card.Body>
             </Card>
             <Card
