@@ -4,15 +4,20 @@ import {
   updateIssueAssigness,
 } from "../../../services/progresstrackapp/issuesService";
 import { useState, useEffect } from "react";
-import { Badge, Card, ListGroup } from "react-bootstrap";
+import { Badge, Card, ListGroup, Modal, Button } from "react-bootstrap";
 import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { getUserDataForIssueAssigneesSearch } from "../../../services/useractivity/userService";
 import { useRouter } from "next/router";
+import { AiFillDelete } from "react-icons/ai";
 
 const IssueDetails = ({ issueId }) => {
   const [issue, setIssue] = useState("");
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [issueAssignees, setIssueAssignees] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleDeleteModalClose = () => setShowDeleteModal(false);
+  const handleShowDeleteModal = () => setShowDeleteModal(true);
 
   const router = useRouter();
   const { repository } = router.query;
@@ -79,11 +84,59 @@ const IssueDetails = ({ issueId }) => {
                       <div style={{ display: "flex" }}>
                         <p> {issueAssignee.username} </p>
                       </div>
+                      <div>
+                        {issueAssignees.length > 0 && (
+                          <AiFillDelete
+                            style={{ cursor: "pointer", marginBottom: "15px" }}
+                            onClick={() => {
+                              //setRemoveCandidate(collaborator);
+                              handleShowDeleteModal();
+                            }}
+                          />
+                        )}
+                      </div>
                     </ListGroup.Item>
                   );
                 })}
               </ListGroup>
             </Card>
+            <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Remove confirmation</Modal.Title>
+              </Modal.Header>
+              <Modal.Body
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: " baseline",
+                }}
+              >
+                <p>
+                  Are you sure you want to remove chosen user from assignees?
+                </p>
+              </Modal.Body>
+
+              <Modal.Footer>
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    // setRepositoryCollaborators(
+                    //   repositoryCollaborators.filter(
+                    //     (collaborator) =>
+                    //       collaborator.username != removeCandidate.username
+                    //   )
+                    // );
+                    handleDeleteModalClose();
+                    //deleteCollaborationById(removeCandidate.collaboration_id);
+                  }}
+                >
+                  Remove
+                </Button>
+                <Button variant="danger" onClick={handleDeleteModalClose}>
+                  Cancel
+                </Button>
+              </Modal.Footer>
+            </Modal>
             <Card
               border="light"
               style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
