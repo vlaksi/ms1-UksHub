@@ -1,10 +1,37 @@
-import { getIssueById } from '../../../services/progresstrackapp/issuesService';
-import { useState, useEffect } from 'react';
-import { Badge, Card } from 'react-bootstrap';
-import UserSearch from '../../atoms/UserSearch/UserSearch';
+import {
+  getAllIssueAssignees,
+  getIssueById,
+  updateIssueAssigness,
+} from "../../../services/progresstrackapp/issuesService";
+import { useState, useEffect } from "react";
+import { Badge, Card, ListGroup } from "react-bootstrap";
+import UserSearch from "../../atoms/UserSearch/UserSearch";
+import { getUserDataForIssueAssigneesSearch } from "../../../services/useractivity/userService";
+import { useRouter } from "next/router";
 
 const IssueDetails = ({ issueId }) => {
-  const [issue, setIssue] = useState('');
+  const [issue, setIssue] = useState("");
+  const [userDataForSearch, setUserDataForSearch] = useState([]);
+  const [issueAssignees, setIssueAssignees] = useState([]);
+
+  const router = useRouter();
+  const { repository } = router.query;
+
+  useEffect(async () => {
+    if (!repository) return;
+    setIssueAssignees(await getAllIssueAssignees(issueId));
+
+    setUserDataForSearch(await getUserDataForIssueAssigneesSearch(repository));
+    console.log("User Data for search:", userDataForSearch);
+    console.log(
+      "setIssueAssignees u use effectu:(dobavlja sve issue ass):",
+      issueAssignees
+    );
+  }, [repository]);
+
+  const isUserAlreadyAssignee = (user) => {
+    return issueAssignees.find((assignee) => assignee.username == user.title);
+  };
 
   useEffect(async () => {
     if (!issueId) return;
@@ -16,28 +43,58 @@ const IssueDetails = ({ issueId }) => {
       {issue && (
         <>
           <h3>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: "flex" }}>
               <Badge
                 pill
                 bg="primary"
                 text="light"
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: "10px" }}
               >
                 #{issue.pk}
-              </Badge>{' '}
+              </Badge>{" "}
               {issue.title}
             </div>
           </h3>
           <div>
-            <Card border="light" style={{ width: '25%', marginLeft: '75%' }}>
+            <Card style={{ width: "25%", marginLeft: "75%" }}>
               <Card.Header>Assignees</Card.Header>
               <Card.Body>
-                <UserSearch placeholder="Add an assignee..."></UserSearch>
+                <UserSearch
+                  placeholder="Add an assignee..."
+                  data={userDataForSearch.filter(
+                    (user) => !isUserAlreadyAssignee(user)
+                  )}
+                  onSelectItem={async (selectedValue) => {
+                    console.log("Selektovani korisnik je : ", selectedValue);
+                    console.log("PK od selektovanog je:", selectedValue.pk);
+                    await updateIssueAssigness(issueId, [selectedValue.pk]);
+                    setIssueAssignees(await getAllIssueAssignees(issueId));
+                    console.log("Setovani issues su : ", issueAssignees);
+                  }}
+                ></UserSearch>
               </Card.Body>
+              <ListGroup variant="flush">
+                {issueAssignees.map((issueAssignee) => {
+                  return (
+                    <ListGroup.Item
+                      key={issueAssignee.id}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div style={{ display: "flex" }}>
+                        <p> {issueAssignee.username} </p>
+                      </div>
+                    </ListGroup.Item>
+                  );
+                })}
+              </ListGroup>
             </Card>
             <Card
               border="light"
-              style={{ width: '25%', marginLeft: '75%', marginTop: '25px' }}
+              style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
             >
               <Card.Header>Labels</Card.Header>
               <Card.Body>
@@ -46,7 +103,7 @@ const IssueDetails = ({ issueId }) => {
             </Card>
             <Card
               border="light"
-              style={{ width: '25%', marginLeft: '75%', marginTop: '25px' }}
+              style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
             >
               <Card.Header>Milestones</Card.Header>
               <Card.Body>
