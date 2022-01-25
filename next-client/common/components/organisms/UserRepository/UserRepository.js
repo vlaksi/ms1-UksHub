@@ -8,22 +8,30 @@ import PullRequestsOverview from '../../molecules/Repository/Pulls/PullRequestsO
 import RepositoryInsights from '../../molecules/Repository/Insights/RepositoryInsights';
 import RepositorySettings from '../../molecules/Repository/Settings/RepositorySettings';
 import { getRepositoryById, getRepositoryCollaboratos } from '../../../services/versioning/repositoryService';
-import { getRepositoryBranches } from '../../../services/versioning/branchService';
+import { getMainBranchCommits, getRepositoryBranches } from '../../../services/versioning/branchService';
 import Actions from '../../atoms/Actions/Actions';
 import { getUserById } from '../../../services/useractivity/userService';
 import { getParsedToken } from '../../../services/authentication/token';
+import { getAllIssues } from '../../../services/progresstrackapp/issuesService';
+import { getPullRequestsByRepository } from '../../../services/progresstrackapp/pullRequestService';
 
 const UserRepository = ({ userId, repositoryId }) => {
   const [user, setUser] = useState();
   const [repository, setRepository] = useState();
   const [repositoryBranches, setRepositoryBranches] = useState();
   const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
+  const [repositoryIssues, setRepositoryIssues] = useState([]);
+  const [repositoryPRs, setRepositoryPRs] = useState([]);
+  const [commitsToMainBranch, setCommitsToMainBranch] = useState([]);
 
   useEffect(async () => {
     if (!repositoryId) return;
     setRepository(await getRepositoryById(repositoryId));
     setRepositoryBranches(await getRepositoryBranches(repositoryId));
     setRepositoryCollaborators(await getRepositoryCollaboratos(repositoryId));
+    setRepositoryIssues(await getAllIssues(repositoryId));
+    setRepositoryPRs(await getPullRequestsByRepository(repositoryId));
+    setCommitsToMainBranch(await getMainBranchCommits(repositoryId));
   }, [repositoryId]);
 
   useEffect(async () => {
@@ -77,7 +85,7 @@ const UserRepository = ({ userId, repositoryId }) => {
               </Tab>
               {isLoggedInUserCollaborator() && (
                 <Tab eventKey="insights" title="Insights">
-                  <RepositoryInsights />
+                  <RepositoryInsights repositoryIssues={repositoryIssues} repositoryPRs={repositoryPRs} commitsToMainBranch={commitsToMainBranch} />
                 </Tab>
               )}
               {isLoggedInUserCollaborator() && (

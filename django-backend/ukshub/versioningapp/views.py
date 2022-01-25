@@ -85,3 +85,23 @@ def repository_collaborators(request, repo_id):
         collaborators.append(CollaboratorDto.create(collaboration.pk,collaboration.collaborator.pk, collaboration.collaborator.username, collaboration.collaboration_type.name))
     serializers = CollaboratorSerializer(collaborators, many=True)
     return Response(serializers.data)
+
+@api_view(['GET'])
+def branch_commits(request, pk):
+    branch = Branch.objects.get(id = pk)
+    commits = branch.commits
+    serializers = CommitSerializer(commits, many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def main_branch_commits(request, repo_id):
+    repository = Repository.objects.get(id = repo_id)
+    repositoribranches = repository.repositoryBranches.all()
+    for repositoribranch in repositoribranches:
+        print(repositoribranches)
+        if(repositoribranch.name == 'main'):
+              branch = Branch.objects.get(id = repositoribranch.pk)
+              commits = branch.commits
+              serializers = CommitSerializer(commits, many=True)
+
+    return Response(serializers.data)
