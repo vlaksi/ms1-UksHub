@@ -89,5 +89,5 @@ def all_assignes_by_issue_id(request, issue_id):
 def all_labels_by_issue_id(request, issue_id):
     issue = Issue.objects.get(id = issue_id)
     labels = issue.labels.all()
-    serializers = UserCreateSerializer(labels, many=True)
+    serializers = LabelSerializer(labels, many=True)
     return Response(serializers.data)

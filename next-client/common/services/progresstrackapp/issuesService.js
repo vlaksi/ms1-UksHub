@@ -189,6 +189,28 @@ export const getAllIssueAssignees = async (issueId) => {
 
   return issue;
 };
+export const getAllIssueLabels = async (issueId) => {
+  let issue = null;
+  await axios
+    .request({
+      url: `/progresstrack/issue/${issueId}/labels`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issue = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return issue;
+};
 export const deleteIssueAssigneeById = async (issueAssigneeId) => {
   await axios
     .request({

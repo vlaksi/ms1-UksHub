@@ -1,5 +1,6 @@
 import {
   getAllIssueAssignees,
+  getAllIssueLabels,
   getIssueById,
   updateIssueAssigness,
   updateIssueLabels,
@@ -42,7 +43,7 @@ const IssueDetails = ({ issueId }) => {
 
   useEffect(async () => {
     if (!repository) return;
-    //setIssueAssignees(await getAllIssueAssignees(issueId));
+    setIssueAddedLabels(await getAllIssueLabels(issueId));
 
     setLabelDataForSearch(
       await getLabelDataForIssueLabellingSearch(repository)
@@ -171,7 +172,7 @@ const IssueDetails = ({ issueId }) => {
                   )}
                   onSelectItem={async (selectedValue) => {
                     await updateIssueLabels(issueId, [selectedValue.pk]);
-                    //setIssueAddedLabels(await getAllIssueAssignees(issueId));
+                    setIssueAddedLabels(await getAllIssueLabels(issueId));
                   }}
                 ></UserSearch>
               </Card.Body>
