@@ -50,7 +50,7 @@ export const getUserDataForIssueAssigneesSearch = async (repositoryId) => {
       type: "user",
     });
   });
-  console.log("UserService dataForSearch: ", dataForSearch);
+
   return dataForSearch;
 };
 

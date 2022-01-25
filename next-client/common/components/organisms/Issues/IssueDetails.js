@@ -22,11 +22,6 @@ const IssueDetails = ({ issueId }) => {
     setIssueAssignees(await getAllIssueAssignees(issueId));
 
     setUserDataForSearch(await getUserDataForIssueAssigneesSearch(repository));
-    console.log("User Data for search:", userDataForSearch);
-    console.log(
-      "setIssueAssignees u use effectu:(dobavlja sve issue ass):",
-      issueAssignees
-    );
   }, [repository]);
 
   const isUserAlreadyAssignee = (user) => {
@@ -65,11 +60,8 @@ const IssueDetails = ({ issueId }) => {
                     (user) => !isUserAlreadyAssignee(user)
                   )}
                   onSelectItem={async (selectedValue) => {
-                    console.log("Selektovani korisnik je : ", selectedValue);
-                    console.log("PK od selektovanog je:", selectedValue.pk);
                     await updateIssueAssigness(issueId, [selectedValue.pk]);
                     setIssueAssignees(await getAllIssueAssignees(issueId));
-                    console.log("Setovani issues su : ", issueAssignees);
                   }}
                 ></UserSearch>
               </Card.Body>
