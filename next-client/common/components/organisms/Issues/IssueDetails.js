@@ -22,6 +22,7 @@ const IssueDetails = ({ issueId }) => {
   const [issueAssignees, setIssueAssignees] = useState([]);
   const [removeCandidate, setRemoveCandidate] = useState("");
   const [issueAddedLabels, setIssueAddedLabels] = useState([]);
+  const [removeLabel, setRemoveLabel] = useState("");
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
@@ -94,7 +95,7 @@ const IssueDetails = ({ issueId }) => {
                 ></UserSearch>
               </Card.Body>
               <ListGroup variant="flush">
-                {issueAssignees.map((issueAssignee) => {
+                {issueAssignees?.map((issueAssignee) => {
                   return (
                     <ListGroup.Item
                       key={issueAssignee.id}
@@ -176,7 +177,85 @@ const IssueDetails = ({ issueId }) => {
                   }}
                 ></UserSearch>
               </Card.Body>
+              <ListGroup variant="flush">
+                {issueAddedLabels?.map((issueAddedLabel) => {
+                  return (
+                    <ListGroup.Item
+                      key={issueAddedLabel.pk}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div style={{ display: "flex" }}>
+                        <p>
+                          {" "}
+                          <div
+                            className="fw-bold"
+                            style={{
+                              background: issueAddedLabel.color,
+                              borderRadius: "15px",
+                              padding: "4px",
+                              color: "white",
+                              display: "flex",
+                            }}
+                          >
+                            {issueAddedLabel.name}
+                          </div>
+                        </p>
+                      </div>
+                      <div>
+                        {issueAddedLabels.length > 0 && (
+                          <AiFillDelete
+                            style={{ cursor: "pointer", marginBottom: "15px" }}
+                            onClick={() => {
+                              setRemoveLabel(issueAddedLabel);
+                              handleShowDeleteModal();
+                            }}
+                          />
+                        )}
+                      </div>
+                    </ListGroup.Item>
+                  );
+                })}
+              </ListGroup>
             </Card>
+            <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Remove confirmation</Modal.Title>
+              </Modal.Header>
+              <Modal.Body
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: " baseline",
+                }}
+              >
+                <p>Are you sure you want to remove chosen label from issue?</p>
+              </Modal.Body>
+
+              <Modal.Footer>
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    setIssueAddedLabels(
+                      issueAddedLabels.filter(
+                        (issueAddedLabel) =>
+                          issueAddedLabel.name != removeLabel.name
+                      )
+                    );
+                    handleDeleteModalClose();
+                    //deleteCollaborationById(removeCandidate.collaboration_id);
+                  }}
+                >
+                  Remove
+                </Button>
+                <Button variant="danger" onClick={handleDeleteModalClose}>
+                  Cancel
+                </Button>
+              </Modal.Footer>
+            </Modal>
             <Card
               border="light"
               style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
