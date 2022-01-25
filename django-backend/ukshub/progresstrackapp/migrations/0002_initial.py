@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('progresstrackapp', '0001_initial'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('versioningapp', '0001_initial'),
         ('useractivityapp', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
