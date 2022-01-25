@@ -2,6 +2,7 @@ import {
   getAllIssueAssignees,
   getIssueById,
   updateIssueAssigness,
+  updateIssueLabels,
 } from "../../../services/progresstrackapp/issuesService";
 import { useState, useEffect } from "react";
 import { Badge, Card, ListGroup, Modal, Button } from "react-bootstrap";
@@ -159,7 +160,6 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Footer>
             </Modal>
             <Card
-              border="light"
               style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
             >
               <Card.Header>Labels</Card.Header>
@@ -169,6 +169,10 @@ const IssueDetails = ({ issueId }) => {
                   data={labelDataForSearch.filter(
                     (label) => !isLabelAlreadyAdded(label)
                   )}
+                  onSelectItem={async (selectedValue) => {
+                    await updateIssueLabels(issueId, [selectedValue.pk]);
+                    //setIssueAddedLabels(await getAllIssueAssignees(issueId));
+                  }}
                 ></UserSearch>
               </Card.Body>
             </Card>
