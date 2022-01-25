@@ -71,6 +71,15 @@ const IssueDetails = ({ issueId }) => {
 		return currentAssignesIds;
 	};
 
+	const getAllIssueLabelsIds = () => {
+		// Be careful with structure, unique id of the label is named pk, but unique id of the usser ie. assigne is id !
+		let currentIssueLabelsIds = [];
+		issueAddedLabels.forEach((label) => {
+			currentIssueLabelsIds.push(label.pk);
+		});
+		return currentIssueLabelsIds;
+	};
+
 	useEffect(async () => {
 		if (!issueId) return;
 		let issue = await getIssueById(issueId);
@@ -166,7 +175,6 @@ const IssueDetails = ({ issueId }) => {
 								<Button
 									variant="success"
 									onClick={async () => {
-										console.log('DELETE');
 										let currentAssignesIds = getAllAssignesIds();
 										let newAssignesIds = currentAssignesIds.filter(
 											(assigneId) => assigneId != removeCandidate.id
@@ -174,12 +182,6 @@ const IssueDetails = ({ issueId }) => {
 										await updateIssueAssigness(issueId, newAssignesIds);
 										setIssueAssignees(await getAllIssueAssignees(issueId));
 
-										// setIssueAssignees(
-										// 	issueAssignees.filter(
-										// 		(issueAssignee) =>
-										// 			issueAssignee.username != removeCandidate.username
-										// 	)
-										// );
 										handleDeleteModalClose();
 										//deleteCollaborationById(removeCandidate.collaboration_id);
 									}}
@@ -204,7 +206,11 @@ const IssueDetails = ({ issueId }) => {
 										(label) => !isLabelAlreadyAdded(label)
 									)}
 									onSelectItem={async (selectedValue) => {
-										await updateIssueLabels(issueId, [selectedValue.pk]);
+										let currentIssueLabelsIds = getAllIssueLabelsIds();
+										await updateIssueLabels(issueId, [
+											...currentIssueLabelsIds,
+											selectedValue.pk,
+										]);
 										setIssueAddedLabels(await getAllIssueLabels(issueId));
 									}}
 								></UserSearch>
@@ -275,13 +281,22 @@ const IssueDetails = ({ issueId }) => {
 							<Modal.Footer>
 								<Button
 									variant="success"
-									onClick={() => {
-										setIssueAddedLabels(
-											issueAddedLabels.filter(
-												(issueAddedLabel) =>
-													issueAddedLabel.name != removeLabel.name
-											)
+									onClick={async () => {
+										// setIssueAddedLabels(
+										// 	issueAddedLabels.filter(
+										// 		(issueAddedLabel) =>
+										// 			issueAddedLabel.name != removeLabel.name
+										// 	)
+										// );
+
+										let currentIssueLabelsIds = getAllIssueLabelsIds();
+										let newIssueLabelsIds = currentIssueLabelsIds.filter(
+											(labelId) => labelId != removeLabel.pk
 										);
+
+										await updateIssueLabels(issueId, newIssueLabelsIds);
+										setIssueAddedLabels(await getAllIssueLabels(issueId));
+
 										handleDeleteLabelModalClose();
 										//deleteCollaborationById(removeCandidate.collaboration_id);
 									}}
