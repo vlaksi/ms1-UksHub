@@ -29,6 +29,10 @@ const IssueDetails = ({ issueId }) => {
 	const handleDeleteModalClose = () => setShowDeleteModal(false);
 	const handleShowDeleteModal = () => setShowDeleteModal(true);
 
+	const [showDeleteLabelModal, setShowDeleteLabelModal] = useState(false);
+	const handleDeleteLabelModalClose = () => setShowDeleteLabelModal(false);
+	const handleShowDeleteLabelModal = () => setShowDeleteLabelModal(true);
+
 	const router = useRouter();
 	const { repository } = router.query;
 
@@ -58,6 +62,15 @@ const IssueDetails = ({ issueId }) => {
 		);
 	};
 
+	// Take all elements from the currentAssignesIds array (ie. take all ids, and add id of the selected user)
+	const getAllAssignesIds = () => {
+		let currentAssignesIds = [];
+		issueAssignees.forEach((assigne) => {
+			currentAssignesIds.push(assigne.id);
+		});
+		return currentAssignesIds;
+	};
+
 	useEffect(async () => {
 		if (!issueId) return;
 		let issue = await getIssueById(issueId);
@@ -82,6 +95,7 @@ const IssueDetails = ({ issueId }) => {
 						</div>
 					</h3>
 					<div>
+						{/* Assignes Card */}
 						<Card style={{ width: '25%', marginLeft: '75%' }}>
 							<Card.Header>Assignees</Card.Header>
 							<Card.Body>
@@ -91,7 +105,11 @@ const IssueDetails = ({ issueId }) => {
 										(user) => !isUserAlreadyAssignee(user)
 									)}
 									onSelectItem={async (selectedValue) => {
-										await updateIssueAssigness(issueId, [selectedValue.pk]);
+										let currentAssignesIds = getAllAssignesIds();
+										await updateIssueAssigness(issueId, [
+											...currentAssignesIds,
+											selectedValue.pk,
+										]);
 										setIssueAssignees(await getAllIssueAssignees(issueId));
 									}}
 								></UserSearch>
@@ -126,6 +144,8 @@ const IssueDetails = ({ issueId }) => {
 								})}
 							</ListGroup>
 						</Card>
+
+						{/* Delete assignes modal from the issue */}
 						<Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
 							<Modal.Header closeButton>
 								<Modal.Title>Remove confirmation</Modal.Title>
@@ -145,13 +165,21 @@ const IssueDetails = ({ issueId }) => {
 							<Modal.Footer>
 								<Button
 									variant="success"
-									onClick={() => {
-										setIssueAssignees(
-											issueAssignees.filter(
-												(issueAssignee) =>
-													issueAssignee.username != removeCandidate.username
-											)
+									onClick={async () => {
+										console.log('DELETE');
+										let currentAssignesIds = getAllAssignesIds();
+										let newAssignesIds = currentAssignesIds.filter(
+											(assigneId) => assigneId != removeCandidate.id
 										);
+										await updateIssueAssigness(issueId, newAssignesIds);
+										setIssueAssignees(await getAllIssueAssignees(issueId));
+
+										// setIssueAssignees(
+										// 	issueAssignees.filter(
+										// 		(issueAssignee) =>
+										// 			issueAssignee.username != removeCandidate.username
+										// 	)
+										// );
 										handleDeleteModalClose();
 										//deleteCollaborationById(removeCandidate.collaboration_id);
 									}}
@@ -163,6 +191,8 @@ const IssueDetails = ({ issueId }) => {
 								</Button>
 							</Modal.Footer>
 						</Modal>
+
+						{/* Labels Card */}
 						<Card
 							style={{ width: '25%', marginLeft: '75%', marginTop: '25px' }}
 						>
@@ -191,7 +221,7 @@ const IssueDetails = ({ issueId }) => {
 											}}
 										>
 											<div style={{ display: 'flex' }}>
-												<p>
+												<>
 													{' '}
 													<div
 														className="fw-bold"
@@ -205,7 +235,7 @@ const IssueDetails = ({ issueId }) => {
 													>
 														{issueAddedLabel.name}
 													</div>
-												</p>
+												</>
 											</div>
 											<div>
 												{issueAddedLabels.length > 0 && (
@@ -213,7 +243,7 @@ const IssueDetails = ({ issueId }) => {
 														style={{ cursor: 'pointer', marginBottom: '15px' }}
 														onClick={() => {
 															setRemoveLabel(issueAddedLabel);
-															handleShowDeleteModal();
+															handleShowDeleteLabelModal();
 														}}
 													/>
 												)}
@@ -223,7 +253,12 @@ const IssueDetails = ({ issueId }) => {
 								})}
 							</ListGroup>
 						</Card>
-						<Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+
+						{/* Delete label modal from the issue */}
+						<Modal
+							show={showDeleteLabelModal}
+							onHide={handleDeleteLabelModalClose}
+						>
 							<Modal.Header closeButton>
 								<Modal.Title>Remove confirmation</Modal.Title>
 							</Modal.Header>
@@ -247,13 +282,13 @@ const IssueDetails = ({ issueId }) => {
 													issueAddedLabel.name != removeLabel.name
 											)
 										);
-										handleDeleteModalClose();
+										handleDeleteLabelModalClose();
 										//deleteCollaborationById(removeCandidate.collaboration_id);
 									}}
 								>
 									Remove
 								</Button>
-								<Button variant="danger" onClick={handleDeleteModalClose}>
+								<Button variant="danger" onClick={handleDeleteLabelModalClose}>
 									Cancel
 								</Button>
 							</Modal.Footer>
