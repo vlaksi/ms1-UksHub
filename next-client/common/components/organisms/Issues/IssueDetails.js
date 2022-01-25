@@ -14,6 +14,7 @@ const IssueDetails = ({ issueId }) => {
   const [issue, setIssue] = useState("");
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [issueAssignees, setIssueAssignees] = useState([]);
+  const [removeCandidate, setRemoveCandidate] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleDeleteModalClose = () => setShowDeleteModal(false);
@@ -89,7 +90,7 @@ const IssueDetails = ({ issueId }) => {
                           <AiFillDelete
                             style={{ cursor: "pointer", marginBottom: "15px" }}
                             onClick={() => {
-                              //setRemoveCandidate(collaborator);
+                              setRemoveCandidate(issueAssignee);
                               handleShowDeleteModal();
                             }}
                           />
@@ -120,12 +121,12 @@ const IssueDetails = ({ issueId }) => {
                 <Button
                   variant="success"
                   onClick={() => {
-                    // setRepositoryCollaborators(
-                    //   repositoryCollaborators.filter(
-                    //     (collaborator) =>
-                    //       collaborator.username != removeCandidate.username
-                    //   )
-                    // );
+                    setIssueAssignees(
+                      issueAssignees.filter(
+                        (issueAssignee) =>
+                          issueAssignee.username != removeCandidate.username
+                      )
+                    );
                     handleDeleteModalClose();
                     //deleteCollaborationById(removeCandidate.collaboration_id);
                   }}
