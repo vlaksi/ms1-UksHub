@@ -222,6 +222,7 @@ class TestIssueModel(TestCase):
         issue = get_issue()
         self.assertEqual(issue.labels.count(),0)
 
+
 class TestMilestoneModel(TestCase):
 
     @classmethod
