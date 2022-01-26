@@ -69,10 +69,12 @@ def initialize_db_with_test_data():
 
     #Create issues
     labelsAll=[label1,label2]
+    assignessAll=[user1]
     issue1 = Issue.objects.create(title='issue1',creation_date='2022-01-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
     issue2 = Issue.objects.create(title='issue2',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
     issue3=Issue.objects.create(title='issue3',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
     issue3.labels.set(labelsAll)
+    issue3.assigness.set(assignessAll)
 
     issue1.save()
     issue2.save()
@@ -221,6 +223,10 @@ class TestIssueModel(TestCase):
     def test_empty_issue_assigness(self):
         issue = get_issue()
         self.assertEqual(issue.assigness.count(),0)
+    
+    def test_not_empty_issue_assigness(self):
+        issue = get_issue(2)
+        self.assertEqual(issue.assigness.count(),1)
 
     def test_empty_issue_labels(self):
         issue = get_issue()
