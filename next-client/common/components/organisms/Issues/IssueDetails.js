@@ -185,7 +185,6 @@ const IssueDetails = ({ issueId }) => {
                     setIssueAssignees(await getAllIssueAssignees(issueId));
 
                     handleDeleteModalClose();
-                    //deleteCollaborationById(removeCandidate.collaboration_id);
                   }}
                 >
                   Remove
@@ -284,13 +283,6 @@ const IssueDetails = ({ issueId }) => {
                 <Button
                   variant="success"
                   onClick={async () => {
-                    // setIssueAddedLabels(
-                    // 	issueAddedLabels.filter(
-                    // 		(issueAddedLabel) =>
-                    // 			issueAddedLabel.name != removeLabel.name
-                    // 	)
-                    // );
-
                     let currentIssueLabelsIds = getAllIssueLabelsIds();
                     let newIssueLabelsIds = currentIssueLabelsIds.filter(
                       (labelId) => labelId != removeLabel.pk
@@ -300,7 +292,6 @@ const IssueDetails = ({ issueId }) => {
                     setIssueAddedLabels(await getAllIssueLabels(issueId));
 
                     handleDeleteLabelModalClose();
-                    //deleteCollaborationById(removeCandidate.collaboration_id);
                   }}
                 >
                   Remove
@@ -325,6 +316,7 @@ const IssueDetails = ({ issueId }) => {
               <Button
                 onClick={async () => {
                   await updateIssueClose(true, issueId);
+                  setIssue(await getIssueById(issue.pk));
                 }}
               >
                 <GiConfirmed size={20}></GiConfirmed> Close issue
@@ -335,6 +327,7 @@ const IssueDetails = ({ issueId }) => {
                   variant="outline-primary"
                   onClick={async () => {
                     await updateIssueClose(false, issueId);
+                    setIssue(await getIssueById(issue.pk));
                   }}
                 >
                   <GiConfirmed size={20}></GiConfirmed> Reopen issue
