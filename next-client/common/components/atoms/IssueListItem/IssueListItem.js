@@ -75,6 +75,15 @@ const IssueListItem = ({ issue }) => {
             <Badge pill bg="light" text="dark">
               {author?.username}
             </Badge>
+            {issue.is_opened === true ? (
+              <Badge pill bg="success" text="light">
+                opened
+              </Badge>
+            ) : (
+              <Badge pill bg="danger" text="light">
+                closed
+              </Badge>
+            )}
           </div>
           <div style={{ display: "flex" }}>
             <Button
