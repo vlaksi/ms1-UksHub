@@ -643,7 +643,6 @@ class TestIssueDetailView(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(res_obj['title'], 'issue1')
-       
 
     def test_delete_issue(self):
         issue = Issue.objects.get(title='issue1')

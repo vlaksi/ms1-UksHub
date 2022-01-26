@@ -69,10 +69,10 @@ def initialize_db_with_test_data():
 
     #Create issues
     issue1 = Issue.objects.create(title='issue1',creation_date='2022-01-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
-    issue1 = Issue.objects.create(title='issue2',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    issue2 = Issue.objects.create(title='issue2',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
 
     issue1.save()
-    issue1.save()
+    issue2.save()
 
 def get_label(index=0):
     return Label.objects.all()[index]
@@ -213,7 +213,14 @@ class TestIssueModel(TestCase):
     def test_issue_author_username(self):
         issue = get_issue()
         self.assertEqual(issue.author.username, USER1_USERNAME)
+    
+    def test_empty_issue_assigness(self):
+        issue = get_issue()
+        self.assertEqual(issue.assigness.count(),0)
 
+    def test_empty_issue_labels(self):
+        issue = get_issue()
+        self.assertEqual(issue.labels.count(),0)
 
 class TestMilestoneModel(TestCase):
 
