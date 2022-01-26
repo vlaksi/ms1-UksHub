@@ -581,7 +581,7 @@ class TestIssueListView(TestCase):
         response = self.c.get('/progresstrack/issues/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         res_obj = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(res_obj),2)
+        self.assertEqual(len(res_obj),3)
 
     def test_get_all_issues_wrong_url(self):
         response = self.c.get('/progresstrack/issue', HTTP_AUTHORIZATION=self.token, content_type=JSON)
