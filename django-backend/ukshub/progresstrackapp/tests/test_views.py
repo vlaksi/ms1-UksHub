@@ -722,6 +722,7 @@ class TestIssueDetailView(TestCase):
         self.assertNotEqual(res_obj['title'], issue.title)
         self.assertEqual(res_obj['title'], new_issue_name)
 
+
        
 
 

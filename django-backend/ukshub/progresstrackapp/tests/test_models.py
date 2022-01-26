@@ -226,6 +226,10 @@ class TestIssueModel(TestCase):
         issue = get_issue()
         self.assertEqual(issue.labels.count(),0)
 
+    def test_not_empty_issue_labels(self):
+        issue = get_issue(2)
+        self.assertEqual(issue.labels.count(),2)
+
 
 class TestMilestoneModel(TestCase):
 
