@@ -321,13 +321,26 @@ const IssueDetails = ({ issueId }) => {
             </Card>
           </div>
           <div>
-            <Button
-              onClick={async () => {
-                await updateIssueClose(true, issueId);
-              }}
-            >
-              <GiConfirmed size={20}></GiConfirmed> Close issue
-            </Button>
+            {issue.is_opened === true ? (
+              <Button
+                onClick={async () => {
+                  await updateIssueClose(true, issueId);
+                }}
+              >
+                <GiConfirmed size={20}></GiConfirmed> Close issue
+              </Button>
+            ) : (
+              <p>
+                <Button
+                  variant="outline-primary"
+                  onClick={async () => {
+                    await updateIssueClose(false, issueId);
+                  }}
+                >
+                  <GiConfirmed size={20}></GiConfirmed> Reopen issue
+                </Button>
+              </p>
+            )}
           </div>
         </>
       )}
