@@ -107,3 +107,17 @@ export const updateLabel = async (
     });
   return success;
 };
+export const getLabelDataForIssueLabellingSearch = async (repositoryId) => {
+  const labels = await getAllLabels(repositoryId);
+  console.log(labels);
+
+  let dataForSearch = [];
+  labels.map((label) => {
+    dataForSearch.push({
+      title: label.name,
+      pk: label.pk,
+    });
+  });
+
+  return dataForSearch;
+};

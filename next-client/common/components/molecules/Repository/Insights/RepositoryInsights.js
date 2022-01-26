@@ -1,27 +1,57 @@
 import React from 'react';
-import { Tab, Col, ListGroup, Row } from "react-bootstrap";
-import { Chart, ArcElement, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
+import { Tab, Col, ListGroup, Row } from 'react-bootstrap';
+import {
+	Chart,
+	ArcElement,
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+} from 'chart.js';
 import { Pie, Line } from 'react-chartjs-2';
 import styles from './RepositoryInsights.module.scss';
-import { MdAssignment, MdCheckCircleOutline, MdExitToApp } from "react-icons/md";
+import {
+	MdAssignment,
+	MdCheckCircleOutline,
+	MdExitToApp,
+} from 'react-icons/md';
 import { AiOutlinePullRequest } from 'react-icons/ai';
 
-const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBranch }) => {
+const RepositoryInsights = ({
+	repositoryIssues,
+	repositoryPRs,
+	commitsToMainBranch,
+}) => {
 	Chart.register(ArcElement);
 	Chart.register(CategoryScale);
 	Chart.register(LinearScale);
 	Chart.register(PointElement);
 	Chart.register(LineElement);
 
-	const getCommitsDates = () => {
-		var commitsDates = []
-		commitsToMainBranch.map((item) => {
-			commitsDates.push(item.creation_date.substring(0, 10))
-		})
-		return commitsDates;
+	// TODO: NEMANJA FIX THIS !, this is only tmp solution
+	if (
+		!!repositoryIssues === false ||
+		!!repositoryPRs === false ||
+		!!commitsToMainBranch === false
+	) {
+		return (
+			<p>
+				There is no any repository issue, repository pull request or commits
+			</p>
+		);
 	}
+
+	const getCommitsDates = () => {
+		var commitsDates = [];
+		commitsToMainBranch.map((item) => {
+			commitsDates.push(item.creation_date.substring(0, 10));
+		});
+		return commitsDates;
+	};
 	const counts = {};
-	getCommitsDates().forEach(function (x) { counts[x] = (counts[x] || 0) + 1; });
+	getCommitsDates().forEach(function (x) {
+		counts[x] = (counts[x] || 0) + 1;
+	});
 
 	const getOpenedIssues = () => {
 		var numberOfOpenedIssues = 0;
@@ -29,36 +59,33 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 			if (item.is_opened) {
 				numberOfOpenedIssues = numberOfOpenedIssues + 1;
 			}
-		})
+		});
 		return numberOfOpenedIssues;
-	}
+	};
 	const getOpenedPRs = () => {
 		var numberOfOpenedMRs = 0;
 		repositoryPRs.map((item) => {
 			if (!item.is_merged) {
 				numberOfOpenedMRs = numberOfOpenedMRs + 1;
 			}
-		})
+		});
 		return numberOfOpenedMRs;
-	}
+	};
 	const dataForIssuesChart = {
-		datasets: [{
-			data: [getOpenedIssues(), repositoryIssues?.length - getOpenedIssues()],
-			backgroundColor: [
-				'#FF6384',
-				'#36A2EB',
-			],
-
-		}]
+		datasets: [
+			{
+				data: [getOpenedIssues(), repositoryIssues?.length - getOpenedIssues()],
+				backgroundColor: ['#FF6384', '#36A2EB'],
+			},
+		],
 	};
 	const dataForPRsChart = {
-		datasets: [{
-			data: [getOpenedPRs(), repositoryPRs?.length - getOpenedPRs()],
-			backgroundColor: [
-				'#238636',
-				'#8957e5',
-			],
-		}]
+		datasets: [
+			{
+				data: [getOpenedPRs(), repositoryPRs?.length - getOpenedPRs()],
+				backgroundColor: ['#238636', '#8957e5'],
+			},
+		],
 	};
 
 	const data = {
@@ -83,9 +110,9 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 				pointHoverBorderWidth: 2,
 				pointRadius: 1,
 				pointHitRadius: 10,
-				data: Object.values(counts)
-			}
-		]
+				data: Object.values(counts),
+			},
+		],
 	};
 	return (
 		<>
@@ -99,7 +126,6 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 							<ListGroup.Item action href="#link2">
 								Contributors
 							</ListGroup.Item>
-
 						</ListGroup>
 					</Col>
 					<Col sm={8}>
@@ -109,39 +135,48 @@ const RepositoryInsights = ({ repositoryIssues, repositoryPRs, commitsToMainBran
 								<Row sm={8}>
 									<Col sm={6}>
 										<div className={styles.overviewChart}>
-											<Pie
-												data={dataForPRsChart}
-											/>
+											<Pie data={dataForPRsChart} />
 										</div>
-										<div><AiOutlinePullRequest /> {repositoryPRs?.length} created pull request</div>
-										<div><AiOutlinePullRequest color='#238636' /> {getOpenedPRs()} opened PRs</div>
-										<div><AiOutlinePullRequest color='#8957e5' /> {repositoryPRs?.length - getOpenedPRs()} Merged PRs</div>
+										<div>
+											<AiOutlinePullRequest /> {repositoryPRs?.length} created
+											pull request
+										</div>
+										<div>
+											<AiOutlinePullRequest color="#238636" /> {getOpenedPRs()}{' '}
+											opened PRs
+										</div>
+										<div>
+											<AiOutlinePullRequest color="#8957e5" />{' '}
+											{repositoryPRs?.length - getOpenedPRs()} Merged PRs
+										</div>
 									</Col>
 
 									<Col sm={6}>
 										<div className={styles.overviewChart}>
-											<Pie
-												data={dataForIssuesChart}
-											/>
+											<Pie data={dataForIssuesChart} />
 										</div>
-										<div><MdAssignment /> {repositoryIssues?.length}  created Issues</div>
-										<div><MdCheckCircleOutline color='#36A2EB' /> {getOpenedIssues()} opened Issues</div>
-										<div><MdExitToApp color='#FF6384' /> {repositoryIssues?.length - getOpenedIssues()} closed Issues</div>
-
+										<div>
+											<MdAssignment /> {repositoryIssues?.length} created Issues
+										</div>
+										<div>
+											<MdCheckCircleOutline color="#36A2EB" />{' '}
+											{getOpenedIssues()} opened Issues
+										</div>
+										<div>
+											<MdExitToApp color="#FF6384" />{' '}
+											{repositoryIssues?.length - getOpenedIssues()} closed
+											Issues
+										</div>
 									</Col>
 								</Row>
-
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link2">
 								<h3>Commits</h3>
 								Contributions to main, excluding merge commits and bot accounts
 								<div className={styles.lineChart}>
-									<Line
-										data={data}
-									/>
+									<Line data={data} />
 								</div>
 							</Tab.Pane>
-
 						</Tab.Content>
 					</Col>
 				</Row>
