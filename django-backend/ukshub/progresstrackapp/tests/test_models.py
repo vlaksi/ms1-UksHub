@@ -68,11 +68,14 @@ def initialize_db_with_test_data():
     milestone2.save()
 
     #Create issues
+    labelsAll=[label1,label2]
     issue1 = Issue.objects.create(title='issue1',creation_date='2022-01-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
     issue2 = Issue.objects.create(title='issue2',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    issue3=Issue.objects.create(title='issue3',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1,labels=labelsAll)
 
     issue1.save()
     issue2.save()
+    issue3.save()
 
 def get_label(index=0):
     return Label.objects.all()[index]
