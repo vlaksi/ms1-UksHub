@@ -45,13 +45,7 @@ export const getRepositoryById = async (repositoryId) => {
   return repository;
 };
 
-export const addRepository = async (
-  newRepositoryName,
-  newRepositoryDescription,
-  authorId,
-  defaultBranch = null,
-  forkedFromAuthorId = null
-) => {
+export const addRepository = async (newRepositoryName, newRepositoryDescription, authorId, defaultBranch = null, forkedFromAuthorId = null) => {
   let repository = null;
   await axios
     .request({
@@ -79,10 +73,7 @@ export const addRepository = async (
   return repository;
 };
 
-export const updateRepositoryDefaultBranch = async (
-  repositoryId,
-  newDefaultBranchId
-) => {
+export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBranchId) => {
   let updatedBranch;
   await axios
     .request({
@@ -101,6 +92,28 @@ export const updateRepositoryDefaultBranch = async (
     });
 
   return updatedBranch;
+};
+
+export const getBranchCommit = async (branchId) => {
+  let files;
+  await axios
+    .request({
+      url: `/versioning/branch/${branchId}/commit/`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      files = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.errorrr);
+    });
+  return files;
 };
 
 export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
@@ -128,10 +141,7 @@ export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
   return success;
 };
 
-export const updateRepositoryDescription = async (
-  newRepositoryDescription,
-  repositoryId
-) => {
+export const updateRepositoryDescription = async (newRepositoryDescription, repositoryId) => {
   let success = false;
   await axios
     .request({

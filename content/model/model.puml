@@ -1,0 +1,128 @@
+@startuml
+
+  class UserAccount{
+    id
+    password
+    last_login
+    is_superuser
+    email
+    username
+    first_name
+    last_name
+    is_active
+    is_staff
+  }
+  
+  class Label{
+    name
+    color
+    description
+  }
+  
+  class Issue{
+    author
+    assigness 
+    comments 
+    title
+    creation_date
+    is_opened
+  }
+  
+  Issue -- "0..*" Label
+  Issue -- UserAccount
+  Issue "0..*" -- Repository
+  
+  class Milestone{
+    title 
+    due_date 
+    description 
+  }
+  
+  Milestone -- "0..*" Issue
+  
+  class PullRequest{
+    is_able_to_merge 
+    is_merged
+    is_approved 
+    creation_date 
+    title 
+  }
+  
+  PullRequest -- "base_branch" Branch 
+  PullRequest -- "compare_branch" Branch 
+  PullRequest "0..*" -- "author" UserAccount
+  PullRequest "0..*" -- "0..*" UserAccount : reviewers
+  PullRequest "0..*" -- "0..*" UserAccount : assignes
+  PullRequest "0..*" -- Repository
+  PullRequest -- "0..*" Issue
+  PullRequest -- "0..*" Milestone
+  PullRequest -- "0..*" Label
+  
+  class Comment {
+    message
+    creation_date
+  }
+  
+  Comment "0..*" -- PullRequest
+  Comment -- UserAccount
+  Comment -- "0..*" Reaction
+  
+  class ReactionType{
+    name
+  }
+  
+  class Reaction{
+  }
+  
+  Reaction "0..*" -- UserAccount
+  Reaction "0..*"-- ReactionType
+  
+  class ActionType{
+  
+  }
+  
+  class Action {
+    new_forked_repository
+  }
+  
+  Action "0..*" -- ActionType
+  Action "0..*" -- UserAccount
+  
+  class Commit{
+    message
+    hash
+    creation_date
+  }
+  Commit "0..*" -- UserAccount
+  Commit -- "0..*" Comment
+  
+  class Branch {
+    name
+  }
+  
+  Branch "0..*" -- Repository
+  Branch -- "0..*" Branch
+  Branch -- "0..*" Commit
+  
+  class Repository {
+    name 
+    description
+    default_branch
+    forked_from_author
+  }
+  
+  Repository "0..*"-- "author" UserAccount
+  Repository -- "0..*" Action
+  
+  class CollaborationType {
+    name
+  }
+  
+  class Collaboration{
+  }
+  Collaboration "0..*" -- UserAccount
+  Collaboration "0..*" -- Repository
+  Collaboration "0..*" -- CollaborationType
+  
+
+@enduml

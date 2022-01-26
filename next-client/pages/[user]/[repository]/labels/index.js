@@ -1,9 +1,11 @@
-const Labels = () => {
-	return (
-		<>
-			<p> Show here all labels </p>
-		</>
-	);
+import Labels from "../../../../common/components/molecules/Labels/Labels";
+
+const LabelsIndex = () => {
+  return (
+    <>
+      <Labels></Labels>
+    </>
+  );
 };
 
-export default Labels;
+export default LabelsIndex;

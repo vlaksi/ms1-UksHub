@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.test import TestCase
 
-from ..models import Label, PullRequest
+from ..models import Label, PullRequest, Milestone,Issue
 from versioningapp.models import Branch, Repository
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -18,6 +18,7 @@ USER1_EMAIL = 'ica@gmail.com'
 PULL_REQUEST_1_TITLE = 'feature[pull-request]: crud'
 PULL_REQUEST_2_TITLE = 'test[pull-request]: progresstrackapp'
 PULL_REQUEST_3_TITLE = 'feature[grammar]: init grammar'
+
 
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
@@ -53,17 +54,43 @@ def initialize_db_with_test_data():
     pull_request3.save()
 
     # Create labels
-    label1 = Label.objects.create(name='label1', decription='desc1', color='red')
-    label2 = Label.objects.create(name='label2', decription='desc2', color='blue')
+    label1 = Label.objects.create(name='label1', decription='desc1', color='red', repository=repository1)
+    label2 = Label.objects.create(name='label2', decription='desc2', color='blue',repository=repository1)
 
     label1.save()
     label2.save()
+
+    #Create milestones
+    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01',repository=repository1)
+    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01',repository=repository1)
+
+    milestone1.save()
+    milestone2.save()
+
+    #Create issues
+    labelsAll=[label1,label2]
+    assignessAll=[user1]
+    issue1 = Issue.objects.create(title='issue1',creation_date='2022-01-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    issue2 = Issue.objects.create(title='issue2',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    issue3=Issue.objects.create(title='issue3',creation_date='2022-02-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    issue3.labels.set(labelsAll)
+    issue3.assigness.set(assignessAll)
+
+    issue1.save()
+    issue2.save()
+    issue3.save()
 
 def get_label(index=0):
     return Label.objects.all()[index]
 
 def get_pull_request(index=0):
     return PullRequest.objects.all()[index]
+
+def get_milestone(index=0):
+    return Milestone.objects.all()[index]
+
+def get_issue(index=0):
+    return Issue.objects.all()[index]
 
 class TestLabelModel(TestCase):
     
@@ -88,7 +115,7 @@ class TestLabelModel(TestCase):
 
     def test_label_color_max_length(self):
         label = get_label()
-        max_length = label._meta.get_field('decription').max_length
+        max_length = label._meta.get_field('color').max_length
         self.assertEquals(max_length, 200)
 
     def test_label_decription_name(self):
@@ -178,16 +205,61 @@ class TestIssueModel(TestCase):
     @classmethod
     def setUpTestData(cls):
         initialize_db_with_test_data()
-        # extend init function with data needed for the Issue
+    
+    def test_issue_name(self):
+        issue = get_issue()
+        verbose_name = issue._meta.get_field('title').verbose_name
+        self.assertEquals(verbose_name, 'title')
+
+    def test_issue_name_max_length(self):
+        issue = get_issue()
+        max_length = issue._meta.get_field('title').max_length
+        self.assertEquals(max_length, 200)
+    
+    def test_issue_author_username(self):
+        issue = get_issue()
+        self.assertEqual(issue.author.username, USER1_USERNAME)
+    
+    def test_empty_issue_assigness(self):
+        issue = get_issue()
+        self.assertEqual(issue.assigness.count(),0)
+    
+    def test_not_empty_issue_assigness(self):
+        issue = get_issue(2)
+        self.assertEqual(issue.assigness.count(),1)
+
+    def test_empty_issue_labels(self):
+        issue = get_issue()
+        self.assertEqual(issue.labels.count(),0)
+
+    def test_not_empty_issue_labels(self):
+        issue = get_issue(2)
+        self.assertEqual(issue.labels.count(),2)
 
 
-# TODO: Add test cases for the Milestone !!
 class TestMilestoneModel(TestCase):
 
     @classmethod
     def setUpTestData(cls):
         initialize_db_with_test_data()
-        # extend init function with data needed for the Milestone
 
+    def test_milestone_name(self):
+        milestone = get_milestone()
+        verbose_name = milestone._meta.get_field('title').verbose_name
+        self.assertEquals(verbose_name, 'title')
+    
+    def test_milestone_name_max_length(self):
+        milestone = get_milestone()
+        max_length = milestone._meta.get_field('title').max_length
+        self.assertEquals(max_length, 200)
 
+    def test_description_name(self):
+        milestone = get_milestone()
+        verbose_name = milestone._meta.get_field('description').verbose_name
+        self.assertEquals(verbose_name, 'description')
+    
+    def test_description_name_max_length(self):
+        milestone = get_milestone()
+        max_length = milestone._meta.get_field('description').max_length
+        self.assertEquals(max_length, 200)
     

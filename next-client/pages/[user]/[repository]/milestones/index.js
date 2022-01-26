@@ -1,9 +1,10 @@
-const Milestones = () => {
-	return (
-		<>
-			<p> Show here all milestones </p>
-		</>
-	);
+import Milestones from "../../../../common/components/molecules/Milestones/Milestones";
+const MilestoneIndex = () => {
+  return (
+    <>
+      <Milestones></Milestones>
+    </>
+  );
 };
 
-export default Milestones;
+export default MilestoneIndex;

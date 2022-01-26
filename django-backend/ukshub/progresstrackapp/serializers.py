@@ -4,7 +4,7 @@ from .models import Issue, Label, Milestone, PullRequest
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label
-        fields = [ "pk", "name", "color", "decription" ]
+        fields = [ "pk", "name", "color", "decription","repository" ]
 
 
 class IssueSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class IssueSerializer(serializers.ModelSerializer):
 class MilestoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Milestone
-        fields = [ "pk", "title", "due_date", "description","issues"]
+        fields = [ "pk", "title", "due_date", "description","issues","repository"]
         extra_kwargs = {
              "issues": {"required": False},
         }
