@@ -668,6 +668,30 @@ class TestIssueDetailView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(res_obj),0)
     
+    def test_get_all_issue_assigness_by_id_successfully_empty(self):
+        issue = Issue.objects.get(title='issue1')
+        response = self.c.get(
+            '/progresstrack/issue/'+str(issue.pk)+'/assignes',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+ 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),0)
+
+    def test_get_all_issue_assigness_by_id_successfully(self):
+        issue = Issue.objects.get(title='issue3')
+        response = self.c.get(
+            '/progresstrack/issue/'+str(issue.pk)+'/assignes',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+ 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),1)
+    
     def test_delete_issue(self):
         issue = Issue.objects.get(title='issue1')
 
