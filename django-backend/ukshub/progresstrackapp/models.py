@@ -28,6 +28,7 @@ class Milestone(models.Model):
     due_date = models.DateTimeField('due date')
     description = models.CharField(max_length=200)
     issues = models.ManyToManyField(Issue, blank=True)
+    is_opened = models.BooleanField(default=False)
     repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='milestones')
     def __str__(self):
         return 'Title of object: ' + self.title       
