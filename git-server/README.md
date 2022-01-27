@@ -2,6 +2,12 @@
 
 A lightweight Git Server Docker image built with Alpine Linux.
 
+## Menu
+
+
+<details>
+    <summary> SSH Keys </summary> 
+    
 ### SSH Keys
 
 How generate a pair keys in client machine:
@@ -10,7 +16,14 @@ How generate a pair keys in client machine:
 
 How upload quickly a public key to host volume:
 
-    $ scp ~/.ssh/id_rsa.pub user@host:~/git-server/keys
+    $ scp ~/.ssh/id_rsa.pub user@host:~/git-server/keys    
+
+</details>
+
+
+<details>
+    <summary> Docker </summary> 
+
 
 ### Build Image
 
@@ -23,6 +36,11 @@ How to make the image:
 You can edit docker-compose.yml file in base directory and run this container along with other project containers with:
 
     $ docker-compose up -d
+
+</details>
+    
+<details>
+    <summary> Basic Usage </summary>
 
 ### Basic Usage
 
@@ -67,3 +85,5 @@ How to upload a repo:
 How clone a repository:
 
     $ git clone ssh://git@<ip-docker-server>:2222/git-server/repos/myrepo.git
+
+</details>
