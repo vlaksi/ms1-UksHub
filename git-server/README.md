@@ -27,7 +27,7 @@ How upload quickly a public key to host volume:
 
 ### Build Image
 
-How to make the image:
+Redirect to the git-server (where is a Dockerfile) & run: 
 
     $ docker build -t uks-git-server .
 
