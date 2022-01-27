@@ -12,6 +12,7 @@ import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { useRouter } from "next/router";
 import { getIssueDataForMilestoneIssueSearch } from "../../../services/progresstrackapp/issuesService";
 import { AiFillDelete } from "react-icons/ai";
+import IssueListItem from "../../atoms/IssueListItem/IssueListItem";
 
 const MilestoneDetails = ({ milestoneId }) => {
   const [milestone, setMilestone] = useState("");
@@ -65,7 +66,16 @@ const MilestoneDetails = ({ milestoneId }) => {
           {milestone.title}
         </div>
       </h4>
-      <Card style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}>
+      <div style={{ marginTop: "35px", width: "75%" }}>
+        {milestonesIssue?.map((issueItem) => {
+          return (
+            <div key={issueItem.pk}>
+              <IssueListItem issue={issueItem} />
+            </div>
+          );
+        })}
+      </div>
+      <Card style={{ width: "20%", marginLeft: "85%", marginTop: "2px" }}>
         <Card.Header>Issues</Card.Header>
         <Card.Body>
           <UserSearch
@@ -148,6 +158,7 @@ const MilestoneDetails = ({ milestoneId }) => {
           </Button>
         </Modal.Footer>
       </Modal>
+
       <div>
         {milestone.is_opened === true ? (
           <Button
