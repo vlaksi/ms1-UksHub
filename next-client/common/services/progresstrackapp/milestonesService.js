@@ -58,6 +58,28 @@ export const getAllMilestones = async (repoId) => {
     });
   return milestones;
 };
+export const getMilestoneById = async (milestoneId) => {
+  let milestone = null;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      milestone = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return milestone;
+};
 export const deleteMilestone = async (milestoneId) => {
   let success = false;
   await axios
