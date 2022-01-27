@@ -4,10 +4,13 @@ import { BsFillFolderFill } from 'react-icons/bs';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdSyncProblem } from 'react-icons/md';
 import Link from 'next/link';
+import { searchAllIssues } from '../../../services/progresstrackapp/issuesService';
+import { useRouter } from 'next/router'
 
 function SearchBar({ placeholder, data }) {
 	const [filteredData, setFilteredData] = useState([]);
 	const [wordEntered, setWordEntered] = useState('');
+	const router = useRouter()
 
 	const handleFilter = (event) => {
 		const searchWord = event.target.value;
@@ -22,6 +25,19 @@ function SearchBar({ placeholder, data }) {
 			setFilteredData(newFilter);
 		}
 	};
+	const handleKeyDown = async (e) => {
+		if (e.key === 'Enter') {
+
+			// let issues = await searchAllIssues(wordEntered);
+			// console.log(issues)
+			router.push({
+				pathname: `/search/[search]`,
+				query: { search: wordEntered },
+			})
+
+			// setNewIssueList(issues);
+		}
+	};
 
 	return (
 		<div className={styles.searchBarWrapper}>
@@ -31,6 +47,7 @@ function SearchBar({ placeholder, data }) {
 					placeholder={placeholder}
 					value={wordEntered}
 					onChange={handleFilter}
+					onKeyDown={handleKeyDown}
 				/>
 			</div>
 			{filteredData.length != 0 && (

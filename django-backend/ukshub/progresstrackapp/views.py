@@ -4,11 +4,12 @@ from django.http import Http404
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import generics, serializers, permissions
+from rest_framework import generics, serializers, permissions, filters
 
 from .models import Issue, Label, Milestone, PullRequest
 from .serializers import IssueSerializer, LabelSerializer, MilestoneSerializer, PullRequestSerializer
 from authentication.serializers import UserCreateSerializer
+
 
 class LabelList(generics.ListCreateAPIView):
     queryset = Label.objects.all()
@@ -21,6 +22,8 @@ class LabelDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LabelSerializer
 
 class IssueList(generics.ListCreateAPIView):
+    search_fields = ['title', 'author__username']
+    filter_backends = (filters.SearchFilter,)
     queryset = Issue.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = IssueSerializer
