@@ -79,9 +79,21 @@ const MilestoneListItem = ({ milestone }) => {
               <a style={{ textDecoration: "none" }}>{milestone.title}</a>
             </Link>
           </h3>
-          <Badge bg="light" text="dark" pill>
-            {milestone.due_date.substring(0, 10)}
-          </Badge>
+          <p>
+            Due by{" "}
+            <Badge bg="light" text="dark" pill>
+              {milestone.due_date.substring(0, 10)}
+            </Badge>
+            {milestone.is_opened === true ? (
+              <Badge pill bg="success" text="light">
+                opened
+              </Badge>
+            ) : (
+              <Badge pill bg="danger" text="light">
+                closed
+              </Badge>
+            )}
+          </p>
         </div>
 
         <div
