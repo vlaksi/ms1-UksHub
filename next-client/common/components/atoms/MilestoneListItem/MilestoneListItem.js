@@ -7,6 +7,7 @@ import {
   deleteMilestone,
   updateMilestone,
 } from "../../../services/progresstrackapp/milestonesService";
+import Link from "next/link";
 
 const MilestoneListItem = ({ milestone }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -72,8 +73,13 @@ const MilestoneListItem = ({ milestone }) => {
         className="d-flex justify-content-between align-items-start"
       >
         <div>
-          <h3>{milestone.title}</h3>
-          <Badge bg="primary" pill>
+          <h3>
+            {" "}
+            <Link href={`/${user}/${repository}/milestones/${milestone.pk}`}>
+              <a style={{ textDecoration: "none" }}>{milestone.title}</a>
+            </Link>
+          </h3>
+          <Badge bg="light" text="dark" pill>
             {milestone.due_date.substring(0, 10)}
           </Badge>
         </div>
