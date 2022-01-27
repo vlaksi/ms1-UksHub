@@ -1,7 +1,11 @@
 import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
 import { Badge, Card } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { getMilestoneById } from "../../../services/progresstrackapp/milestonesService";
+import {
+  getAllMilestoneIssues,
+  getMilestoneById,
+  updateMilestoneIssues,
+} from "../../../services/progresstrackapp/milestonesService";
 import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { useRouter } from "next/router";
 import { getIssueDataForMilestoneIssueSearch } from "../../../services/progresstrackapp/issuesService";
@@ -22,13 +26,20 @@ const MilestoneDetails = ({ milestoneId }) => {
 
   useEffect(async () => {
     if (!repository) return;
-    //setMilestonesIssue(await getAllIssueLabels(issueId));
+    setMilestonesIssue(await getAllMilestoneIssues(milestoneId));
 
     setIssueDataForSearch(
       await getIssueDataForMilestoneIssueSearch(repository)
     );
   }, [repository]);
 
+  const getAllIssuesIds = () => {
+    let currentMilestoneIssuesIds = [];
+    milestonesIssue.forEach((issue) => {
+      currentMilestoneIssuesIds.push(issue.pk);
+    });
+    return currentMilestoneIssuesIds;
+  };
   const isAlreadyAddedIssue = (issue) => {
     return milestonesIssue.find(
       (addedIssue) => addedIssue.title == issue.title
@@ -54,6 +65,14 @@ const MilestoneDetails = ({ milestoneId }) => {
             data={issueDataForSearch.filter(
               (issue) => !isAlreadyAddedIssue(issue)
             )}
+            onSelectItem={async (selectedValue) => {
+              let currentIssuesIds = getAllIssuesIds();
+              await updateMilestoneIssues(milestoneId, [
+                ...currentIssuesIds,
+                selectedValue.pk,
+              ]);
+              setMilestonesIssue(await getAllMilestoneIssues(milestoneId));
+            }}
           ></UserSearch>
         </Card.Body>
       </Card>

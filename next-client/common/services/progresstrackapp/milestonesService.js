@@ -137,3 +137,49 @@ export const updateMilestone = async (
     });
   return success;
 };
+export const updateMilestoneIssues = async (milestoneId, issueId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        issues: issueId,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};
+export const getAllMilestoneIssues = async (milestoneId) => {
+  let milestone = null;
+  await axios
+    .request({
+      url: `/progresstrack/milestone/${milestoneId}/issues`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      milestone = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return milestone;
+};
