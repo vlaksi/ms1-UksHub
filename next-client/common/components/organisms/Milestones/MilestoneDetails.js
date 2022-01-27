@@ -6,6 +6,7 @@ import {
   getMilestoneById,
   updateMilestoneIssues,
 } from "../../../services/progresstrackapp/milestonesService";
+import { GiConfirmed } from "react-icons/gi";
 import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { useRouter } from "next/router";
 import { getIssueDataForMilestoneIssueSearch } from "../../../services/progresstrackapp/issuesService";
@@ -146,6 +147,30 @@ const MilestoneDetails = ({ milestoneId }) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <div>
+        {milestone.is_opened === true ? (
+          <Button
+            onClick={async () => {
+              //await updateIssueClose(true, issueId);
+              setMilestone(await getMilestoneById(milestone.pk));
+            }}
+          >
+            <GiConfirmed size={20}></GiConfirmed> Close issue
+          </Button>
+        ) : (
+          <p>
+            <Button
+              variant="outline-primary"
+              onClick={async () => {
+                //await updateIssueClose(false, issueId);
+                setMilestone(await getMilestoneById(milestone.pk));
+              }}
+            >
+              <GiConfirmed size={20}></GiConfirmed> Reopen issue
+            </Button>
+          </p>
+        )}
+      </div>
     </>
   );
 };
