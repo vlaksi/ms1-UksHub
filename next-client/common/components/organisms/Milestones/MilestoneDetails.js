@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   getAllMilestoneIssues,
   getMilestoneById,
+  updateMilestoneClose,
   updateMilestoneIssues,
 } from "../../../services/progresstrackapp/milestonesService";
 import { GiConfirmed } from "react-icons/gi";
@@ -151,22 +152,22 @@ const MilestoneDetails = ({ milestoneId }) => {
         {milestone.is_opened === true ? (
           <Button
             onClick={async () => {
-              //await updateIssueClose(true, issueId);
+              await updateMilestoneClose(true, milestoneId);
               setMilestone(await getMilestoneById(milestone.pk));
             }}
           >
-            <GiConfirmed size={20}></GiConfirmed> Close issue
+            <GiConfirmed size={20}></GiConfirmed> Close milestone
           </Button>
         ) : (
           <p>
             <Button
               variant="outline-primary"
               onClick={async () => {
-                //await updateIssueClose(false, issueId);
+                await updateMilestoneClose(false, milestoneId);
                 setMilestone(await getMilestoneById(milestone.pk));
               }}
             >
-              <GiConfirmed size={20}></GiConfirmed> Reopen issue
+              <GiConfirmed size={20}></GiConfirmed> Reopen milestone
             </Button>
           </p>
         )}

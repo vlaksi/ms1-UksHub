@@ -23,6 +23,7 @@ export const addMilestone = async (
           )
         ),
         repository: repoId,
+        is_opened: true,
         grant_type: "client_credentials",
         scope: "public",
       },
@@ -182,4 +183,28 @@ export const getAllMilestoneIssues = async (milestoneId) => {
     });
 
   return milestone;
+};
+export const updateMilestoneClose = async (isClosed, milestoneId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        is_opened: !isClosed,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
 };
