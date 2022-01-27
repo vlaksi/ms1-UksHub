@@ -1,5 +1,12 @@
 import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
-import { Badge, Card, ListGroup, Modal, Button } from "react-bootstrap";
+import {
+  Badge,
+  Card,
+  ListGroup,
+  Modal,
+  Button,
+  ProgressBar,
+} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import {
   getAllMilestoneIssues,
@@ -23,6 +30,26 @@ const MilestoneDetails = ({ milestoneId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
+
+  const [showPercentage, setShowPercentage] = useState("");
+
+  useEffect(async () => {
+    if (!milestone?.pk) return;
+
+    let allIssues = milestone.issues.length;
+    console.log(allIssues);
+
+    let onlyClosedIssues = milestone.issues.filter(
+      (issue) => issue.is_opened === false
+    );
+
+    let countClosedIssues = onlyClosedIssues.length;
+
+    let percents = (1 / allIssues) * 100;
+    console.log(percents);
+
+    setShowPercentage(percents);
+  }, [milestone?.pk]);
 
   const router = useRouter();
   const { repository } = router.query;
@@ -66,6 +93,14 @@ const MilestoneDetails = ({ milestoneId }) => {
           {milestone.title}
         </div>
       </h4>
+      <div style={{ width: "15%" }}>
+        <ProgressBar
+          striped
+          now={showPercentage}
+          label={`${showPercentage}%`}
+        ></ProgressBar>
+      </div>
+
       <div style={{ marginTop: "35px", width: "75%" }}>
         {milestonesIssue?.map((issueItem) => {
           return (
