@@ -2,7 +2,7 @@ from django.db.models import fields
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Branch, Commit, Repository, Collaboration, CollaborationType
-from .dtos import CollaboratorDto, GitServerCommitDto
+from .dtos import CollaboratorDto, GitServerBranchDto, GitServerCommitDto
 
 import pygit2
 from pygit2 import init_repository
@@ -78,3 +78,8 @@ class GitServerCommitSerializer(serializers.ModelSerializer):
     class Meta:
         model = GitServerCommitDto
         fields = [ "hash", "committed_date", "author" ]
+
+class GitServerBranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GitServerBranchDto
+        fields = [ "name" ]

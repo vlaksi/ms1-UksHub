@@ -8,11 +8,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import CollaborationType, Branch, Commit, Repository, Collaboration
-from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, GitServerCommitSerializer, RepositorySerializer, CollaborationSerializer
-from .dtos import CollaboratorDto, GitServerCommitDto
+from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, GitServerBranchSerializer, GitServerCommitSerializer, RepositorySerializer, CollaborationSerializer
+from .dtos import CollaboratorDto, GitServerBranchDto, GitServerCommitDto
 
 from git import Repo
 import os
+from datetime import datetime
+import time
 
 
 class RepositoryList(generics.ListCreateAPIView):
@@ -71,27 +73,53 @@ def collaboration_types(request):
 @api_view(['GET'])
 def repository_branches(request, pk):
     repository = Repository.objects.get(id = pk)
-    #TODO: change the code so it works with real data
-    # try:
-    #     repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
-    #     branches = repo.branches
-    # except:
-    #     return Response({})
-    # returnBranches = []
+    try:
+        repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
+        branches = repo.branches
+    except:
+        return Response({})
+    returnBranches = []
 
-    # for branch in branches:
-    #     returnBranches.append(GitServerCommitDto.create(    commit.__hash__, commit.committed_date, commit.author))
-    # serializers = GitServerCommitSerializer(returnBranches, many=True)
-    # return Response(serializers.data)
-    b = repository.repositoryBranches.all()
-    serializers = BranchSerializer(b, many=True)
+    for branch in branches:
+        returnBranches.append(GitServerBranchDto.create( branch.name ))
+    serializers = GitServerBranchSerializer(returnBranches, many=True)
     return Response(serializers.data)
 
 @api_view(['GET'])
-def branch_last_commit(request, pk):
-    branch = Branch.objects.get(id = pk)
-    commit = branch.commits.last()
-    serializers = CommitSerializer(commit, many=True)
+def branch_last_commit(request, repository_id, name):
+    repository = Repository.objects.get(id = repository_id)
+    branch = Branch.objects.get(name = name, repository_id = repository.id)
+    commits = []
+    try:
+        repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
+        commits = list(repo.iter_commits(branch.name))
+    except:
+        return Response({})
+    returnCommits = []
+    commited = datetime.fromtimestamp(commits[0].committed_date)
+    print("\n\n\n\n\n\n")
+    print(len(commits))
+    print(datetime.fromtimestamp(int(time.time())))
+    print("\n\n")
+    print(commited)
+    print("\n\n")
+    difference = datetime.fromtimestamp(int(time.time())) - commited
+    diff = divmod(difference.total_seconds(), 31536000)[0]
+    commited_date = str(int(diff)) + " years ago"
+    if diff == 0 :
+        diff = difference.days
+        commited_date = str(int(diff)) + " days ago"
+    if diff == 0 :
+        diff = divmod(difference.total_seconds(), 3600)[0]
+        commited_date = str(int(diff)) + " hours ago"
+    if diff == 0 :
+        diff = divmod(difference.total_seconds(), 60)[0]
+        commited_date = str(int(diff)) + " minutes ago"
+    if diff == 0 :
+        diff = difference.seconds
+        commited_date = str(int(diff)) + " seconds ago"
+    returnCommits.append(GitServerCommitDto.create(commits[0].__hash__, commited_date, commits[0].author))
+    serializers = GitServerCommitSerializer(returnCommits, many=True)
     return Response(serializers.data)
     
 @api_view(['GET'])
@@ -114,7 +142,7 @@ def branch_commits(request, pk):
         return Response({})
     returnCommits = []
     for commit in commits:
-        returnCommits.append(GitServerCommitDto.create(commit.__hash__, commit.committed_date, commit.author))
+        returnCommits.append(GitServerCommitDto.create(commit.__hash__, datetime.fromtimestamp(commit.committed_date), commit.author))
     serializers = GitServerCommitSerializer(returnCommits, many=True)
     return Response(serializers.data)
 
@@ -128,7 +156,7 @@ def main_branch_commits(request, repo_id):
         return Response({})
     returnCommits = []
     for commit in commits:
-        returnCommits.append(GitServerCommitDto.create(commit.__hash__, commit.committed_date, commit.author))
+        returnCommits.append(GitServerCommitDto.create(commit.__hash__, datetime.fromtimestamp(commit.committed_date), commit.author))
     serializers = GitServerCommitSerializer(returnCommits, many=True)
     # repositoribranches = repository.repositoryBranches.all()
     # for repositoribranch in repositoribranches:

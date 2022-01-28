@@ -94,11 +94,11 @@ export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBran
   return updatedBranch;
 };
 
-export const getBranchCommit = async (branchId) => {
+export const getBranchCommit = async (repository_id, branchName) => {
   let files;
   await axios
     .request({
-      url: `/versioning/branch/${branchId}/commit/`,
+      url: `/versioning/branch/${repository_id}/${branchName}/commit/`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },

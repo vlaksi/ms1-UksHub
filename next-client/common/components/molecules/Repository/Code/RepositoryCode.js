@@ -18,12 +18,13 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
   const [activeFolders, setActiveFolders] = useState([]);
   const [activeFiles, setActiveFiles] = useState([]);
   const [activeFilesPath, setActiveFilesPath] = useState([]);
+  const [commit, setCommit] = useState([]);
 
   const setCurrentBrach = async (branch) => {
     setActiveBranch(branch);
-    console.log(branch.pk);
-    var x = await getBranchCommit(branch.pk);
-    console.log(x);
+    var commit = await getBranchCommit(repository.pk, branch.name);
+    setCommit(commit);
+    console.log(commit);
     // setActiveFolders(x);
     // setActiveFolders(await getBranchFolders(branch.pk));
     // setActiveFiles(await getBranchFiles(branch.pk));
@@ -234,7 +235,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
           </ListGroup>
         </Card.Body>
         <Card.Footer className="text-muted">
-          <div className={styles.repositoryFooter}>2 days ago</div>
+          <div className={styles.repositoryFooter}>{commit != null && commit[0] != null && commit[0].committed_date}</div>
         </Card.Footer>
       </Card>
     </>
