@@ -25,7 +25,7 @@ function SearchBar({ placeholder, data }) {
 		}
 	};
 	const handleKeyDown = async (e) => {
-		if (e.key === 'Enter') {
+		if (e.key === 'Enter' && wordEntered !== '') {
 			router.push({
 				pathname: `/search/[search]`,
 				query: { search: wordEntered },
