@@ -5,6 +5,7 @@ import { Tab, Col, ListGroup, Row, Badge } from 'react-bootstrap';
 import { searchAllUsers } from '../../../common/services/useractivity/userService';
 import { searchAllRepositories } from '../../../common/services/versioning/repositoryService';
 import SearchIssueListItem from '../../../common/components/atoms/SearchIssueListItem/SearchIssueListItem';
+import RepositoryListItem from '../../../common/components/atoms/RepositoryListItem/RepositoryListItem';
 
 const Search = () => {
     const router = useRouter();
@@ -22,7 +23,7 @@ const Search = () => {
         setSearchedUsers(users)
         setSearchedRepositories(repositories)
     }, [search]);
-    console.log(searchedIssues)
+
     return (
         <>
             <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
@@ -50,20 +51,16 @@ const Search = () => {
                         <Tab.Content>
                             <Tab.Pane eventKey="#link1">
                                 <h3>Repositories</h3>
-                                Search results:
-                                <br />
-                                Repositories with name: {searchedRepositories[0]?.name ?? searchedRepositories[0]?.name}
-                                <br />
-                                Repositories with name:{searchedRepositories[1]?.name ?? searchedRepositories[1]?.name}
-                                <Row sm={8}>
-                                    <Col sm={6}>
 
-                                    </Col>
-
-                                    <Col sm={6}>
-
-                                    </Col>
-                                </Row>
+                                {searchedRepositories?.map((repository) => {
+                                    return (
+                                        <RepositoryListItem
+                                            key={repository.pk}
+                                            authorId={repository.author}
+                                            repository={repository}
+                                        />
+                                    );
+                                })}
                             </Tab.Pane>
                             <Tab.Pane eventKey="#link2">
                                 <h3>Code</h3>
