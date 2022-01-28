@@ -133,7 +133,7 @@ export const getLabelDataForIssueLabellingSearch = async (repositoryId) => {
   console.log(labels);
 
   let dataForSearch = [];
-  labels.map((label) => {
+  labels?.map((label) => {
     dataForSearch.push({
       title: label.name,
       pk: label.pk,

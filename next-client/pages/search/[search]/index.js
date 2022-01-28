@@ -4,6 +4,7 @@ import { searchAllIssues } from '../../../common/services/progresstrackapp/issue
 import { Tab, Col, ListGroup, Row, Badge } from 'react-bootstrap';
 import { searchAllUsers } from '../../../common/services/useractivity/userService';
 import { searchAllRepositories } from '../../../common/services/versioning/repositoryService';
+import SearchIssueListItem from '../../../common/components/atoms/SearchIssueListItem/SearchIssueListItem';
 
 const Search = () => {
     const router = useRouter();
@@ -74,11 +75,15 @@ const Search = () => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="#link4">
                                 <h3>Issues</h3>
-                                Search results:
-                                <br />
-                                Issue with title: {searchedIssues[0]?.title ?? searchedIssues[0]?.title}
-                                <br />
-                                Issue with title:{searchedIssues[1]?.title ?? searchedIssues[1]?.title}
+                                <div style={{ marginTop: "35px" }}>
+                                    {searchedIssues?.map((issueItem) => {
+                                        return (
+                                            <div key={issueItem.pk}>
+                                                <SearchIssueListItem issue={issueItem} />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </Tab.Pane>
                             <Tab.Pane eventKey="#link5">
                                 <h3>Users</h3>
