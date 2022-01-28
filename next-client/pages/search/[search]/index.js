@@ -84,11 +84,33 @@ const Search = () => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="#link5">
                                 <h3>Users</h3>
-                                Search results:
-                                <br />
-                                User with Username: {searchedUsers[0]?.username ?? searchedUsers[0]?.username}
-                                <br />
-                                User with Username:{searchedUsers[1]?.username ?? searchedUsers[1]?.username}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">First Name</th>
+                                            <th scope="col">Last Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {searchedUsers?.map((user, index) => {
+                                            return (
+                                                <tr key={user.pk}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{user.pk}</td>
+                                                    <td>{user.username}</td>
+                                                    <td>{user.first_name}</td>
+                                                    <td>{user.last_name}</td>
+                                                    <td>{user.email}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             </Tab.Pane>
                         </Tab.Content>
                     </Col>
