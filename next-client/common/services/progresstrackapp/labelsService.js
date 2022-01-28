@@ -54,6 +54,27 @@ export const getAllLabels = async (repoId) => {
     });
   return labels;
 };
+export const searchAllLables = async (search) => {
+  let issues;
+  await axios
+    .request({
+      url: `/progresstrack/labels/?search=${search}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
 export const deleteLabel = async (labelId) => {
   let success = false;
   await axios
