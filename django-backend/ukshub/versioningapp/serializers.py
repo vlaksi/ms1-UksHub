@@ -77,7 +77,7 @@ class CommitSerializer(serializers.ModelSerializer):
 class GitServerCommitSerializer(serializers.ModelSerializer):
     class Meta:
         model = GitServerCommitDto
-        fields = [ "hash", "committed_date", "author" ]
+        fields = [ "hash", "committed_date", "author", "message" ]
 
 class GitServerBranchSerializer(serializers.ModelSerializer):
     class Meta:

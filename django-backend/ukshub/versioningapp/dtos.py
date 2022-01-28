@@ -17,14 +17,16 @@ class GitServerCommitDto(models.Model):
     hash = models.CharField(max_length=200)
     committed_date = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
+    message = models.CharField(max_length=200)
 
     @classmethod
-    def create(cls, hash, committed_date, author):
-        gitServerCommitDto = cls(hash=hash, committed_date=committed_date, author=author)
+    def create(cls, hash, committed_date, author, message):
+        gitServerCommitDto = cls(hash=hash, committed_date=committed_date, author=author, message=message)
         return gitServerCommitDto
 
 class GitServerBranchDto(models.Model):
     name = models.CharField(max_length=200)
+
     @classmethod
     def create(cls, name):
         branch = cls(name=name)

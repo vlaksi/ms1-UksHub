@@ -6,7 +6,7 @@ import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
 import { ToastContainer, toast } from 'react-toastify';
 import styles from './RepositoryCode.module.scss';
 
-import { getBranchCommit } from '../../../../services/versioning/repositoryService';
+import { getBranchCommits, getBranchLastCommit } from '../../../../services/versioning/repositoryService';
 import { createBranch, deleteBranch, getRepositoryBranches } from '../../../../services/versioning/branchService';
 
 const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollaborator }) => {
@@ -19,15 +19,15 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
   const [activeFiles, setActiveFiles] = useState([]);
   const [activeFilesPath, setActiveFilesPath] = useState([]);
   const [commit, setCommit] = useState([]);
+  const [commits, setCommits] = useState([]);
 
   const setCurrentBrach = async (branch) => {
     setActiveBranch(branch);
-    var commit = await getBranchCommit(repository.pk, branch.name);
+    var commit = await getBranchLastCommit(repository.pk, branch.name);
     setCommit(commit);
-    console.log(commit);
-    // setActiveFolders(x);
-    // setActiveFolders(await getBranchFolders(branch.pk));
-    // setActiveFiles(await getBranchFiles(branch.pk));
+    var commits = await getBranchCommits(repository.pk, branch.name);
+    setCommits(commits);
+    console.log(commits);
   };
 
   const notify = () => toast.success('Successfully created new branch!');
@@ -69,6 +69,10 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     notifyDeletedBranch();
     setBranches(await getRepositoryBranches(repository.pk));
   };
+
+  useEffect(async () => {
+    setCurrentBrach(repositoryBranches[0]);
+  }, []);
 
   return (
     <>
