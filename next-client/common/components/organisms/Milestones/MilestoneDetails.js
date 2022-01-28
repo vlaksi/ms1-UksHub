@@ -28,7 +28,10 @@ const MilestoneDetails = ({ milestoneId }) => {
   const [removeIssue, setRemoveIssue] = useState("");
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const handleDeleteModalClose = () => setShowDeleteModal(false);
+  const handleDeleteModalClose = async () => {
+    setShowDeleteModal(false);
+    setShowPercentage(await getPercents());
+  };
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
   const [showPercentage, setShowPercentage] = useState("");
