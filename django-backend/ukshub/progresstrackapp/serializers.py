@@ -19,9 +19,10 @@ class IssueSerializer(serializers.ModelSerializer):
 class MilestoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Milestone
-        fields = [ "pk", "title", "due_date", "description","issues","repository"]
+        fields = [ "pk", "title", "due_date", "description","issues","repository","is_opened"]
         extra_kwargs = {
              "issues": {"required": False},
+             
         }
 
 class PullRequestSerializer(serializers.ModelSerializer):

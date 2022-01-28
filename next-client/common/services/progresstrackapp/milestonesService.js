@@ -23,6 +23,7 @@ export const addMilestone = async (
           )
         ),
         repository: repoId,
+        is_opened: true,
         grant_type: "client_credentials",
         scope: "public",
       },
@@ -57,6 +58,28 @@ export const getAllMilestones = async (repoId) => {
       console.log(err);
     });
   return milestones;
+};
+export const getMilestoneById = async (milestoneId) => {
+  let milestone = null;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      milestone = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return milestone;
 };
 export const deleteMilestone = async (milestoneId) => {
   let success = false;
@@ -101,6 +124,76 @@ export const updateMilestone = async (
             "YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z]"
           )
         ),
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};
+export const updateMilestoneIssues = async (milestoneId, issueId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        issues: issueId,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};
+export const getAllMilestoneIssues = async (milestoneId) => {
+  let milestone = null;
+  await axios
+    .request({
+      url: `/progresstrack/milestone/${milestoneId}/issues`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      milestone = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return milestone;
+};
+export const updateMilestoneClose = async (isClosed, milestoneId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/milestones/${milestoneId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        is_opened: !isClosed,
         grant_type: "client_credentials",
         scope: "public",
       },

@@ -60,13 +60,7 @@ def initialize_db_with_test_data():
     label1.save()
     label2.save()
 
-    #Create milestones
-    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01',repository=repository1)
-    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01',repository=repository1)
-
-    milestone1.save()
-    milestone2.save()
-
+   
     #Create issues
     labelsAll=[label1,label2]
     assignessAll=[user1]
@@ -79,6 +73,18 @@ def initialize_db_with_test_data():
     issue1.save()
     issue2.save()
     issue3.save()
+
+    #Create milestones
+    issuesAll=[issue1,issue3]
+    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01',repository=repository1)
+    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01',repository=repository1)
+    milestone3 = Milestone.objects.create(title='milestone3',description='desc3',due_date='2022-03-29 01:00:00+01',repository=repository1)
+    milestone3.issues.set(issuesAll)
+
+    milestone1.save()
+    milestone2.save()
+    milestone3.save()
+
 
 def get_label(index=0):
     return Label.objects.all()[index]
@@ -262,4 +268,18 @@ class TestMilestoneModel(TestCase):
         milestone = get_milestone()
         max_length = milestone._meta.get_field('description').max_length
         self.assertEquals(max_length, 200)
+
+    def test_empty_milestone_issues(self):
+        milestone = get_milestone()
+        self.assertEqual(milestone.issues.count(),0)
+
+    def test_not_empty_milestone_issues(self):
+        milestone = get_milestone(2)
+        self.assertEqual(milestone.issues.count(),2)
+
+
+   
+
+    
+
     
