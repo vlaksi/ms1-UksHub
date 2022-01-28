@@ -1,3 +1,4 @@
+from ast import Return
 from django.shortcuts import render
 from django.http import Http404
 from django.contrib.auth.models import User
@@ -7,8 +8,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import CollaborationType, Branch, Commit, Repository, Collaboration
-from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, RepositorySerializer, CollaborationSerializer
-from .dtos import CollaboratorDto
+from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, GitServerCommitSerializer, RepositorySerializer, CollaborationSerializer
+from .dtos import CollaboratorDto, GitServerCommitDto
+
+from git import Repo
+import os
+
 
 class RepositoryList(generics.ListCreateAPIView):
     queryset = Repository.objects.all()
@@ -66,8 +71,20 @@ def collaboration_types(request):
 @api_view(['GET'])
 def repository_branches(request, pk):
     repository = Repository.objects.get(id = pk)
-    repositories = repository.repositoryBranches.all()
-    serializers = BranchSerializer(repositories, many=True)
+    #TODO: change the code so it works with real data
+    # try:
+    #     repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
+    #     branches = repo.branches
+    # except:
+    #     return Response({})
+    # returnBranches = []
+
+    # for branch in branches:
+    #     returnBranches.append(GitServerCommitDto.create(    commit.__hash__, commit.committed_date, commit.author))
+    # serializers = GitServerCommitSerializer(returnBranches, many=True)
+    # return Response(serializers.data)
+    b = repository.repositoryBranches.all()
+    serializers = BranchSerializer(b, many=True)
     return Response(serializers.data)
 
 @api_view(['GET'])
@@ -89,19 +106,36 @@ def repository_collaborators(request, repo_id):
 @api_view(['GET'])
 def branch_commits(request, pk):
     branch = Branch.objects.get(id = pk)
-    commits = branch.commits
-    serializers = CommitSerializer(commits, many=True)
+    repository = Repository.objects.get(id = branch.repository_id)
+    try:
+        repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
+        commits = repo.iter_commits('master')
+    except:
+        return Response({})
+    returnCommits = []
+    for commit in commits:
+        returnCommits.append(GitServerCommitDto.create(commit.__hash__, commit.committed_date, commit.author))
+    serializers = GitServerCommitSerializer(returnCommits, many=True)
     return Response(serializers.data)
 
 @api_view(['GET'])
 def main_branch_commits(request, repo_id):
     repository = Repository.objects.get(id = repo_id)
-    repositoribranches = repository.repositoryBranches.all()
-    for repositoribranch in repositoribranches:
-        print(repositoribranches)
-        if(repositoribranch.name == 'main'):
-              branch = Branch.objects.get(id = repositoribranch.pk)
-              commits = branch.commits
-              serializers = CommitSerializer(commits, many=True)
+    try:
+        repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
+        commits = repo.iter_commits('master')
+    except:
+        return Response({})
+    returnCommits = []
+    for commit in commits:
+        returnCommits.append(GitServerCommitDto.create(commit.__hash__, commit.committed_date, commit.author))
+    serializers = GitServerCommitSerializer(returnCommits, many=True)
+    # repositoribranches = repository.repositoryBranches.all()
+    # for repositoribranch in repositoribranches:
+    #     print(repositoribranches)
+    #     if(repositoribranch.name == 'master'):
+    #           branch = Branch.objects.get(id = repositoribranch.pk)
+    #           commits = branch.commits
+    #           serializers = CommitSerializer(commits, many=True)
 
     return Response(serializers.data)

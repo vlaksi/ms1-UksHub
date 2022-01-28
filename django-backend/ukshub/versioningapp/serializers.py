@@ -2,7 +2,7 @@ from django.db.models import fields
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Branch, Commit, Repository, Collaboration, CollaborationType
-from .dtos import CollaboratorDto
+from .dtos import CollaboratorDto, GitServerCommitDto
 
 import pygit2
 from pygit2 import init_repository
@@ -35,7 +35,7 @@ class RepositorySerializer(serializers.ModelSerializer):
         author = validated_data.get('author')
         name = validated_data.get('name')
         description = validated_data.get('description')
-        repo = Repo.init(os.getenv('GIT_SERVER_PATH')+str(author.id)+name+'.git', bare=True)
+        repo = Repo.init(os.getenv('GIT_SERVER_PATH')+str(author.id)+"/"+name+'.git', bare=True)
         repository = Repository.objects.create( author=author, name=name, description=description)
         repository.save()
 
@@ -74,3 +74,7 @@ class CommitSerializer(serializers.ModelSerializer):
              "comments": {"required": False},
         }
 
+class GitServerCommitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GitServerCommitDto
+        fields = [ "hash", "committed_date", "author" ]
