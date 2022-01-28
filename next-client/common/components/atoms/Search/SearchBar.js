@@ -4,7 +4,6 @@ import { BsFillFolderFill } from 'react-icons/bs';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdSyncProblem } from 'react-icons/md';
 import Link from 'next/link';
-import { searchAllIssues } from '../../../services/progresstrackapp/issuesService';
 import { useRouter } from 'next/router'
 
 function SearchBar({ placeholder, data }) {
@@ -27,15 +26,10 @@ function SearchBar({ placeholder, data }) {
 	};
 	const handleKeyDown = async (e) => {
 		if (e.key === 'Enter') {
-
-			// let issues = await searchAllIssues(wordEntered);
-			// console.log(issues)
 			router.push({
 				pathname: `/search/[search]`,
 				query: { search: wordEntered },
 			})
-
-			// setNewIssueList(issues);
 		}
 	};
 
@@ -50,7 +44,8 @@ function SearchBar({ placeholder, data }) {
 					onKeyDown={handleKeyDown}
 				/>
 			</div>
-			{filteredData.length != 0 && (
+			{/* TODO: Implement new search dropdown */}
+			{/* {filteredData.length != 0 && (
 				<div className={styles.dataResult}>
 					{filteredData.slice(0, 15).map((value, key) => {
 						return (
@@ -74,7 +69,7 @@ function SearchBar({ placeholder, data }) {
 						);
 					})}
 				</div>
-			)}
+			)} */}
 		</div>
 	);
 }
