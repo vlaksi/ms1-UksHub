@@ -22,3 +22,8 @@ Load inital data:
 
 1. cd to /ukshub
 2. python manage.py loaddata versioningapp_init_data.json
+
+Reset migrations:
+
+1. cd to /ukshub
+2. just run in /ukshub this cmd: ./resetmigrations.sh
