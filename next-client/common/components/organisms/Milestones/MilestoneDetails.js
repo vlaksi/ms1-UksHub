@@ -40,19 +40,13 @@ const MilestoneDetails = ({ milestoneId }) => {
     let allIssuesById = await getAllMilestoneIssues(milestoneId);
     let allIssues = allIssuesById.length;
 
-    console.log("Svi issues su:", allIssuesById);
-
     let onlyClosedIssues = allIssuesById.filter(
       (issue) => issue.is_opened === false
     );
 
-    console.log("Svi closed issues:", onlyClosedIssues);
     let countClosedIssues = onlyClosedIssues.length;
 
-    console.log("Broj zatvorenih issues je:", countClosedIssues);
     let percents = ((countClosedIssues / allIssues) * 100).toFixed(0);
-
-    console.log("Procenti", percents);
 
     return percents;
   };
