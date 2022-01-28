@@ -4,6 +4,10 @@ from django.contrib.auth import get_user_model
 from .models import Branch, Commit, Repository, Collaboration, CollaborationType
 from .dtos import CollaboratorDto
 
+import pygit2
+from pygit2 import init_repository
+from git import Repo
+
 User = get_user_model()
 
 class CollaborationTypeSerializer(serializers.ModelSerializer):
@@ -30,11 +34,12 @@ class RepositorySerializer(serializers.ModelSerializer):
         author = validated_data.get('author')
         name = validated_data.get('name')
         description = validated_data.get('description')
+        repo = Repo.init("~/git-server/repos/"+name+'.git', bare=True)
         repository = Repository.objects.create( author=author, name=name, description=description)
         repository.save()
 
         # Create default main branch of this repository & update default branch of the repository
-        default_branch = Branch.objects.create(name='main', repository=repository)
+        default_branch = Branch.objects.create(name='master', repository=repository)
         default_branch.save()
         repository.default_branch=default_branch
         repository.save()
