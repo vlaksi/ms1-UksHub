@@ -37,16 +37,14 @@ const MilestoneDetails = ({ milestoneId }) => {
     if (!milestone?.pk) return;
 
     let allIssues = milestone.issues.length;
-    console.log(allIssues);
+    let allIssuesById = await getAllMilestoneIssues(milestoneId);
 
-    let onlyClosedIssues = milestone.issues.filter(
+    let onlyClosedIssues = allIssuesById.filter(
       (issue) => issue.is_opened === false
     );
 
     let countClosedIssues = onlyClosedIssues.length;
-
-    let percents = (1 / allIssues) * 100;
-    console.log(percents);
+    let percents = ((countClosedIssues / allIssues) * 100).toFixed(0);
 
     setShowPercentage(percents);
   }, [milestone?.pk]);
@@ -95,7 +93,6 @@ const MilestoneDetails = ({ milestoneId }) => {
       </h4>
       <div style={{ width: "15%" }}>
         <ProgressBar
-          striped
           now={showPercentage}
           label={`${showPercentage}%`}
         ></ProgressBar>
