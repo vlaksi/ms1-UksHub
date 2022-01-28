@@ -73,15 +73,17 @@ def collaboration_types(request):
 @api_view(['GET'])
 def repository_branches(request, pk):
     repository = Repository.objects.get(id = pk)
+    returnBranches = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
         branches = repo.branches
+        for branch in branches:
+            returnBranches.append(GitServerBranchDto.create( branch.name ))
     except:
-        return Response({})
-    returnBranches = []
+        returnBranches.append(GitServerBranchDto.create( "master" ))
 
-    for branch in branches:
-        returnBranches.append(GitServerBranchDto.create( branch.name ))
+    if len(returnBranches) == 0 :
+        returnBranches.append(GitServerBranchDto.create( "master" ))
     serializers = GitServerBranchSerializer(returnBranches, many=True)
     return Response(serializers.data)
 
@@ -162,14 +164,16 @@ def branch_commits(request, repository_id, name):
 @api_view(['GET'])
 def main_branch_commits(request, repo_id):
     repository = Repository.objects.get(id = repo_id)
+    commits = []
+    returnCommits = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
         commits = repo.iter_commits('master')
+        for commit in commits:
+            returnCommits.append(GitServerCommitDto.create(commit, datetime.fromtimestamp(commit.committed_date), commit.author, commit.message))
     except:
         return Response({})
-    returnCommits = []
-    for commit in commits:
-        returnCommits.append(GitServerCommitDto.create(commit, datetime.fromtimestamp(commit.committed_date), commit.author, commit.message))
+        
     serializers = GitServerCommitSerializer(returnCommits, many=True)
     # repositoribranches = repository.repositoryBranches.all()
     # for repositoribranch in repositoribranches:

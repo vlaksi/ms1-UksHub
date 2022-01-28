@@ -118,8 +118,8 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
                 >
                   {branches?.map((branch) => {
                     return (
-                      <option key={branch.pk} value={branch.pk}>
-                        {branch.name}
+                      <option key={branch?.pk} value={branch?.pk}>
+                        {branch?.name}
                       </option>
                     );
                   })}
@@ -159,7 +159,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  {branches.map((branch) => {
+                  {branches?.map((branch) => {
                     return (
                       <Dropdown.Item
                         key={branch.name}
