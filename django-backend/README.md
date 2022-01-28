@@ -26,4 +26,6 @@ Load inital data:
 Reset migrations:
 
 1. cd to /ukshub
-2. just run in /ukshub this cmd: ./resetmigrations.sh
+2. delete db & create new one with name 'uks'
+3. just run in /ukshub this cmd: ./resetmigrations.sh
+4. from this step follow Migrations part (ie. makemigrations, migrate and so on...)
