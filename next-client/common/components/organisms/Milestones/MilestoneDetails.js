@@ -33,20 +33,30 @@ const MilestoneDetails = ({ milestoneId }) => {
 
   const [showPercentage, setShowPercentage] = useState("");
 
-  useEffect(async () => {
-    if (!milestone?.pk) return;
-
-    let allIssues = milestone.issues.length;
+  const getPercents = async () => {
     let allIssuesById = await getAllMilestoneIssues(milestoneId);
+    let allIssues = allIssuesById.length;
+
+    console.log("Svi issues su:", allIssuesById);
 
     let onlyClosedIssues = allIssuesById.filter(
       (issue) => issue.is_opened === false
     );
 
+    console.log("Svi closed issues:", onlyClosedIssues);
     let countClosedIssues = onlyClosedIssues.length;
+
+    console.log("Broj zatvorenih issues je:", countClosedIssues);
     let percents = ((countClosedIssues / allIssues) * 100).toFixed(0);
 
-    setShowPercentage(percents);
+    console.log("Procenti", percents);
+
+    return percents;
+  };
+
+  useEffect(async () => {
+    if (!milestone?.pk) return;
+    setShowPercentage(await getPercents());
   }, [milestone?.pk]);
 
   const router = useRouter();
@@ -122,6 +132,7 @@ const MilestoneDetails = ({ milestoneId }) => {
                 selectedValue.pk,
               ]);
               setMilestonesIssue(await getAllMilestoneIssues(milestoneId));
+              setShowPercentage(await getPercents());
             }}
           ></UserSearch>
         </Card.Body>
