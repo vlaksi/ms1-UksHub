@@ -10,6 +10,7 @@ urlpatterns = [
     path('issue/<int:issue_id>/labels', views.all_labels_by_issue_id,name="all-issue-labels"),
     path('milestones/', views.MilestoneList.as_view()),
     path('milestones/<int:pk>', views.MilestoneDetail.as_view()),
+    path('milestone/<int:milestone_id>/issues', views.all_issues_by_milestone_id,name="all-milestone-issues"),
     path('pullrequests/', views.PullRequestList.as_view()),
     path('pullrequests/<int:pk>', views.PullRequestDetail.as_view(), name="pull-request-detail"),
     path('repository/<int:repo_id>/pullrequests',views.all_pull_requests_by_repository_id,name="all-repository-pull-requests"),
