@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import Http404
 from django.contrib.auth.models import User
 
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions,filters
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -11,6 +11,8 @@ from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, Br
 from .dtos import CollaboratorDto
 
 class RepositoryList(generics.ListCreateAPIView):
+    search_fields = ['name']
+    filter_backends = (filters.SearchFilter,)
     queryset = Repository.objects.all()
     # permission_classes = [permissions.IsAuthenticated]
     serializer_class = RepositorySerializer

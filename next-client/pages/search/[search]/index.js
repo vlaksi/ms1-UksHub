@@ -21,7 +21,7 @@ const Search = () => {
         setSearchedUsers(users)
         setSearchedRepositories(repositories)
     }, [search]);
-
+    console.log(searchedIssues)
     return (
         <>
             <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">

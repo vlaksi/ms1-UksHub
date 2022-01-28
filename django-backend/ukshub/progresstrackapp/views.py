@@ -12,6 +12,8 @@ from authentication.serializers import UserCreateSerializer
 
 
 class LabelList(generics.ListCreateAPIView):
+    search_fields = ['name']
+    filter_backends = (filters.SearchFilter,)
     queryset = Label.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LabelSerializer
@@ -22,7 +24,7 @@ class LabelDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LabelSerializer
 
 class IssueList(generics.ListCreateAPIView):
-    search_fields = ['title', 'author__username']
+    search_fields = ['title']
     filter_backends = (filters.SearchFilter,)
     queryset = Issue.objects.all()
     permission_classes = [permissions.IsAuthenticated]
