@@ -7,6 +7,7 @@ from .dtos import CollaboratorDto
 import pygit2
 from pygit2 import init_repository
 from git import Repo
+import os
 
 User = get_user_model()
 
@@ -34,7 +35,7 @@ class RepositorySerializer(serializers.ModelSerializer):
         author = validated_data.get('author')
         name = validated_data.get('name')
         description = validated_data.get('description')
-        repo = Repo.init("~/git-server/repos/"+name+'.git', bare=True)
+        repo = Repo.init(os.getenv('GIT_SERVER_PATH')+str(author.id)+name+'.git', bare=True)
         repository = Repository.objects.create( author=author, name=name, description=description)
         repository.save()
 
