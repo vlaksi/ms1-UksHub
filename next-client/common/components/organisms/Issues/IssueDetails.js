@@ -15,6 +15,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { GiConfirmed } from "react-icons/gi";
 import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
 import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
+import Comments from "../../molecules/Comments/Comments";
 
 const IssueDetails = ({ issueId }) => {
   const [issue, setIssue] = useState("");
@@ -105,6 +106,11 @@ const IssueDetails = ({ issueId }) => {
               {issue.title}
             </div>
           </h4>
+          <div>
+            {" "}
+            <Comments></Comments>
+          </div>
+
           <div>
             {/* Assignes Card */}
             <Card style={{ width: "25%", marginLeft: "75%" }}>
