@@ -6,7 +6,7 @@ import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
 import { ToastContainer, toast } from 'react-toastify';
 import styles from './RepositoryCode.module.scss';
 
-import { getBranchCommit } from '../../../../services/versioning/repositoryService';
+import { getBranchCommits, getBranchLastCommit } from '../../../../services/versioning/repositoryService';
 import { createBranch, deleteBranch, getRepositoryBranches } from '../../../../services/versioning/branchService';
 
 const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollaborator }) => {
@@ -14,19 +14,20 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
   const [branches, setBranches] = useState(repositoryBranches);
   const [newBranchName, setNewBranchName] = useState('');
   const [deleteBranchId, setDeleteBranch] = useState('');
-  const [activeBranch, setActiveBranch] = useState();
+  const [activeBranch, setActiveBranch] = useState(repositoryBranches[0]);
   const [activeFolders, setActiveFolders] = useState([]);
   const [activeFiles, setActiveFiles] = useState([]);
   const [activeFilesPath, setActiveFilesPath] = useState([]);
+  const [commit, setCommit] = useState([]);
+  const [commits, setCommits] = useState([]);
 
   const setCurrentBrach = async (branch) => {
     setActiveBranch(branch);
-    console.log(branch.pk);
-    var x = await getBranchCommit(branch.pk);
-    console.log(x);
-    // setActiveFolders(x);
-    // setActiveFolders(await getBranchFolders(branch.pk));
-    // setActiveFiles(await getBranchFiles(branch.pk));
+    var commit = await getBranchLastCommit(repository.pk, branch.name);
+    setCommit(commit);
+    var commits = await getBranchCommits(repository.pk, branch.name);
+    setCommits(commits);
+    console.log(commits);
   };
 
   const notify = () => toast.success('Successfully created new branch!');
@@ -68,6 +69,12 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
     notifyDeletedBranch();
     setBranches(await getRepositoryBranches(repository.pk));
   };
+
+  useEffect(async () => {
+    // repositoryBranches = await getRepositoryBranches(repository.pk);
+    // console.log(repositoryBranches);
+    setCurrentBrach(repositoryBranches[0]);
+  }, []);
 
   return (
     <>
@@ -113,8 +120,8 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
                 >
                   {branches?.map((branch) => {
                     return (
-                      <option key={branch.pk} value={branch.pk}>
-                        {branch.name}
+                      <option key={branch?.pk} value={branch?.pk}>
+                        {branch?.name}
                       </option>
                     );
                   })}
@@ -154,7 +161,7 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  {branches.map((branch) => {
+                  {branches?.map((branch) => {
                     return (
                       <Dropdown.Item
                         key={branch.name}
@@ -234,7 +241,11 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
           </ListGroup>
         </Card.Body>
         <Card.Footer className="text-muted">
-          <div className={styles.repositoryFooter}>2 days ago</div>
+          <div className={styles.repositoryFooter}>
+            {commit != null && commit[0] != null && commit[0].committed_date}
+            &nbsp; &nbsp; &nbsp; &nbsp;
+            <span> {commits != null && commits.length} commits</span>
+          </div>
         </Card.Footer>
       </Card>
     </>
