@@ -234,6 +234,28 @@ export const getRepositoryCollaboratos = async (repositoryId) => {
   return repositoryCollaborators;
 };
 
+export const searchRepositoryCollaboratos = async (repositoryId, search) => {
+  let repositoryCollaborators;
+  await axios
+    .request({
+      url: `/versioning/repository/${repositoryId}/collaborators/${search}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositoryCollaborators = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return repositoryCollaborators;
+};
+
 export const getAllCollaboratorsRoles = async () => {
   let collaboratorsRoles;
   await axios
