@@ -113,3 +113,10 @@ def all_labels_by_issue_id(request, issue_id):
     labels = issue.labels.all()
     serializers = LabelSerializer(labels, many=True)
     return Response(serializers.data)
+
+@api_view(['GET'])
+def all_issues_by_milestone_id(request, milestone_id):
+    milestone = Milestone.objects.get(id = milestone_id)
+    issues = milestone.issues.all()
+    serializers = IssueSerializer(issues, many=True)
+    return Response(serializers.data)

@@ -301,15 +301,6 @@ const IssueDetails = ({ issueId }) => {
                 </Button>
               </Modal.Footer>
             </Modal>
-            <Card
-              border="light"
-              style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
-            >
-              <Card.Header>Milestones</Card.Header>
-              <Card.Body>
-                <UserSearch placeholder="Add a milestone..."></UserSearch>
-              </Card.Body>
-            </Card>
           </div>
           <div>
             {issue.is_opened === true ? (

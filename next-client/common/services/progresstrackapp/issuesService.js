@@ -318,3 +318,17 @@ export const updateIssueClose = async (isClosed, issueId) => {
     });
   return success;
 };
+export const getIssueDataForMilestoneIssueSearch = async (repositoryId) => {
+  const issues = await getAllIssues(repositoryId);
+  console.log(issues);
+
+  let dataForSearch = [];
+  issues.map((issue) => {
+    dataForSearch.push({
+      title: issue.title,
+      pk: issue.pk,
+    });
+  });
+
+  return dataForSearch;
+};

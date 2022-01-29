@@ -139,11 +139,33 @@ export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBran
   return updatedBranch;
 };
 
-export const getBranchCommit = async (branchId) => {
+export const getBranchLastCommit = async (repository_id, branchName) => {
   let files;
   await axios
     .request({
-      url: `/versioning/branch/${branchId}/commit/`,
+      url: `/versioning/branch/${repository_id}/${branchName}/commit/`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      files = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.errorrr);
+    });
+  return files;
+};
+
+export const getBranchCommits = async (repository_id, branchName) => {
+  let files;
+  await axios
+    .request({
+      url: `/versioning/branch/${repository_id}/${branchName}/commits/`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },

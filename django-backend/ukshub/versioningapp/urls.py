@@ -18,5 +18,7 @@ urlpatterns = [
     path('repository/<int:repo_id>/collaborators/<str:searchword>', views.search_repository_collaborators, name="search_repository_collaborators"),
     path('branch/<int:pk>/commit/', views.branch_last_commit, name="branch-last-commit"), 
     path('branch/<int:pk>/commits/', views.branch_commits, name="branch-commits"),\
+    path('branch/<int:repository_id>/<str:name>/commit/', views.branch_last_commit, name="branch-last-commit"), 
+    path('branch/<int:repository_id>/<str:name>/commits/', views.branch_commits, name="branch-commits"),
     path('mainbranch/<int:repo_id>/commits/', views.main_branch_commits, name="main-branch-commits"), 
 ]
