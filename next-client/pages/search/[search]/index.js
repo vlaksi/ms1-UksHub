@@ -1,12 +1,13 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { searchAllIssues } from '../../../common/services/progresstrackapp/issuesService';
-import { Tab, Col, ListGroup, Row, Badge } from 'react-bootstrap';
 import { searchAllUsers } from '../../../common/services/useractivity/userService';
 import { searchAllRepositories } from '../../../common/services/versioning/repositoryService';
-import SearchListOfUsers from '../../../common/components/atoms/SearchListOfUsers/SearchListOfUsers';
+import { Tab, Col, ListGroup, Row, Badge } from 'react-bootstrap';
 import RepositoryListItem from '../../../common/components/atoms/RepositoryListItem/RepositoryListItem';
-import SearchUserList from '../../../common/components/atoms/SearchListOfUsers/SearchListOfUsers';
+import SearchListOfUsers from '../../../common/components/atoms/SearchListOfUsers/SearchListOfUsers';
+import SearchIssueListItem from '../../../common/components/atoms/SearchIssueListItem/SearchIssueListItem';
+import SearchPage from '../../../common/components/organisms/SearchPage/SearchPage';
 
 const Search = () => {
     const router = useRouter();
@@ -27,69 +28,7 @@ const Search = () => {
 
     return (
         <>
-            <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
-                <Row>
-                    <Col sm={4}>
-                        <ListGroup>
-                            <ListGroup.Item action href="#link1">
-                                Repositories    <Badge bg="info" text="dark">{searchedRepositories?.length}</Badge>
-                            </ListGroup.Item>
-                            <ListGroup.Item action href="#link2">
-                                Code
-                            </ListGroup.Item>
-                            <ListGroup.Item action href="#link3">
-                                Commits
-                            </ListGroup.Item>
-                            <ListGroup.Item action href="#link4">
-                                Issues     <Badge bg="info" text="dark">{searchedIssues?.length}</Badge>
-                            </ListGroup.Item>
-                            <ListGroup.Item action href="#link5">
-                                Users     <Badge bg="info" text="dark">{searchedUsers?.length}</Badge>
-                            </ListGroup.Item>
-                        </ListGroup>
-                    </Col>
-                    <Col sm={8}>
-                        <Tab.Content>
-                            <Tab.Pane eventKey="#link1">
-                                <h3>Repositories</h3>
-                                {searchedRepositories?.map((repository) => {
-                                    return (
-                                        <RepositoryListItem
-                                            key={repository.pk}
-                                            authorId={repository.author}
-                                            repository={repository}
-                                        />
-                                    );
-                                })}
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="#link2">
-                                <h3>Code</h3>
-                                Coming soon...
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="#link3">
-                                <h3>Commits</h3>
-                                Coming soon...
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="#link4">
-                                <h3>Issues</h3>
-                                <div style={{ marginTop: "35px" }}>
-                                    {searchedIssues?.map((issueItem) => {
-                                        return (
-                                            <div key={issueItem.pk}>
-                                                <SearchListOfUsers issue={issueItem} />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="#link5">
-                                <h3>Users</h3>
-                                <SearchUserList listUsers={searchedUsers} />
-                            </Tab.Pane>
-                        </Tab.Content>
-                    </Col>
-                </Row>
-            </Tab.Container>
+            <SearchPage searchedIssues={searchedIssues} searchedUsers={searchedUsers} searchedRepositories={searchedRepositories} />
         </>
     );
 };
