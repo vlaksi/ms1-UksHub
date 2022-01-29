@@ -83,6 +83,15 @@ def all_issues_by_repository_id(request, repo_id):
     return Response(serializers.data)
 
 @api_view(['GET'])
+def search_all_issues_of_author(request, author_id, searchword):
+    criterion1 = Q(author__id=author_id)
+    criterion2 = Q(title__contains=searchword)
+    issues= Issue.objects.filter(criterion1 & criterion2)
+    if(len(issues) == 0): raise Http404('No Issues matches the given query.')
+    serializers=IssueSerializer(issues,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
 def search_all_issues_by_repository_id(request, repo_id, searchword):
     criterion1 = Q(repository=repo_id)
     criterion2 = Q(title__contains=searchword)

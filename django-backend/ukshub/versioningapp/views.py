@@ -61,6 +61,15 @@ def all_repositories_by_user(request, user_id):
     return Response(serializers.data)
 
 @api_view(['GET'])
+def search_all_repositories_of_user(request, user_id, searchword):
+    criterion1 = Q(author_id=user_id)
+    criterion2 = Q(name__contains=searchword)
+    repositories= Repository.objects.filter(criterion1 & criterion2)
+    if(len(repositories) == 0): raise Http404('No repositories matches the given query.')
+    serializers=RepositorySerializer(repositories,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
 def collaboration_types(request):
     collaboration_types = CollaborationType.objects.all()
     serializers = CollaborationTypeSerializer(collaboration_types, many=True)

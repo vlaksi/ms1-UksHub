@@ -12,6 +12,7 @@ urlpatterns = [
     path('commits/', views.CommitList.as_view()),
     path('commits/<int:pk>', views.CommitDetail.as_view()),
     path('users/<int:user_id>/repositories',views.all_repositories_by_user,name="all-repositories"),
+    path('users/<int:user_id>/repositories/<str:searchword>',views.search_all_repositories_of_user, name="search_all_repositories_of_user"),
     path('repository/<int:pk>/branches/', views.repository_branches, name="repository-branches"), 
     path('repository/<int:repo_id>/collaborators/', views.repository_collaborators, name="repository-collaborators"),
     path('repository/<int:repo_id>/collaborators/<str:searchword>', views.search_repository_collaborators, name="search_repository_collaborators"),

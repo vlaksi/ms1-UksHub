@@ -16,5 +16,7 @@ urlpatterns = [
     path('repository/<int:repo_id>/labels',views.all_labels_by_repository_id,name="all-repository-labels"),
     path('repository/<int:repo_id>/milestones',views.all_milestones_by_repository_id,name="all-repository-milestones"),
     path('repository/<int:repo_id>/issues',views.all_issues_by_repository_id,name="all-repository-issues"),
-    path('repository/<int:repo_id>/issues/<slug:searchword>',views.search_all_issues_by_repository_id,name="search_all_issues_by_repository_id")
+    path('repository/<int:repo_id>/issues/<slug:searchword>',views.search_all_issues_by_repository_id,name="search_all_issues_by_repository_id"),
+    path('issue/<int:author_id>/issues/<slug:searchword>',views.search_all_issues_of_author,name="search_all_issues_of_author")
+
 ]

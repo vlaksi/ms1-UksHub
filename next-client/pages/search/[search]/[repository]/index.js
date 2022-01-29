@@ -20,7 +20,7 @@ const Search = () => {
 
     return (
         <>
-            <SearchPage isSearchInThisRepo={true} earchedIssues={searchedIssues} searchedUsers={searchedUsers} />
+            <SearchPage isSearchInThisRepo={false} isSearchInThisRepo={true} earchedIssues={searchedIssues} searchedUsers={searchedUsers} />
         </>
     );
 };

@@ -45,6 +45,29 @@ export const getAllRepositoriesByAuthor = async (user_id) => {
   return repositories;
 };
 
+
+export const searchAllRepositoriesByAuthor = async (user_id, searchword) => {
+  let repositories;
+  await axios
+    .request({
+      url: `/versioning/users/${user_id}/repositories/${searchword}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositories = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return repositories;
+};
+
 export const getRepositoryById = async (repositoryId) => {
   let repository;
   await axios

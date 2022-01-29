@@ -74,6 +74,18 @@ function SearchBar({ placeholder, data }) {
 								</p>
 							</a>
 						</Link>}
+					{user &&
+						<Link key={3} href={`/search/${wordEntered}/searchinuser/${user}/`}>
+							<a className={styles.dataItem} onClick={() => { setWordEntered('') }} >
+								<BsSearch style={{ marginLeft: '10px' }} />
+								<p>
+									<Badge pill bg="info" text="light" style={{ marginRight: '20px' }}>
+										In this user
+									</Badge>
+									{wordEntered}
+								</p>
+							</a>
+						</Link>}
 				</div>
 			}
 		</div>

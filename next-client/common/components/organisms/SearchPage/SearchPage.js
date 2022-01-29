@@ -3,7 +3,7 @@ import RepositoryListItem from '../../atoms/RepositoryListItem/RepositoryListIte
 import SearchIssueListItem from '../../atoms/SearchIssueListItem/SearchIssueListItem';
 import SearchListOfUsers from '../../atoms/SearchListOfUsers/SearchListOfUsers';
 
-const SearchPage = ({ isSearchInThisRepo, searchedRepositories, searchedIssues, searchedUsers }) => {
+const SearchPage = ({ isSearchInThisUser, isSearchInThisRepo, searchedRepositories, searchedIssues, searchedUsers }) => {
     return (
         <>
             <Tab.Container id="list-group-tabs-example" defaultActiveKey={isSearchInThisRepo ? "#link2" : "#link2"} >
@@ -22,9 +22,11 @@ const SearchPage = ({ isSearchInThisRepo, searchedRepositories, searchedIssues, 
                             <ListGroup.Item action href="#link4">
                                 Issues     <Badge bg="info" text="dark">{searchedIssues?.length}</Badge>
                             </ListGroup.Item>
-                            <ListGroup.Item action href="#link5">
-                                Users     <Badge bg="info" text="dark">{searchedUsers?.length}</Badge>
-                            </ListGroup.Item>
+                            {!isSearchInThisUser &&
+                                <ListGroup.Item action href="#link5">
+                                    Users     <Badge bg="info" text="dark">{searchedUsers?.length}</Badge>
+                                </ListGroup.Item>
+                            }
                         </ListGroup>
                     </Col>
                     <Col sm={8}>
@@ -61,10 +63,11 @@ const SearchPage = ({ isSearchInThisRepo, searchedRepositories, searchedIssues, 
                                     })}
                                 </div>
                             </Tab.Pane>
-                            <Tab.Pane eventKey="#link5">
-                                <h3>Users</h3>
-                                <SearchListOfUsers listUsers={searchedUsers} />
-                            </Tab.Pane>
+                            {!isSearchInThisUser &&
+                                <Tab.Pane eventKey="#link5">
+                                    <h3>Users</h3>
+                                    <SearchListOfUsers listUsers={searchedUsers} />
+                                </Tab.Pane>}
                         </Tab.Content>
                     </Col>
                 </Row>
