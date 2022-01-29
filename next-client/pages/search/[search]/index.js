@@ -4,8 +4,9 @@ import { searchAllIssues } from '../../../common/services/progresstrackapp/issue
 import { Tab, Col, ListGroup, Row, Badge } from 'react-bootstrap';
 import { searchAllUsers } from '../../../common/services/useractivity/userService';
 import { searchAllRepositories } from '../../../common/services/versioning/repositoryService';
-import SearchIssueListItem from '../../../common/components/atoms/SearchIssueListItem/SearchIssueListItem';
+import SearchListOfUsers from '../../../common/components/atoms/SearchListOfUsers/SearchListOfUsers';
 import RepositoryListItem from '../../../common/components/atoms/RepositoryListItem/RepositoryListItem';
+import SearchUserList from '../../../common/components/atoms/SearchListOfUsers/SearchListOfUsers';
 
 const Search = () => {
     const router = useRouter();
@@ -51,7 +52,6 @@ const Search = () => {
                         <Tab.Content>
                             <Tab.Pane eventKey="#link1">
                                 <h3>Repositories</h3>
-
                                 {searchedRepositories?.map((repository) => {
                                     return (
                                         <RepositoryListItem
@@ -76,7 +76,7 @@ const Search = () => {
                                     {searchedIssues?.map((issueItem) => {
                                         return (
                                             <div key={issueItem.pk}>
-                                                <SearchIssueListItem issue={issueItem} />
+                                                <SearchListOfUsers issue={issueItem} />
                                             </div>
                                         );
                                     })}
@@ -84,31 +84,7 @@ const Search = () => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="#link5">
                                 <h3>Users</h3>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">First Name</th>
-                                            <th scope="col">Last Name</th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {searchedUsers?.map((user, index) => {
-                                            return (
-                                                <tr key={user.pk}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{user.username}</td>
-                                                    <td>{user.first_name}</td>
-                                                    <td>{user.last_name}</td>
-                                                    <td>{user.email}</td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                                <SearchUserList listUsers={searchedUsers} />
                             </Tab.Pane>
                         </Tab.Content>
                     </Col>
