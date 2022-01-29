@@ -76,11 +76,8 @@ def repository_branches(request, pk):
     returnBranches = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
-        print("\n\n\n\n\n\n")
-        print(repo.branches)
         branches = repo.branches
         for branch in branches:
-            print(branch)
             returnBranches.append(GitServerBranchDto.create( branch.name ))
     except:
         returnBranches.append(GitServerBranchDto.create( "master" ))
@@ -176,14 +173,5 @@ def main_branch_commits(request, repo_id):
             returnCommits.append(GitServerCommitDto.create(commit, datetime.fromtimestamp(commit.committed_date), commit.author, commit.message))
     except:
         return Response({})
-        
     serializers = GitServerCommitSerializer(returnCommits, many=True)
-    # repositoribranches = repository.repositoryBranches.all()
-    # for repositoribranch in repositoribranches:
-    #     print(repositoribranches)
-    #     if(repositoribranch.name == 'master'):
-    #           branch = Branch.objects.get(id = repositoribranch.pk)
-    #           commits = branch.commits
-    #           serializers = CommitSerializer(commits, many=True)
-
     return Response(serializers.data)
