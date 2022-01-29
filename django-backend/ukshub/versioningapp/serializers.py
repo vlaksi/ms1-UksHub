@@ -2,7 +2,12 @@ from django.db.models import fields
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Branch, Commit, Repository, Collaboration, CollaborationType
-from .dtos import CollaboratorDto
+from .dtos import CollaboratorDto, GitServerBranchDto, GitServerCommitDto
+
+import pygit2
+from pygit2 import init_repository
+from git import Repo
+import os
 
 User = get_user_model()
 
@@ -30,11 +35,12 @@ class RepositorySerializer(serializers.ModelSerializer):
         author = validated_data.get('author')
         name = validated_data.get('name')
         description = validated_data.get('description')
+        repo = Repo.init(os.getenv('GIT_SERVER_PATH')+str(author.id)+"/"+name+'.git', bare=True)
         repository = Repository.objects.create( author=author, name=name, description=description)
         repository.save()
 
         # Create default main branch of this repository & update default branch of the repository
-        default_branch = Branch.objects.create(name='main', repository=repository)
+        default_branch = Branch.objects.create(name='master', repository=repository)
         default_branch.save()
         repository.default_branch=default_branch
         repository.save()
@@ -68,3 +74,12 @@ class CommitSerializer(serializers.ModelSerializer):
              "comments": {"required": False},
         }
 
+class GitServerCommitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GitServerCommitDto
+        fields = [ "hash", "committed_date", "author", "message" ]
+
+class GitServerBranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GitServerBranchDto
+        fields = [ "name" ]

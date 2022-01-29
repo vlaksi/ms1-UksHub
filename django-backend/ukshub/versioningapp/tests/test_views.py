@@ -197,7 +197,9 @@ class TestRepositoryDetailView(TestCase):
         res_obj = json.loads(response.content.decode('UTF-8'))
         
         self.assertEquals(response.status_code, 200)
-        self.assertEqual(len(res_obj),2)
+        # self.assertEqual(len(res_obj),2)
+        # In DB we have currently 2 branches, but we do not work with DB for the branches !
+        self.assertEqual(len(res_obj),1)
 
     def test_get_user_repositories_by_user_id_with_no_repositories(self):
         user = User.objects.get(username=USER2_USERNAME)
