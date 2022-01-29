@@ -3,16 +3,16 @@ import RepositoryListItem from '../../atoms/RepositoryListItem/RepositoryListIte
 import SearchIssueListItem from '../../atoms/SearchIssueListItem/SearchIssueListItem';
 import SearchListOfUsers from '../../atoms/SearchListOfUsers/SearchListOfUsers';
 
-const SearchPage = ({ searchedRepositories, searchedIssues, searchedUsers }) => {
+const SearchPage = ({ isSearchInThisRepo, searchedRepositories, searchedIssues, searchedUsers }) => {
     return (
         <>
-            <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
+            <Tab.Container id="list-group-tabs-example" defaultActiveKey={isSearchInThisRepo ? "#link2" : "#link2"} >
                 <Row>
                     <Col sm={4}>
                         <ListGroup>
-                            <ListGroup.Item action href="#link1">
+                            {!isSearchInThisRepo && <ListGroup.Item action href="#link1">
                                 Repositories  <Badge bg="info" text="dark">{searchedRepositories?.length}</Badge>
-                            </ListGroup.Item>
+                            </ListGroup.Item>}
                             <ListGroup.Item action href="#link2">
                                 Code
                             </ListGroup.Item>
@@ -29,7 +29,7 @@ const SearchPage = ({ searchedRepositories, searchedIssues, searchedUsers }) => 
                     </Col>
                     <Col sm={8}>
                         <Tab.Content>
-                            <Tab.Pane eventKey="#link1">
+                            {!isSearchInThisRepo && <Tab.Pane eventKey="#link1">
                                 <h3>Repositories</h3>
                                 {searchedRepositories?.map((repository) => {
                                     return (
@@ -40,7 +40,7 @@ const SearchPage = ({ searchedRepositories, searchedIssues, searchedUsers }) => 
                                         />
                                     );
                                 })}
-                            </Tab.Pane>
+                            </Tab.Pane>}
                             <Tab.Pane eventKey="#link2">
                                 <h3>Code</h3>
                                 Coming soon...

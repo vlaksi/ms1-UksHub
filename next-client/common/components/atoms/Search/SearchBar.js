@@ -28,6 +28,7 @@ function SearchBar({ placeholder, data }) {
 	};
 	const handleKeyDown = async (e) => {
 		if (e.key === 'Enter' && wordEntered !== '') {
+			setWordEntered('');
 			router.push({
 				pathname: `/search/[search]`,
 				query: { search: wordEntered },
@@ -49,8 +50,8 @@ function SearchBar({ placeholder, data }) {
 
 			{wordEntered != 0 &&
 				<div className={styles.dataResult}>
-					<Link key={1} href={`/search/${wordEntered}`}>
-						<a className={styles.dataItem} target="_blank">
+					<Link key={1} href={`/search/${wordEntered}`} >
+						<a className={styles.dataItem} onClick={() => { setWordEntered('') }}>
 							<BsSearch style={{ marginLeft: '10px' }} />
 							<p>
 
@@ -61,47 +62,20 @@ function SearchBar({ placeholder, data }) {
 							</p>
 						</a>
 					</Link>
-					<Link key={2} href={`/search/${wordEntered}/${repository}/`}>
-						<a className={styles.dataItem} target="_blank">
-							<BsSearch style={{ marginLeft: '10px' }} />
-							<p>
-
-								<Badge pill bg="info" text="light" style={{ marginRight: '20px' }}>
-									In this repository
-								</Badge>
-								{wordEntered}
-							</p>
-						</a>
-					</Link>
+					{repository &&
+						<Link key={2} href={`/search/${wordEntered}/${repository}/`}>
+							<a className={styles.dataItem} onClick={() => { setWordEntered('') }} >
+								<BsSearch style={{ marginLeft: '10px' }} />
+								<p>
+									<Badge pill bg="info" text="light" style={{ marginRight: '20px' }}>
+										In this repository
+									</Badge>
+									{wordEntered}
+								</p>
+							</a>
+						</Link>}
 				</div>
 			}
-
-			{/* TODO: Implement new search dropdown */}
-			{/* {filteredData.length != 0 && (
-				<div className={styles.dataResult}>
-					{filteredData.slice(0, 15).map((value, key) => {
-						return (
-							<Link key={value.title} href={`/${value.route}`}>
-								<a className={styles.dataItem} target="_blank">
-									{value.type === 'repository' && (
-										<BsFillFolderFill style={{ marginLeft: '10px' }} />
-									)}
-
-									{value.type === 'user' && (
-										<FaUserCircle style={{ marginLeft: '10px' }} />
-									)}
-
-									{value.type === 'issue' && (
-										<MdSyncProblem style={{ marginLeft: '10px' }} />
-									)}
-
-									<p>{value.title} </p>
-								</a>
-							</Link>
-						);
-					})}
-				</div>
-			)} */}
 		</div>
 	);
 }
