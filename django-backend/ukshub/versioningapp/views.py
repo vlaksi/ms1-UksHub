@@ -76,8 +76,11 @@ def repository_branches(request, pk):
     returnBranches = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
+        print("\n\n\n\n\n\n")
+        print(repo.branches)
         branches = repo.branches
         for branch in branches:
+            print(branch)
             returnBranches.append(GitServerBranchDto.create( branch.name ))
     except:
         returnBranches.append(GitServerBranchDto.create( "master" ))
@@ -90,11 +93,11 @@ def repository_branches(request, pk):
 @api_view(['GET'])
 def branch_last_commit(request, repository_id, name):
     repository = Repository.objects.get(id = repository_id)
-    branch = Branch.objects.get(name = name, repository_id = repository.id)
+    # branch = Branch.objects.get(name = name, repository_id = repository.id)
     commits = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
-        commits = list(repo.iter_commits(branch.name))
+        commits = list(repo.iter_commits(name))
     except:
         return Response({})
     returnCommits = []
@@ -130,11 +133,11 @@ def repository_collaborators(request, repo_id):
 @api_view(['GET'])
 def branch_commits(request, repository_id, name):
     repository = Repository.objects.get(id = repository_id)
-    branch = Branch.objects.get(name = name, repository_id = repository.id)
+    # branch = Branch.objects.get(name = name, repository_id = repository.id)
     commits = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
-        commits = list(repo.iter_commits(branch.name))
+        commits = list(repo.iter_commits(name))
     except:
         return Response({})
 

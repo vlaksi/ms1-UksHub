@@ -71,6 +71,8 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
   };
 
   useEffect(async () => {
+    // repositoryBranches = await getRepositoryBranches(repository.pk);
+    // console.log(repositoryBranches);
     setCurrentBrach(repositoryBranches[0]);
   }, []);
 
@@ -239,7 +241,11 @@ const RepositoryCode = ({ repository, repositoryBranches, isLoggedInUserCollabor
           </ListGroup>
         </Card.Body>
         <Card.Footer className="text-muted">
-          <div className={styles.repositoryFooter}>{commit != null && commit[0] != null && commit[0].committed_date}</div>
+          <div className={styles.repositoryFooter}>
+            {commit != null && commit[0] != null && commit[0].committed_date}
+            &nbsp; &nbsp; &nbsp; &nbsp;
+            <span> {commits != null && commits.length} commits</span>
+          </div>
         </Card.Footer>
       </Card>
     </>
