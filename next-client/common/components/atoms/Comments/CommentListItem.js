@@ -1,11 +1,16 @@
-import { Card, Badge } from "react-bootstrap";
+import { Card, Badge, Modal, Button } from "react-bootstrap";
 import { MdEdit } from "react-icons/md";
 import { AiFillDelete } from "react-icons/ai";
 import { deleteComment } from "../../../services/useractivity/commentsService";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 const CommentListItem = ({ comment }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleDeleteModalClose = () => setShowDeleteModal(false);
+  const handleShowDeleteModal = () => setShowDeleteModal(true);
+
   const notifyDeleted = () => toast.success("Successfully deleted comment!");
 
   const router = useRouter();
@@ -14,7 +19,7 @@ const CommentListItem = ({ comment }) => {
   const deleteChosenComment = async () => {
     let isSuccessfulDeleted = await deleteComment(comment.pk);
     if (isSuccessfulDeleted) {
-      window.location.href = `http://localhost:3000/${user}/${repository}`;
+      //window.location.href = `http://localhost:3000/${user}/${repository}`;
       notifyDeleted();
     }
   };
@@ -44,12 +49,39 @@ const CommentListItem = ({ comment }) => {
             <AiFillDelete
               size={18}
               style={{ cursor: "pointer", color: "red" }}
-              onClick={async () => {
-                await deleteChosenComment();
-              }}
+              onClick={handleShowDeleteModal}
             />
           </Card.Footer>
         </Card>
+        <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Remove confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: " baseline",
+            }}
+          >
+            <p>Are you sure you want to remove chosen comment from issue?</p>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={async () => {
+                await deleteChosenComment();
+                handleDeleteModalClose();
+              }}
+            >
+              Remove
+            </Button>
+            <Button variant="danger" onClick={handleDeleteModalClose}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </>
   );
