@@ -8,6 +8,7 @@ urlpatterns = [
     path('collaborations/<int:pk>', views.CollaborationDetail.as_view()),
     path('visits/', views.VisitList.as_view()),
     path('visits/<int:pk>', views.VisitDetail.as_view()),
+    path('visits/repositoryid/<int:repository_id>/',views.all_visitors_by_repository,name="all_visitors_by_repository"),
     path('collaboration/types/', views.collaboration_types, name="collaboration-types"),
     path('branchs/', views.BranchList.as_view()),
     path('branchs/<int:pk>', views.BranchDetail.as_view()),

@@ -411,3 +411,25 @@ export const createVisit = async (uniqueFingerprint, repositoryId, visitDate) =>
       console.log(err);
     });
 };
+
+export const getRepositoryVisits = async (repositoryId) => {
+  let repositoryCollaborators;
+  await axios
+    .request({
+      url: `/versioning/visits/repositoryid/${repositoryId}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositoryCollaborators = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return repositoryCollaborators;
+};

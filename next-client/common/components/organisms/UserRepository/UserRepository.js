@@ -11,6 +11,7 @@ import {
 	createVisit,
 	getRepositoryById,
 	getRepositoryCollaboratos,
+	getRepositoryVisits,
 } from '../../../services/versioning/repositoryService';
 import {
 	getMainBranchCommits,
@@ -33,9 +34,14 @@ const UserRepository = ({ userId, repositoryId }) => {
 	const [repositoryPRs, setRepositoryPRs] = useState([]);
 	const [commitsToMainBranch, setCommitsToMainBranch] = useState([]);
 	const [forksOfRepo, setForksOfRepo] = useState([]);
+	const [visitsOfRepo, setVisitsOfRepo] = useState([]);
 
 	useEffect(async () => {
 		if (!repositoryId) return;
+		//Uncomment if you want to simulate different date
+		// var today = new Date();
+		// await createVisit(await getMyBrowserID(), repositoryId, new Date(today.getTime() + (48 * 60 * 60 * 1000)))
+		await createVisit(await getMyBrowserID(), repositoryId, new Date())
 		setRepository(await getRepositoryById(repositoryId));
 		setRepositoryBranches(await getRepositoryBranches(repositoryId));
 		setRepositoryCollaborators(await getRepositoryCollaboratos(repositoryId));
@@ -43,8 +49,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 		setRepositoryPRs(await getPullRequestsByRepository(repositoryId));
 		setCommitsToMainBranch(await getMainBranchCommits(repositoryId));
 		setForksOfRepo(await getAllRepositoryUsersByActionType(repositoryId, 'fork'))
-		await createVisit(await getMyBrowserID(), repositoryId, new Date())
-
+		setVisitsOfRepo(await getRepositoryVisits(repositoryId))
 	}, [repositoryId]);
 
 	useEffect(async () => {
@@ -59,7 +64,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 			(collaborator) => collaborator.collaborator_id == loggedInUserId
 		);
 	};
-	console.log(forksOfRepo, 'forksOfRepo')
+
 	return (
 		<>
 			{repository &&
@@ -122,6 +127,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 											commitsToMainBranch={commitsToMainBranch}
 											forksOfRepo={forksOfRepo}
 											repository={repository}
+											visitsOfRepo={visitsOfRepo}
 										/>
 									</Tab>
 								)}

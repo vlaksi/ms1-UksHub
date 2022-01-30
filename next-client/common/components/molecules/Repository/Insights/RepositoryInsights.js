@@ -22,9 +22,10 @@ const RepositoryInsights = ({
 	repositoryPRs,
 	commitsToMainBranch,
 	forksOfRepo,
-	repository
+	repository,
+	visitsOfRepo
 }) => {
-
+	console.log('visitsOfRepo', visitsOfRepo)
 	Chart.register(ArcElement);
 	Chart.register(CategoryScale);
 	Chart.register(LinearScale);
@@ -55,6 +56,29 @@ const RepositoryInsights = ({
 	getCommitsDates().forEach(function (x) {
 		counts[x] = (counts[x] || 0) + 1;
 	});
+
+	const getVisitDates = () => {
+		var visitDates = [];
+		visitsOfRepo?.map((item) => {
+			visitDates.push(item.visit_date.substring(0, 10));
+		});
+		return visitDates;
+	};
+	const countsVisitDates = {};
+	getVisitDates().forEach(function (x) {
+		countsVisitDates[x] = (countsVisitDates[x] || 0) + 1;
+	});
+
+	//Count unique visitors
+	var tempResult = {}
+	for (let { unique_fingerprint } of visitsOfRepo)
+		tempResult[unique_fingerprint] = {
+			unique_fingerprint,
+			count: tempResult[unique_fingerprint] ? tempResult[unique_fingerprint].count + 1 : 1
+		}
+	let uniqueVisitors = Object.values(tempResult)
+	//End count unique visitors
+
 
 	const getOpenedIssues = () => {
 		var numberOfOpenedIssues = 0;
@@ -114,6 +138,32 @@ const RepositoryInsights = ({
 				pointRadius: 1,
 				pointHitRadius: 10,
 				data: Object.values(counts),
+			},
+		],
+	};
+	const trafficData = {
+		labels: Object.keys(countsVisitDates),
+		datasets: [
+			{
+				label: 'My First dataset',
+				fill: true,
+				lineTension: 0.1,
+				backgroundColor: 'rgba(75,192,192,0.4)',
+				borderColor: 'rgba(75,192,192,1)',
+				borderCapStyle: 'butt',
+				borderDash: [],
+				borderDashOffset: 0.0,
+				borderJoinStyle: 'miter',
+				pointBorderColor: 'rgba(75,192,192,1)',
+				pointBackgroundColor: '#fff',
+				pointBorderWidth: 1,
+				pointHoverRadius: 5,
+				pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+				pointHoverBorderColor: 'rgba(220,220,220,1)',
+				pointHoverBorderWidth: 2,
+				pointRadius: 1,
+				pointHitRadius: 10,
+				data: Object.values(countsVisitDates),
 			},
 		],
 	};
@@ -188,6 +238,7 @@ const RepositoryInsights = ({
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link3">
 								<h3>Forks</h3>
+								<br />
 								{forksOfRepo.length == 0 &&
 									<div>
 										<AiOutlineFork />
@@ -195,12 +246,17 @@ const RepositoryInsights = ({
 									</div>
 								}
 								{forksOfRepo?.map((item) => {
-									return <> <AiOutlineUser /> {item.username} / {repository.name} <br /></>
+									return <h5><AiOutlineUser /> {item.username} / {repository.name} <br /></h5>
 								})}
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link4">
 								<h3>Traffic</h3>
-
+								<br />
+								<div className={styles.lineChart}>
+									Visits
+									<Line data={trafficData} />
+									<h4>Unique visitors: {uniqueVisitors?.length}</h4>
+								</div>
 							</Tab.Pane>
 						</Tab.Content>
 					</Col>
