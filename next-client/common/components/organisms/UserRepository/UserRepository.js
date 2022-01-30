@@ -8,6 +8,7 @@ import PullRequestsOverview from '../../molecules/Repository/Pulls/PullRequestsO
 import RepositoryInsights from '../../molecules/Repository/Insights/RepositoryInsights';
 import RepositorySettings from '../../molecules/Repository/Settings/RepositorySettings';
 import {
+	createVisit,
 	getRepositoryById,
 	getRepositoryCollaboratos,
 } from '../../../services/versioning/repositoryService';
@@ -21,6 +22,7 @@ import { getParsedToken } from '../../../services/authentication/token';
 import { getAllIssues } from '../../../services/progresstrackapp/issuesService';
 import { getPullRequestsByRepository } from '../../../services/progresstrackapp/pullRequestService';
 import { getAllRepositoryUsersByActionType } from '../../../services/useractivity/actionService';
+import { getMyBrowserID } from '../../../services/progresstrackapp/fingerprint';
 
 const UserRepository = ({ userId, repositoryId }) => {
 	const [user, setUser] = useState();
@@ -41,6 +43,8 @@ const UserRepository = ({ userId, repositoryId }) => {
 		setRepositoryPRs(await getPullRequestsByRepository(repositoryId));
 		setCommitsToMainBranch(await getMainBranchCommits(repositoryId));
 		setForksOfRepo(await getAllRepositoryUsersByActionType(repositoryId, 'fork'))
+		await createVisit(await getMyBrowserID(), repositoryId, new Date())
+
 	}, [repositoryId]);
 
 	useEffect(async () => {

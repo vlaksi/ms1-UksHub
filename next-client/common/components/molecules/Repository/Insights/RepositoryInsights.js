@@ -132,6 +132,9 @@ const RepositoryInsights = ({
 							<ListGroup.Item action href="#link3">
 								Forks
 							</ListGroup.Item>
+							<ListGroup.Item action href="#link4">
+								Traffic
+							</ListGroup.Item>
 						</ListGroup>
 					</Col>
 					<Col sm={8}>
@@ -194,6 +197,10 @@ const RepositoryInsights = ({
 								{forksOfRepo?.map((item) => {
 									return <> <AiOutlineUser /> {item.username} / {repository.name} <br /></>
 								})}
+							</Tab.Pane>
+							<Tab.Pane eventKey="#link4">
+								<h3>Traffic</h3>
+
 							</Tab.Pane>
 						</Tab.Content>
 					</Col>
