@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import CollaborationType, Branch, Commit, Repository, Collaboration
-from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, GitServerBranchSerializer, GitServerCommitSerializer, RepositorySerializer, CollaborationSerializer
+from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, GitServerBranchSerializer, GitServerCommitSerializer, RepositorySerializer, CollaborationSerializer, VisitsSerializer
 from .dtos import CollaboratorDto, GitServerBranchDto, GitServerCommitDto
 
 from git import Repo
@@ -59,6 +59,17 @@ class CommitDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Commit.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CommitSerializer
+
+class VisitList(generics.ListCreateAPIView):
+    queryset = Commit.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = VisitsSerializer
+
+class VisitDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Commit.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = VisitsSerializer
+
 
 @api_view(['GET'])
 def all_repositories_by_user(request, user_id):

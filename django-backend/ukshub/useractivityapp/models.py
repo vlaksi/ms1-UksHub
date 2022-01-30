@@ -35,4 +35,3 @@ class Comment(models.Model):
     reaction = models.ManyToManyField(to=Reaction, blank=True, related_name='comment') 
     message = models.CharField(max_length=200)
     creation_date = models.DateTimeField('date of creation')
-

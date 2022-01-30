@@ -18,9 +18,16 @@ class Branch(models.Model):
     def __str__(self):
         return 'Name of object: ' + self.name
 
+
+class Visit(models.Model):  
+    unique_fingerprint = models.CharField(max_length=200)
+    repository = models.ForeignKey('Repository', on_delete=models.CASCADE, related_name = "repositoryVisit")
+    visit_date = models.DateTimeField('date of visit')
+
 class Repository(models.Model):
     author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=True, null=True)
     actions = models.ManyToManyField(Action, blank=True, related_name='action_of_repositorys')
+    visits = models.ManyToManyField(Visit, blank=True, related_name='visits_of_repositorys')
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, blank=True)
     default_branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True, related_name='default_branch')
@@ -35,3 +42,4 @@ class Collaboration(models.Model):
     collaborator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, blank=False, null=False)
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, blank=False, null=False, related_name = "repositoryCollaborations")
     collaboration_type = models.ForeignKey(CollaborationType, on_delete=models.CASCADE, blank=False, null=False)
+
