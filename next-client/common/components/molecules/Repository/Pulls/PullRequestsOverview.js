@@ -49,16 +49,16 @@ const PullRequestsOverview = ({ dbRepository }) => {
 
   const getRepositoryAllBranches = async () => {
     let branches = await getRepositoryBranches(dbRepository.pk);
-    setNewBaseBranch(branches[0].pk);
-    setNewCompareBranch(branches[0].pk);
+    setNewBaseBranch(branches[0]);
+    setNewCompareBranch(branches[0]);
     setAllBranches(branches);
   };
 
   const addNewPullRequest = async () => {
     let createdPullRequest = await addPullRequest(
       newPullRequestName,
-      newBaseBranch,
-      newCompareBranch,
+      newBaseBranch.name,
+      newCompareBranch.name,
       dbRepository.pk,
       getParsedToken().user_id
     );
@@ -112,6 +112,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
           <MdAddCircle size={24} /> Add pull request
         </Button>
 
+        {/* ADD PR Modal */}
         <Modal show={show} onHide={handleClose} backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>Add new pull request</Modal.Title>
@@ -136,11 +137,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
                   }}
                 >
                   {allBranches?.map((branch) => {
-                    return (
-                      <option key={branch.pk} value={branch.pk}>
-                        {branch.name}
-                      </option>
-                    );
+                    return <option key={branch.name}>{branch.name}</option>;
                   })}
                 </Form.Select>
 
@@ -152,11 +149,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
                   }}
                 >
                   {allBranches?.map((branch) => {
-                    return (
-                      <option key={branch.pk} value={branch.pk}>
-                        {branch.name}
-                      </option>
-                    );
+                    return <option key={branch.name}>{branch.name}</option>;
                   })}
                 </Form.Select>
               </Form.Group>
