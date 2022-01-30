@@ -1,7 +1,10 @@
-import { Card, Badge, Modal, Button } from "react-bootstrap";
+import { Card, Badge, Modal, Button, Form } from "react-bootstrap";
 import { MdEdit } from "react-icons/md";
 import { AiFillDelete } from "react-icons/ai";
-import { deleteComment } from "../../../services/useractivity/commentsService";
+import {
+  deleteComment,
+  updateComment,
+} from "../../../services/useractivity/commentsService";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -11,7 +14,22 @@ const CommentListItem = ({ comment }) => {
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const [commentMessage, setCommentMessage] = useState(comment.message);
+  const handleChangingCommentMessage = (commentMessage) => {
+    setCommentMessage(commentMessage);
+  };
+
   const notifyDeleted = () => toast.success("Successfully deleted comment!");
+
+  const notifyUpdated = () =>
+    toast.success("Successfully changed comment message!");
+  const notifyError = () => toast.error("Check if you entered all fields!");
 
   const router = useRouter();
   const { user, repository } = router.query;
@@ -19,8 +37,18 @@ const CommentListItem = ({ comment }) => {
   const deleteChosenComment = async () => {
     let isSuccessfulDeleted = await deleteComment(comment.pk);
     if (isSuccessfulDeleted) {
-      //window.location.href = `http://localhost:3000/${user}/${repository}`;
+      window.location.href = `http://localhost:3000/${user}/${repository}/issues/${comment.issue}`;
       notifyDeleted();
+    }
+  };
+  const updateNewComment = async () => {
+    let isSuccessfulUpdated = await updateComment(commentMessage, comment.pk);
+    if (isSuccessfulUpdated) {
+      notifyUpdated();
+      handleClose();
+      window.location.href = `http://localhost:3000/${user}/${repository}/issues/${comment.issue}`;
+    } else {
+      notifyError();
     }
   };
   return (
@@ -44,6 +72,9 @@ const CommentListItem = ({ comment }) => {
                 cursor: "pointer",
                 color: "green",
                 marginLeft: "90%",
+              }}
+              onClick={() => {
+                handleShow();
               }}
             />
             <AiFillDelete
@@ -78,6 +109,38 @@ const CommentListItem = ({ comment }) => {
               Remove
             </Button>
             <Button variant="danger" onClick={handleDeleteModalClose}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={show} onHide={handleClose} backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>Edit this comment</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Comment message</Form.Label>
+                <Form.Control
+                  type="name"
+                  defaultValue={comment.message}
+                  onChange={(e) => {
+                    handleChangingCommentMessage(e.target.value);
+                  }}
+                ></Form.Control>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={async () => {
+                await updateNewComment();
+              }}
+            >
+              Save Changes
+            </Button>
+            <Button variant="danger" onClick={handleClose}>
               Cancel
             </Button>
           </Modal.Footer>
