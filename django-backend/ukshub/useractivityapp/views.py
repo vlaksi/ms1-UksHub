@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from authentication.models import UserAccount
 from .models import Action, ActionType, Comment, Reaction, ReactionType
 from .serializers import UserSerializer, ActionSerializer, ActionTypeSerializer, CommentSerializer, ReactionSerializer, ReactionTypeSerializer
+from django.http import Http404
 
 class UserAdminList(generics.ListCreateAPIView):
     queryset = UserAccount.objects.all()
