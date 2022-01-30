@@ -14,7 +14,6 @@ export const addCommentIssue = async (messageComment, authorId, issueId) => {
         creation_date: new Date(),
         author: authorId,
         issue: issueId,
-        pull_request: null,
         grant_type: "client_credentials",
         scope: "public",
       },
@@ -27,4 +26,25 @@ export const addCommentIssue = async (messageComment, authorId, issueId) => {
     });
 
   return comment;
+};
+export const getAllCommentsIssues = async (issueId) => {
+  let comments;
+  await axios
+    .request({
+      url: `/useractivity/issue/${issueId}/comments`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      comments = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return comments;
 };

@@ -2,9 +2,14 @@ import CommentListItem from "../../atoms/Comments/CommentListItem";
 import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useState, useEffect } from "react";
-import { addCommentIssue } from "../../../services/useractivity/commentsService";
+import {
+  addCommentIssue,
+  getAllCommentsIssues,
+} from "../../../services/useractivity/commentsService";
+import { ToastContainer, toast } from "react-toastify";
 
 const Comments = ({ issueId, authorId }) => {
+  const [comments, setNewCommentList] = useState([]);
   const [newCommentMessage, setNewCommentMessage] = useState("");
   const handleAddingCommentMessage = (newCommentMessage) => {
     setNewCommentMessage(newCommentMessage);
@@ -12,23 +17,17 @@ const Comments = ({ issueId, authorId }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
+    setNewCommentMessage("");
   };
   const handleShow = () => setShow(true);
-  let comments = [
-    {
-      message:
-        "Prvi komentar: Potreno je resiti sve zadatke poput filtriranja, sortiranja. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ",
-      user: "anciz",
-      creation_date: "2022-02-06",
-      pk: 1,
-    },
-    {
-      message: "Drugi komentar",
-      user: "vlado",
-      creation_date: "2022-02-06",
-      pk: 2,
-    },
-  ];
+  const notify = () => toast.success("Successfully created new comment!");
+  const notifyError = () => toast.error("Check if you entered all fields!");
+
+  useEffect(async () => {
+    if (!issueId) return;
+    let comments = await getAllCommentsIssues(issueId);
+    setNewCommentList(comments);
+  }, [issueId]);
   const addNewComment = async () => {
     let createdComment = await addCommentIssue(
       newCommentMessage,
@@ -37,12 +36,12 @@ const Comments = ({ issueId, authorId }) => {
     );
     console.log("U added comentu id issue je: ", issueId);
     if (createdComment) {
-      // notify();
+      notify();
       handleClose();
       console.log("Nakon kreiranja id issue je:", issueId);
-      //setNewMilestoneList(await getAllMilestones(repository));
+      setNewCommentList(await getAllCommentsIssues(issueId));
     } else {
-      //notifyError();
+      notifyError();
     }
   };
   return (
@@ -85,6 +84,7 @@ const Comments = ({ issueId, authorId }) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
       {comments?.map((commentItem) => {
         return (
           <div key={commentItem.pk}>

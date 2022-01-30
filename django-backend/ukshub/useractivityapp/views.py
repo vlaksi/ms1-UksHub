@@ -97,4 +97,10 @@ def action_by_repo_and_user(request, action_name, repo_id, user_id):
         action = None
         return Response({})
 
+@api_view(['GET'])
+def all_comments_by_issue_id(request, issue_id):
+    comments= Comment.objects.filter(issue=issue_id)
+    if(len(comments) == 0): raise Http404('No Comments matches the given query.')
+    serializers=CommentSerializer(comments,many=True)
+    return Response(serializers.data)
     
