@@ -37,7 +37,7 @@ const IssueDetails = ({ issueId }) => {
   const handleShowDeleteLabelModal = () => setShowDeleteLabelModal(true);
 
   const router = useRouter();
-  const { repository } = router.query;
+  const { user, repository } = router.query;
 
   useEffect(async () => {
     if (!repository) return;
@@ -108,7 +108,7 @@ const IssueDetails = ({ issueId }) => {
           </h4>
           <div>
             {" "}
-            <Comments></Comments>
+            <Comments issueId={issueId} authorId={user}></Comments>
           </div>
 
           <div>
