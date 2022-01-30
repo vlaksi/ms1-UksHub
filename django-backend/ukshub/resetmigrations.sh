@@ -6,3 +6,7 @@ find . -path "*/authentication/migrations/*.pyc" -delete
 find . -path "*/progresstrackapp/migrations/*.pyc" -delete
 find . -path "*/useractivityapp/migrations/*.pyc" -delete
 find . -path "*/versioningapp/migrations/*.pyc" -delete
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py loaddata versioningapp_init_data.json
