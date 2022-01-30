@@ -1,6 +1,5 @@
 from django.db import models
 from versioningapp.models import Branch,Repository
-from useractivityapp.models import Comment
 from authentication.models import UserAccount
 
 class Label(models.Model):  
@@ -15,7 +14,6 @@ class Issue(models.Model):
     repository =  models.ForeignKey(to=Repository, null=False, on_delete=models.CASCADE, related_name='issues')
     author = models.ForeignKey(to=UserAccount, null=False, on_delete=models.CASCADE,related_name='issue_created')
     assigness = models.ManyToManyField(UserAccount, blank=True, related_name='issue_assigned_to_me')
-    comments = models.ManyToManyField(Comment, blank=True, related_name='issue')
     title= models.CharField(max_length=200)
     creation_date= models.DateTimeField('date of creation')
     is_opened = models.BooleanField(default=False)
@@ -48,7 +46,6 @@ class PullRequest(models.Model):
     issues = models.ManyToManyField(Issue, blank=True)
     milestones = models.ManyToManyField(Milestone, blank=True)
     labels = models.ManyToManyField(Label, blank=True)
-    comments = models.ManyToManyField(Comment, blank=True, related_name='pull_request')
     def __str__(self):
         return 'Title of object: ' + self.title    
 

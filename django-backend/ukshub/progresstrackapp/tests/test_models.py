@@ -193,10 +193,6 @@ class TestPullRequestModel(TestCase):
         pr = get_pull_request()
         self.assertEqual(pr.labels.count(),0)
 
-    def test_empty_pr_comments(self):
-        pr = get_pull_request()
-        self.assertEqual(pr.comments.count(),0)
-
     def test_empty_pr_reviewes(self):
         pr = get_pull_request()
         self.assertEqual(pr.reviewes.count(),0)
