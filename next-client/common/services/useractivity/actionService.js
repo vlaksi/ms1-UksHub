@@ -12,7 +12,7 @@ export const createRepositoryAction = async (
 			url: `/useractivity/actions/`,
 			method: 'post',
 			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ getToken()},
+			headers: { 'Authorization': 'JWT ' + getToken() },
 			data: {
 				author: authorId,
 				repository: repositoryId,
@@ -41,7 +41,7 @@ export const getActionByRepoAndAuthor = async (
 			url: `/useractivity/action/${actionName}/${repositoryId}/${userId}/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ getToken()},
+			headers: { 'Authorization': 'JWT ' + getToken() },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -63,7 +63,7 @@ export const deleteActionById = async (actionId) => {
 			url: `/useractivity/actions/${actionId}`,
 			method: 'delete',
 			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ getToken()},
+			headers: { 'Authorization': 'JWT ' + getToken() },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -88,7 +88,32 @@ export const getAllRepositoryUsersByAction = async (
 			url: `/useractivity/users/${repositoryId}/${actionType}/`,
 			method: 'get',
 			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ getToken()},
+			headers: { 'Authorization': 'JWT ' + getToken() },
+			data: {
+				grant_type: 'client_credentials',
+				scope: 'public',
+			},
+		})
+		.then((response) => {
+			users = response.data;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	return users;
+};
+
+export const getAllRepositoryUsersByActionType = async (
+	repositoryId,
+	actionType
+) => {
+	let users;
+	await axios
+		.request({
+			url: `/useractivity/users/${repositoryId}/${actionType}/`,
+			method: 'get',
+			baseURL: 'http://127.0.0.1:8000/',
+			headers: { 'Authorization': 'JWT ' + getToken() },
 			data: {
 				grant_type: 'client_credentials',
 				scope: 'public',
@@ -113,7 +138,7 @@ export const updateActionNewForkedRepoId = async (
 			url: `/useractivity/actions/${actionId}`,
 			method: 'patch',
 			baseURL: 'http://127.0.0.1:8000/',
-			headers: {'Authorization': 'JWT '+ getToken()},
+			headers: { 'Authorization': 'JWT ' + getToken() },
 			data: {
 				new_forked_repository: newForkedRepositoryId,
 				grant_type: 'client_credentials',

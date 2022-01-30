@@ -15,13 +15,16 @@ import {
 	MdCheckCircleOutline,
 	MdExitToApp,
 } from 'react-icons/md';
-import { AiOutlinePullRequest } from 'react-icons/ai';
+import { AiOutlinePullRequest, AiOutlineUser, AiOutlineFork } from 'react-icons/ai';
 
 const RepositoryInsights = ({
 	repositoryIssues,
 	repositoryPRs,
 	commitsToMainBranch,
+	forksOfRepo,
+	repository
 }) => {
+
 	Chart.register(ArcElement);
 	Chart.register(CategoryScale);
 	Chart.register(LinearScale);
@@ -43,9 +46,9 @@ const RepositoryInsights = ({
 
 	const getCommitsDates = () => {
 		var commitsDates = [];
-		commitsToMainBranch.map((item) => {
-			commitsDates.push(item.creation_date.substring(0, 10));
-		});
+		// commitsToMainBranch?.map((item) => {
+		// 	commitsDates.push(item.creation_date.substring(0, 10));
+		// });
 		return commitsDates;
 	};
 	const counts = {};
@@ -126,6 +129,9 @@ const RepositoryInsights = ({
 							<ListGroup.Item action href="#link2">
 								Contributors
 							</ListGroup.Item>
+							<ListGroup.Item action href="#link3">
+								Forks
+							</ListGroup.Item>
 						</ListGroup>
 					</Col>
 					<Col sm={8}>
@@ -176,6 +182,18 @@ const RepositoryInsights = ({
 								<div className={styles.lineChart}>
 									<Line data={data} />
 								</div>
+							</Tab.Pane>
+							<Tab.Pane eventKey="#link3">
+								<h3>Forks</h3>
+								{forksOfRepo.length == 0 &&
+									<div>
+										<AiOutlineFork />
+										No one has forked this repository yet.
+									</div>
+								}
+								{forksOfRepo?.map((item) => {
+									return <> <AiOutlineUser /> {item.username} / {repository.name} <br /></>
+								})}
 							</Tab.Pane>
 						</Tab.Content>
 					</Col>

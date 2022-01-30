@@ -20,6 +20,7 @@ import { getUserById } from '../../../services/useractivity/userService';
 import { getParsedToken } from '../../../services/authentication/token';
 import { getAllIssues } from '../../../services/progresstrackapp/issuesService';
 import { getPullRequestsByRepository } from '../../../services/progresstrackapp/pullRequestService';
+import { getAllRepositoryUsersByActionType } from '../../../services/useractivity/actionService';
 
 const UserRepository = ({ userId, repositoryId }) => {
 	const [user, setUser] = useState();
@@ -29,6 +30,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 	const [repositoryIssues, setRepositoryIssues] = useState([]);
 	const [repositoryPRs, setRepositoryPRs] = useState([]);
 	const [commitsToMainBranch, setCommitsToMainBranch] = useState([]);
+	const [forksOfRepo, setForksOfRepo] = useState([]);
 
 	useEffect(async () => {
 		if (!repositoryId) return;
@@ -38,6 +40,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 		setRepositoryIssues(await getAllIssues(repositoryId));
 		setRepositoryPRs(await getPullRequestsByRepository(repositoryId));
 		setCommitsToMainBranch(await getMainBranchCommits(repositoryId));
+		setForksOfRepo(await getAllRepositoryUsersByActionType(repositoryId, 'fork'))
 	}, [repositoryId]);
 
 	useEffect(async () => {
@@ -52,7 +55,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 			(collaborator) => collaborator.collaborator_id == loggedInUserId
 		);
 	};
-
+	console.log(forksOfRepo, 'forksOfRepo')
 	return (
 		<>
 			{repository &&
@@ -113,6 +116,8 @@ const UserRepository = ({ userId, repositoryId }) => {
 											repositoryIssues={repositoryIssues}
 											repositoryPRs={repositoryPRs}
 											commitsToMainBranch={commitsToMainBranch}
+											forksOfRepo={forksOfRepo}
+											repository={repository}
 										/>
 									</Tab>
 								)}
