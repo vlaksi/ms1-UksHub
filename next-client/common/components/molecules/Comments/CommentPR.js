@@ -2,13 +2,10 @@ import CommentListItem from "../../atoms/Comments/CommentListItem";
 import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useState, useEffect } from "react";
-import {
-  addCommentIssue,
-  getAllCommentsIssues,
-} from "../../../services/useractivity/commentsService";
+import { addCommentPullRequest } from "../../../services/useractivity/commentsService";
 import { ToastContainer, toast } from "react-toastify";
 
-const Comments = ({ issueId, authorId }) => {
+const Comments = ({ pullRequestId, authorId }) => {
   const [comments, setNewCommentList] = useState([]);
   const [newCommentMessage, setNewCommentMessage] = useState("");
   const handleAddingCommentMessage = (newCommentMessage) => {
@@ -24,21 +21,21 @@ const Comments = ({ issueId, authorId }) => {
   const notifyError = () => toast.error("Check if you entered all fields!");
 
   useEffect(async () => {
-    if (!issueId) return;
-    let comments = await getAllCommentsIssues(issueId);
+    if (!pullRequestId) return;
+    //let comments = await getAllCommentsIssues(issueId);
     setNewCommentList(comments);
-  }, [issueId]);
+  }, [pullRequestId]);
   const addNewComment = async () => {
-    let createdComment = await addCommentIssue(
+    let createdComment = await addCommentPullRequest(
       newCommentMessage,
       authorId,
-      issueId
+      pullRequestId
     );
 
     if (createdComment) {
       notify();
       handleClose();
-      setNewCommentList(await getAllCommentsIssues(issueId));
+      //setNewCommentList(await getAllCommentsIssues(issueId));
     } else {
       notifyError();
     }
