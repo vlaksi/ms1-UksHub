@@ -1,0 +1,13 @@
+[
+  {
+    "model": "authentication.UserAccount",
+    "pk": 1,
+    "fields": {
+      "first_name": "Dragana",
+      "last_name": "Dragic",
+      "email": "draga@example.com",
+      "username": "dragana",
+      "password": "pbkdf2_sha256$260000$sd57OsVQRE6PHY4dP6fpKH$H2ulSx4kvYdxSDIhg758scbRdkvGsUYfpKxal3srkfc="
+    }
+  }
+]
