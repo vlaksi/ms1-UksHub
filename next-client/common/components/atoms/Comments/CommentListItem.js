@@ -54,7 +54,7 @@ const CommentListItem = ({ comment }) => {
     }
   };
   useEffect(async () => {
-    let authorComment = await getUserById(user);
+    let authorComment = await getUserById(comment.author);
     setAuthor(authorComment);
   }, []);
   return (
