@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.http import Http404
 from ..models import ActionType, ReactionType, Action, Reaction, Comment
 from versioningapp.models import Repository
+from progresstrackapp.models import Issue
 
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -35,6 +36,16 @@ def get_mocked_user(username, password, first_name, last_name, email):
         "email": email
     }
     return user
+
+def get_mocked_comment(test_comment_message='Some_Comment_Test'):
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+
+    comment = {
+       "message":test_comment_message,
+       "creation_date":"2022-01-31 10:53:15.739+01",
+       "author":user_id
+    }
+    return comment
 
 def get_action(index=0):
     return Action.objects.all()[index]
@@ -390,3 +401,32 @@ class TestCommentListView(TestCase):
     def test_get_all_comments_wrong_url(self):
         response = self.c.get('/useractivity/comment', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
+
+    def test_post_create_comment_successfully(self):
+        comment = get_mocked_comment('Test comment message 1')
+
+        response = self.c.post(
+            '/useractivity/comments/',
+            data=json.dumps(comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+       
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['message'], 'Test comment message 1')
+
+    def test_post_create_comment_with_missing_message(self):
+        test_message_comment = None
+        comment = get_mocked_comment(test_message_comment)
+
+        response = self.c.post(
+            '/useractivity/comments/',
+            data=json.dumps(comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+   
+       
