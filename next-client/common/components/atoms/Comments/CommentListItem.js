@@ -8,11 +8,13 @@ import {
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import { getUserById } from "../../../services/useractivity/userService";
 
 const CommentListItem = ({ comment }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
+  const [author, setAuthor] = useState();
 
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
@@ -51,14 +53,22 @@ const CommentListItem = ({ comment }) => {
       notifyError();
     }
   };
+  useEffect(async () => {
+    let authorComment = await getUserById(user);
+    setAuthor(authorComment);
+  }, []);
   return (
     <>
       <div>
         <Card style={{ width: "60%", marginTop: "5%" }}>
           <Card.Header>
-            Commented by on{" "}
+            Commented by{" "}
             <Badge bg="primary" text="light" pill>
-              {comment.creation_date}
+              {author?.username}
+            </Badge>{" "}
+            on{" "}
+            <Badge bg="primary" text="light" pill>
+              {comment.creation_date.substring(0, 10)}
             </Badge>
           </Card.Header>
           <Card.Body>
