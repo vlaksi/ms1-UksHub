@@ -111,4 +111,11 @@ def all_comments_by_pull_request_id(request, pull_request_id):
     if(len(comments) == 0): raise Http404('No Comments matches the given query.')
     serializers=CommentSerializer(comments,many=True)
     return Response(serializers.data)
+
+@api_view(['GET'])
+def all_reactions_by_comment_id(request, comment_id):
+    reactions= Reaction.objects.filter(comment= comment_id)
+    if(len(reactions) == 0): raise Http404('No Reactions matches the given query.')
+    serializers=ReactionSerializer(reactions,many=True)
+    return Response(serializers.data)
     
