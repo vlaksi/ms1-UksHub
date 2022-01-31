@@ -15,6 +15,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 import CommentPR from "../../molecules/Comments/CommentPR";
+import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -66,17 +67,18 @@ const PullRequestDetails = ({ pullRequestId }) => {
 
   return (
     <>
+      <RepositoryNav />
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
-      <h2>
+      <h4>
         <div style={{ display: "flex" }}>
           <Badge pill bg="primary" text="light" style={{ marginRight: "10px" }}>
             #{pullRequest.pk}
           </Badge>{" "}
           {pullRequest.title}
         </div>
-      </h2>
+      </h4>
 
-      <InputGroup className="mb-3">
+      <InputGroup className="mb-3" style={{ width: "40%", marginTop: "2%" }}>
         <FormControl
           defaultValue={pullRequest.title}
           aria-label="Pull request title"
@@ -103,7 +105,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
         ></CommentPR>
       </div>
 
-      <Card border="danger" style={{ width: "50%" }}>
+      <Card border="danger" style={{ width: "30%", marginTop: "30%" }}>
         <Card.Header>Danger Zone</Card.Header>
         <Card.Body
           style={{
