@@ -1,6 +1,8 @@
 import { Card, Badge, Modal, Button, Form } from "react-bootstrap";
 import { MdEdit } from "react-icons/md";
 import { AiFillDelete } from "react-icons/ai";
+import { BsFillChatQuoteFill } from "react-icons/bs";
+import { FaRegSmile } from "react-icons/fa";
 import {
   deleteComment,
   updateComment,
@@ -81,7 +83,7 @@ const CommentListItem = ({ comment }) => {
                 marginRight: "15px",
                 cursor: "pointer",
                 color: "green",
-                marginLeft: "90%",
+                marginLeft: "80%",
               }}
               onClick={() => {
                 handleShow();
@@ -89,9 +91,14 @@ const CommentListItem = ({ comment }) => {
             />
             <AiFillDelete
               size={18}
-              style={{ cursor: "pointer", color: "red" }}
+              style={{ cursor: "pointer", color: "red", marginRight: "15px" }}
               onClick={handleShowDeleteModal}
             />
+            <BsFillChatQuoteFill
+              size={15}
+              style={{ cursor: "pointer", marginRight: "15px" }}
+            />
+            <FaRegSmile />
           </Card.Footer>
         </Card>
         <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
