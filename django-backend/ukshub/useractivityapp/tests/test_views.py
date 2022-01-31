@@ -1,7 +1,8 @@
 import json
 
 from django.test import TestCase, Client
-
+from django.urls import reverse
+from django.http import Http404
 from ..models import ActionType, ReactionType, Action, Reaction, Comment
 from versioningapp.models import Repository
 
@@ -9,85 +10,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+from .test_models import initialize_db_with_test_data,USER1_USERNAME,USER2_USERNAME,USER1_PASSWORD,USER2_PASSWORD,USER2_EMAIL,USER2_FIRST_NAME,USER2_LAST_NAME,REPO1_NAME
+
 from rest_framework.test import APIClient
 
-# User init consts
-USER1_USERNAME = 'user1'
-USER1_PASSWORD = 'Ovojejakasifra!'
-USER1_FIRST_NAME = 'Ivana'
-USER1_LAST_NAME = 'Perisic'
-USER1_EMAIL = 'ica@gmail.com'
 
-USER2_USERNAME = 'user2'
-USER2_PASSWORD = 'Ovojejakasifra!'
-USER2_FIRST_NAME = 'Ivana'
-USER2_LAST_NAME = 'Perisic'
-USER2_EMAIL = 'ica2@gmail.com'
-
-USER3_USERNAME = 'user3'
-USER3_PASSWORD = 'Ovojejakasifra!'
-USER3_FIRST_NAME = 'Ivana'
-USER3_LAST_NAME = 'Perisic'
-USER3_EMAIL = 'ica3@gmail.com'
-
-REPO1_NAME = 'RepoUKS'
-ACTION_TYPE_NAME = 'fork'
-REACTION_TYPE_NAME = 'Reaction'
 
 JSON = 'application/json'
-# INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
-def initialize_db_with_test_data():
-    # Create users
-    user1 = User.objects.create_user(
-      username=USER1_USERNAME, 
-      password=USER1_PASSWORD,
-      first_name=USER1_FIRST_NAME,
-      last_name=USER1_LAST_NAME,
-      email=USER1_EMAIL,
-      is_superuser = True, 
-      is_staff=True)
-
-    user2 = User.objects.create_user(
-      username=USER2_USERNAME, 
-      password=USER2_PASSWORD,
-      first_name=USER2_FIRST_NAME,
-      last_name=USER2_LAST_NAME,
-      email=USER2_EMAIL,
-      is_superuser = False, 
-      is_staff=False)
-
-    user3 = User.objects.create_user(
-      username=USER3_USERNAME, 
-      password=USER3_PASSWORD,
-      first_name=USER3_FIRST_NAME,
-      last_name=USER3_LAST_NAME,
-      email=USER3_EMAIL,
-      is_superuser = False, 
-      is_staff=False)
-
-    user1.save()
-    user2.save()
-    user3.save()
-
-    # Create repositories
-    repository1 = Repository.objects.create(author=user1, name=REPO1_NAME)
-    
-    repository1.save()
-
-    # Create ActionType
-    actionType1 = ActionType.objects.create(name=ACTION_TYPE_NAME)
-
-    actionType1.save()
-
-    # Create ReactionType
-    reactionType1 = ReactionType.objects.create(name=REACTION_TYPE_NAME)
-
-    reactionType1.save()
-
-    # Create actions
-    action1 = Action.objects.create(author=user1, repository=repository1, action_type=actionType1.name, new_forked_repository=repository1)
-
-    action1.save()
 
 def get_jwt_token(is_admin):
     c = Client()
@@ -441,3 +370,23 @@ class TestActionDetailView(TestCase):
         )
 
         self.assertEquals(response.status_code, 404)
+
+class TestCommentListView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
+
+    def test_get_all_comments(self):
+        response = self.c.get('/useractivity/comments/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+
+    def test_get_all_comments_wrong_url(self):
+        response = self.c.get('/useractivity/comment', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)

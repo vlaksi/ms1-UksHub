@@ -10,11 +10,44 @@ User = get_user_model()
 from django.db import IntegrityError
 
 # User init consts
-USER1_USERNAME = 'dusan'
-USER1_PASSWORD = 'Passw0rd!.'
-USER1_FIRST_NAME = 'Dusan'
-USER1_LAST_NAME = 'Miljkovic'
-USER1_EMAIL = 'dusan@gmail.com'
+USER1_USERNAME = 'user1'
+USER1_PASSWORD = 'Ovojejakasifra!'
+USER1_FIRST_NAME = 'Ivana'
+USER1_LAST_NAME = 'Perisic'
+USER1_EMAIL = 'ica@gmail.com'
+
+USER2_USERNAME = 'user2'
+USER2_PASSWORD = 'Ovojejakasifra!'
+USER2_FIRST_NAME = 'Ivana'
+USER2_LAST_NAME = 'Perisic'
+USER2_EMAIL = 'ica2@gmail.com'
+
+USER3_USERNAME = 'user3'
+USER3_PASSWORD = 'Ovojejakasifra!'
+USER3_FIRST_NAME = 'Ivana'
+USER3_LAST_NAME = 'Perisic'
+USER3_EMAIL = 'ica3@gmail.com'
+
+REPO1_NAME = 'RepoUKS'
+ACTION_TYPE_NAME = 'fork'
+REACTION_TYPE_NAME = 'Reaction'# User init consts
+USER1_USERNAME = 'user1'
+USER1_PASSWORD = 'Ovojejakasifra!'
+USER1_FIRST_NAME = 'Ivana'
+USER1_LAST_NAME = 'Perisic'
+USER1_EMAIL = 'ica@gmail.com'
+
+USER2_USERNAME = 'user2'
+USER2_PASSWORD = 'Ovojejakasifra!'
+USER2_FIRST_NAME = 'Ivana'
+USER2_LAST_NAME = 'Perisic'
+USER2_EMAIL = 'ica2@gmail.com'
+
+USER3_USERNAME = 'user3'
+USER3_PASSWORD = 'Ovojejakasifra!'
+USER3_FIRST_NAME = 'Ivana'
+USER3_LAST_NAME = 'Perisic'
+USER3_EMAIL = 'ica3@gmail.com'
 
 REPO1_NAME = 'RepoUKS'
 ACTION_TYPE_NAME = 'fork'
@@ -22,9 +55,39 @@ REACTION_TYPE_NAME = 'Reaction'
 
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
+
+    # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
     # Create users
-    user1 = User.objects.create_user(username=USER1_USERNAME, password=USER1_PASSWORD,first_name=USER1_FIRST_NAME,last_name=USER1_LAST_NAME,email=USER1_EMAIL)
+    user1 = User.objects.create_user(
+      username=USER1_USERNAME, 
+      password=USER1_PASSWORD,
+      first_name=USER1_FIRST_NAME,
+      last_name=USER1_LAST_NAME,
+      email=USER1_EMAIL,
+      is_superuser = True, 
+      is_staff=True)
+
+    user2 = User.objects.create_user(
+      username=USER2_USERNAME, 
+      password=USER2_PASSWORD,
+      first_name=USER2_FIRST_NAME,
+      last_name=USER2_LAST_NAME,
+      email=USER2_EMAIL,
+      is_superuser = False, 
+      is_staff=False)
+
+    user3 = User.objects.create_user(
+      username=USER3_USERNAME, 
+      password=USER3_PASSWORD,
+      first_name=USER3_FIRST_NAME,
+      last_name=USER3_LAST_NAME,
+      email=USER3_EMAIL,
+      is_superuser = False, 
+      is_staff=False)
+
     user1.save()
+    user2.save()
+    user3.save()
 
     # Create repositories
     repository1 = Repository.objects.create(author=user1, name=REPO1_NAME)
@@ -46,16 +109,14 @@ def initialize_db_with_test_data():
 
     action1.save()
 
-    # Create reactions
-    # reaction1 = Reaction.objects.create()
-
-    # reaction1.save()
-
+    
     # Create comment
     comment1 = Comment.objects.create(author=user1, message="Komentar1",  creation_date="2022-01-30 22:03:08.405+01")
+    comment2 = Comment.objects.create(author=user1, message="Komentar2",  creation_date="2022-01-30 22:03:08.405+01")
 
     comment1.save()
-
+    comment2.save()
+    
 def get_action_type(index=0):
     return ActionType.objects.all()[index]
 
