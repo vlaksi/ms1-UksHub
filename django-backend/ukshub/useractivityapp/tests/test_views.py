@@ -480,6 +480,38 @@ class TestCommentDetailView(TestCase):
         )
 
         self.assertEquals(response.status_code, 404)
+
+    def test_put_HTTP404_comment_change_message(self):
+        comment = Comment.objects.get(message='Komentar2')
+        new_comment_message = 'New_Comment_Message'
+        new_comment = get_mocked_comment(new_comment_message)
+
+        response = self.c.put(
+            '/useractivity/comments/99999',
+            data=json.dumps(new_comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+    
+    def test_put_comment_change_message(self):
+        comment = Comment.objects.get(message='Komentar2')
+        new_comment_message = 'New_Comment_Message'
+        new_comment = get_mocked_comment(new_comment_message)
+
+        response = self.c.put(
+             '/useractivity/comments/'+str(comment.pk),
+            data=json.dumps(new_comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['message'], comment.message)
+        self.assertEqual(res_obj['message'], new_comment_message)
     
 
    
