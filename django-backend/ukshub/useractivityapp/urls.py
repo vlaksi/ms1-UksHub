@@ -10,6 +10,7 @@ urlpatterns = [
     path('comments/', views.CommentList.as_view()),
     path('comments/<int:pk>', views.CommentDetail.as_view()),
     path('issue/<int:issue_id>/comments',views.all_comments_by_issue_id,name="all-issue-comments"),
+    path('pull_request/<int:pull_request_id>/comments',views.all_comments_by_pull_request_id,name="all-pull-request-comments"),
     path('reactions/', views.ReactionList.as_view()),
     path('reactions/<int:pk>', views.ReactionDetail.as_view()),
     path('actions/', views.ActionList.as_view()),

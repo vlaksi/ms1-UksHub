@@ -62,7 +62,7 @@ const CommentListItem = ({ comment }) => {
   return (
     <>
       <div>
-        <Card style={{ width: "60%", marginTop: "5%" }}>
+        <Card style={{ width: "50%", marginTop: "5%" }}>
           <Card.Header>
             Commented by{" "}
             <Badge bg="primary" text="light" pill>
@@ -83,7 +83,7 @@ const CommentListItem = ({ comment }) => {
                 marginRight: "15px",
                 cursor: "pointer",
                 color: "green",
-                marginLeft: "80%",
+                marginLeft: "70%",
               }}
               onClick={() => {
                 handleShow();

@@ -78,6 +78,27 @@ export const getAllCommentsIssues = async (issueId) => {
     });
   return comments;
 };
+export const getAllCommentsPullRequests = async (pullRequestId) => {
+  let comments;
+  await axios
+    .request({
+      url: `/useractivity/pull_request/${pullRequestId}/comments`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      comments = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return comments;
+};
 export const deleteComment = async (commentId) => {
   let success = false;
   await axios

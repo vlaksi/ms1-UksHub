@@ -2,7 +2,10 @@ import CommentListItem from "../../atoms/Comments/CommentListItem";
 import { Button, Modal, Form } from "react-bootstrap";
 import { MdAddCircle } from "react-icons/md";
 import { useState, useEffect } from "react";
-import { addCommentPullRequest } from "../../../services/useractivity/commentsService";
+import {
+  addCommentPullRequest,
+  getAllCommentsPullRequests,
+} from "../../../services/useractivity/commentsService";
 import { ToastContainer, toast } from "react-toastify";
 
 const Comments = ({ pullRequestId, authorId }) => {
@@ -22,7 +25,7 @@ const Comments = ({ pullRequestId, authorId }) => {
 
   useEffect(async () => {
     if (!pullRequestId) return;
-    //let comments = await getAllCommentsIssues(issueId);
+    let comments = await getAllCommentsPullRequests(pullRequestId);
     setNewCommentList(comments);
   }, [pullRequestId]);
   const addNewComment = async () => {
@@ -35,7 +38,7 @@ const Comments = ({ pullRequestId, authorId }) => {
     if (createdComment) {
       notify();
       handleClose();
-      //setNewCommentList(await getAllCommentsIssues(issueId));
+      setNewCommentList(await getAllCommentsPullRequests(pullRequestId));
     } else {
       notifyError();
     }
@@ -43,7 +46,7 @@ const Comments = ({ pullRequestId, authorId }) => {
   return (
     <>
       <Button
-        style={{ marginTop: "10px", marginLeft: "75%", marginBottom: "2%" }}
+        style={{ marginLeft: "85%", marginBottom: "2%" }}
         variant="primary"
         onClick={() => {
           handleShow();

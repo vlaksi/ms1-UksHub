@@ -77,35 +77,35 @@ const PullRequestDetails = ({ pullRequestId }) => {
           {pullRequest.title}
         </div>
       </h4>
-
-      <InputGroup className="mb-3" style={{ width: "40%", marginTop: "2%" }}>
-        <FormControl
-          defaultValue={pullRequest.title}
-          aria-label="Pull request title"
-          aria-describedby="basic-addon2"
-          onChange={(e) => {
-            handlePullRequestNameChanging(e.target.value);
-          }}
-        />
-        <Button
-          variant="success"
-          id="button-addon2"
-          onClick={async () => {
-            await updateNewPullRequestName();
-            setPullRequest(await getPullRequestById(pullRequestId));
-          }}
-        >
-          Change
-        </Button>
-      </InputGroup>
       <div>
+        <InputGroup className="mb-3" style={{ width: "40%", marginTop: "2%" }}>
+          <FormControl
+            defaultValue={pullRequest.title}
+            aria-label="Pull request title"
+            aria-describedby="basic-addon2"
+            onChange={(e) => {
+              handlePullRequestNameChanging(e.target.value);
+            }}
+          />
+          <Button
+            variant="success"
+            id="button-addon2"
+            onClick={async () => {
+              await updateNewPullRequestName();
+              setPullRequest(await getPullRequestById(pullRequestId));
+            }}
+          >
+            Change
+          </Button>
+        </InputGroup>
+
         <CommentPR
           pullRequestId={pullRequest.pk}
           authorId={pullRequest.author}
         ></CommentPR>
       </div>
 
-      <Card border="danger" style={{ width: "30%", marginTop: "30%" }}>
+      <Card border="danger" style={{ width: "50%", marginTop: "30%" }}>
         <Card.Header>Danger Zone</Card.Header>
         <Card.Body
           style={{
