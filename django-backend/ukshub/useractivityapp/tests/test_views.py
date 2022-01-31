@@ -428,5 +428,37 @@ class TestCommentListView(TestCase):
         )
 
         self.assertEquals(response.status_code, 400)
+
+class TestCommentDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
+
+    def test_get_HTTP404_comment_by_id(self):
+        response = self.c.get(
+            '/useractivity/comments/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+    
+    def test_get_comment_by_id_successfully(self):
+        comment = Comment.objects.get(message='Komentar1')
+        response = self.c.get(
+            '/useractivity/comments/'+str(comment.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['message'], 'Komentar1')
+
+
    
        
