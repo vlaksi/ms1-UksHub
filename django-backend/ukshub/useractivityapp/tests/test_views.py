@@ -459,6 +459,28 @@ class TestCommentDetailView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(res_obj['message'], 'Komentar1')
 
+    def test_delete_comment(self):
+        comment = Comment.objects.get(message='Komentar1')
+
+        response = self.c.delete(
+            '/useractivity/comments/'+str(comment.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+    
+    def test_delete_HTTP404_comment(self):
+        comment = Comment.objects.get(message='Komentar1')
+
+        response = self.c.delete(
+            '/useractivity/comments/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+    
 
    
        
