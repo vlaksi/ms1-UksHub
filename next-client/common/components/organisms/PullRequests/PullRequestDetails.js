@@ -80,6 +80,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
       <div>
         <InputGroup className="mb-3" style={{ width: "40%", marginTop: "2%" }}>
           <FormControl
+            size="sm"
             defaultValue={pullRequest.title}
             aria-label="Pull request title"
             aria-describedby="basic-addon2"
@@ -88,6 +89,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
             }}
           />
           <Button
+            size="sm"
             variant="success"
             id="button-addon2"
             onClick={async () => {

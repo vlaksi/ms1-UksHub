@@ -110,7 +110,6 @@ const IssueDetails = ({ issueId }) => {
             {" "}
             <Comments issueId={issueId} authorId={user}></Comments>
           </div>
-
           <div>
             {/* Assignes Card */}
             <Card style={{ width: "25%", marginLeft: "75%" }}>

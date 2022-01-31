@@ -52,9 +52,9 @@ def initialize_db_with_test_data():
     # reaction1.save()
 
     # Create comment
-    # comment1 = Comment.objects.create()
+    comment1 = Comment.objects.create(author=user1, message="Komentar1",  creation_date="2022-01-30 22:03:08.405+01")
 
-    # comment1.save()
+    comment1.save()
 
 def get_action_type(index=0):
     return ActionType.objects.all()[index]
@@ -120,3 +120,30 @@ class TestActionModel(TestCase):
     def test_action_new_forked_repository_name(self):
         action = get_action()
         self.assertEqual(action.repository.name, REPO1_NAME)
+
+class TestCommentModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def test_action_author_username(self):
+        comment = get_comment()
+        self.assertEqual(comment.author.username, USER1_USERNAME)
+
+    def test_comment_message(self):
+        comment = get_comment()
+        verbose_name = comment._meta.get_field('message').verbose_name
+        self.assertEquals(verbose_name, 'message')
+
+    def test_comment_message_max_length(self):
+        comment = get_comment()
+        max_length = comment._meta.get_field('message').max_length
+        self.assertEquals(max_length, 200)
+    
+    def test_empty_comment_reactions(self):
+        comment = get_comment()
+        self.assertEqual(comment.reaction.count(),0)
+
+    
+

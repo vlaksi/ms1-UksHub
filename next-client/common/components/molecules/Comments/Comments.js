@@ -46,7 +46,7 @@ const Comments = ({ issueId, authorId }) => {
   return (
     <>
       <Button
-        style={{ marginTop: "10px", marginLeft: "75%", marginBottom: "2%" }}
+        style={{ marginTop: "5px", marginLeft: "75%", marginBottom: "2%" }}
         variant="primary"
         onClick={() => {
           handleShow();
