@@ -41,7 +41,12 @@ const CommentListItem = ({ comment }) => {
   const deleteChosenComment = async () => {
     let isSuccessfulDeleted = await deleteComment(comment.pk);
     if (isSuccessfulDeleted) {
-      window.location.href = `http://localhost:3000/${user}/${repository}/issues/${comment.issue}`;
+      if (comment.issue != null) {
+        window.location.href = `http://localhost:3000/${user}/${repository}/issues/${comment.issue}`;
+      } else {
+        window.location.href = `http://localhost:3000/${user}/${repository}/pulls/${comment.pull_request}`;
+      }
+
       notifyDeleted();
     }
   };
@@ -50,11 +55,16 @@ const CommentListItem = ({ comment }) => {
     if (isSuccessfulUpdated) {
       notifyUpdated();
       handleClose();
-      window.location.href = `http://localhost:3000/${user}/${repository}/issues/${comment.issue}`;
+      if (comment.issue != null) {
+        window.location.href = `http://localhost:3000/${user}/${repository}/issues/${comment.issue}`;
+      } else {
+        window.location.href = `http://localhost:3000/${user}/${repository}/pulls/${comment.pull_request}`;
+      }
     } else {
       notifyError();
     }
   };
+
   useEffect(async () => {
     let authorComment = await getUserById(comment.author);
     setAuthor(authorComment);
@@ -83,7 +93,7 @@ const CommentListItem = ({ comment }) => {
                 marginRight: "15px",
                 cursor: "pointer",
                 color: "green",
-                marginLeft: "70%",
+                marginLeft: "77%",
               }}
               onClick={() => {
                 handleShow();
@@ -112,7 +122,7 @@ const CommentListItem = ({ comment }) => {
               alignItems: " baseline",
             }}
           >
-            <p>Are you sure you want to remove chosen comment from issue?</p>
+            <p>Are you sure you want to remove chosen comment?</p>
           </Modal.Body>
 
           <Modal.Footer>
