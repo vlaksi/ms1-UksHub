@@ -25,13 +25,15 @@ const CommentListItem = ({ comment }) => {
   const handleClose = () => {
     setShow(false);
   };
-  const [showNumberOfLikes, setShowNumberOfLikes] = useState("");
 
   const [commentMessage, setCommentMessage] = useState(comment.message);
   const handleChangingCommentMessage = (commentMessage) => {
     setCommentMessage(commentMessage);
   };
   const [reactions, setReactions] = useState([]);
+
+  const [showNumberOfLikes, setShowNumberOfLikes] = useState([]);
+
   const notifyDeleted = () => toast.success("Successfully deleted comment!");
 
   const notifyUpdated = () =>
@@ -69,24 +71,38 @@ const CommentListItem = ({ comment }) => {
   };
 
   useEffect(async () => {
+    if (!comment?.pk) return;
+
+    let reactions = await getAllReactionsByCommentId(comment.pk);
+    setReactions(reactions);
+    console.log("Sve reakcije su:", reactions);
+
+    let numberOfLikes = await getNumberOfLikes();
+    console.log("Svi brojevi lajkova su:", numberOfLikes);
+    setShowNumberOfLikes(numberOfLikes);
+  }, [comment?.pk]);
+
+  useEffect(async () => {
     let authorComment = await getUserById(comment.author);
     setAuthor(authorComment);
   }, []);
 
-  const getNumberOfLikes = async (commentId) => {
-    let allReactions = await getAllReactionsByCommentId(commentId);
-    setReactions(allReactions);
+  const getNumberOfLikes = async () => {
+    let reactions = await getAllReactionsByCommentId(comment.pk);
+    let numberOfLikes = reactions.length;
 
-    let lengthOfLikeReactions;
-    lengthOfLikeReactions = reactions.length;
-    console.log("Reackije iz funkcije", reactions.length);
-    return lengthOfLikeReactions;
+    return numberOfLikes;
   };
 
-  useEffect(async () => {
-    if (!comment?.pk) return;
-    setShowNumberOfLikes(await getNumberOfLikes(comment.pk));
-  }, [comment?.pk]);
+  // const getNumberOfLikes = async (commentId) => {
+  //   let allReactions = await getAllReactionsByCommentId(commentId);
+  //   setReactions(allReactions);
+  //   console.log("Sve reakcije za komentar su:", allReactions);
+
+  //   console.log("Reackije iz funkcije", reactions.length);
+  //   return reactions.length;
+  // };
+
   return (
     <>
       <div>
