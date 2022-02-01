@@ -128,7 +128,7 @@ const CommentListItem = ({ comment }) => {
                   onClick={async () => {
                     console.log('click on like');
                     let loggedInUser = getLoggedInUserId();
-                    await addReaction(loggedInUser, 'like');
+                    await addReaction(loggedInUser, 'like', comment.pk);
                   }}
                   style={{
                     color: 'blue',

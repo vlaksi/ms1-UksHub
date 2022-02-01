@@ -23,7 +23,7 @@ export const getAllReactionsByCommentId = async (commentId) => {
   return reactions;
 };
 
-export const addReaction = async (authorId, reactionType) => {
+export const addReaction = async (authorId, reactionType, commentId) => {
   let reaction = null;
   await axios
     .request({
@@ -34,6 +34,7 @@ export const addReaction = async (authorId, reactionType) => {
       data: {
         author: authorId,
         type: reactionType,
+        comment: commentId,
         grant_type: 'client_credentials',
         scope: 'public',
       },
