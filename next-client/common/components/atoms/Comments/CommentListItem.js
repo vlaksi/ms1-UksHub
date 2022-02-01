@@ -76,25 +76,24 @@ const CommentListItem = ({ comment }) => {
 
   useEffect(async () => {
     if (!comment?.pk) return;
+    setNumberOfLikes();
+  }, [comment?.pk]);
 
+  const setNumberOfLikes = async () => {
     let newReactions = await getAllReactionsByCommentId(comment.pk);
     setReactions(newReactions);
-    console.log('Sve reakcije su:', newReactions);
+
+    newReactions = newReactions.filter((reaction) => reaction.type == 'like');
 
     let numberOfLikes = newReactions?.length;
     console.log('Svi brojevi lajkova su:', numberOfLikes);
     setShowNumberOfLikes(numberOfLikes);
-  }, [comment?.pk]);
+  };
 
   useEffect(async () => {
     let authorComment = await getUserById(comment.author);
     setAuthor(authorComment);
   }, []);
-
-  const getNumberOfLikes = async (reactions) => {
-    let numberOfLikes = reactions?.length;
-    return numberOfLikes;
-  };
 
   const getLoggedInUserId = () => {
     return getParsedToken().user_id;
@@ -115,37 +114,58 @@ const CommentListItem = ({ comment }) => {
             </Badge>
           </Card.Header>
           <Card.Body>
-            <Card.Text>
-              {comment.message} {showNumberOfLikes}
-            </Card.Text>
+            <Card.Text>{comment.message}</Card.Text>
           </Card.Body>
           <Card.Footer>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               {/* Reactions */}
-              <div style={{ marginLeft: '10px' }}>
-                <AiFillLike
-                  size={19}
-                  onClick={async () => {
-                    console.log('click on like');
-                    let loggedInUser = getLoggedInUserId();
-                    await addReaction(loggedInUser, 'like', comment.pk);
-                  }}
+              <div style={{ marginLeft: '10px', display: 'flex' }}>
+                {/* Like */}
+                <div
                   style={{
-                    color: 'blue',
-                    cursor: 'pointer',
+                    display: 'flex ',
                     marginRight: '10px',
+                    alignItems: 'center',
                   }}
-                />
-                <FcLike
-                  size={20}
-                  onClick={() => {
-                    console.log('click on heart');
-                  }}
+                >
+                  <AiFillLike
+                    size={18}
+                    onClick={async () => {
+                      console.log('click on like');
+                      let loggedInUser = getLoggedInUserId();
+                      await addReaction(loggedInUser, 'like', comment.pk);
+                      setNumberOfLikes();
+                    }}
+                    style={{
+                      color: 'blue',
+                      cursor: 'pointer',
+                      marginRight: '5px',
+                    }}
+                  />
+                  {showNumberOfLikes}
+                </div>
+
+                {/* Heart */}
+                <div
                   style={{
-                    cursor: 'pointer',
-                    color: 'red',
+                    display: 'flex ',
+                    marginLeft: '5px',
+                    alignItems: 'center',
                   }}
-                />
+                >
+                  <FcLike
+                    size={20}
+                    onClick={() => {
+                      console.log('click on heart');
+                    }}
+                    style={{
+                      cursor: 'pointer',
+                      color: 'red',
+                      marginRight: '5px',
+                    }}
+                  />
+                  99
+                </div>
               </div>
 
               {/* Actions */}
