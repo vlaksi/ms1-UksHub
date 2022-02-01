@@ -114,43 +114,51 @@ const CommentListItem = ({ comment }) => {
             </Card.Text>
           </Card.Body>
           <Card.Footer>
-            <MdEdit
-              size={20}
-              style={{
-                marginRight: '15px',
-                cursor: 'pointer',
-                color: 'green',
-                marginLeft: '65%',
-              }}
-              onClick={() => {
-                handleShow();
-              }}
-            />
-            <AiFillDelete
-              size={18}
-              style={{ cursor: 'pointer', color: 'red', marginRight: '15px' }}
-              onClick={handleShowDeleteModal}
-            />
-            <BsFillChatQuoteFill
-              size={15}
-              style={{ cursor: 'pointer', marginRight: '15px' }}
-            />
-            <AiFillLike
-              size={19}
-              style={{
-                color: 'blue',
-                cursor: 'pointer',
-                marginRight: '15px',
-              }}
-            />
-            <FcLike
-              size={20}
-              style={{
-                cursor: 'pointer',
-                marginRight: '15px',
-                color: 'red',
-              }}
-            />
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              {/* Reactions */}
+              <div style={{ marginLeft: '10px' }}>
+                <AiFillLike
+                  size={19}
+                  style={{
+                    color: 'blue',
+                    cursor: 'pointer',
+                    marginRight: '10px',
+                  }}
+                />
+                <FcLike
+                  size={20}
+                  style={{
+                    cursor: 'pointer',
+                    color: 'red',
+                  }}
+                />
+              </div>
+
+              {/* Actions */}
+              <div>
+                <MdEdit
+                  size={20}
+                  style={{
+                    cursor: 'pointer',
+                    color: 'green',
+                  }}
+                  onClick={() => {
+                    handleShow();
+                  }}
+                />
+                <AiFillDelete
+                  size={18}
+                  style={{
+                    cursor: 'pointer',
+                    color: 'red',
+                    marginLeft: '10px',
+                    marginRight: '10px',
+                  }}
+                  onClick={handleShowDeleteModal}
+                />
+                <BsFillChatQuoteFill size={15} style={{ cursor: 'pointer' }} />
+              </div>
+            </div>
           </Card.Footer>
         </Card>
         <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
