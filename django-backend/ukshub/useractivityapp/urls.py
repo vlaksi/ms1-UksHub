@@ -14,6 +14,7 @@ urlpatterns = [
     path('reactions/', views.ReactionList.as_view()),
     path('reactions/comment/<int:comment_id>', views.all_reactions_by_comment_id,name="all-comment-reactions"),
     path('reactions/<int:pk>', views.ReactionDetail.as_view()),
+    path('reactions/comments/<int:comment_id>/user/<int:user_id>/type/<str:type_name>',views.delete_by_comment_and_user_id, name="delete-by-comment-and-user-id"),
     path('actions/', views.ActionList.as_view()),
     path('actions/<int:pk>', views.ActionDetail.as_view()),
     path('action/<str:action_name>/<int:repo_id>/<int:user_id>/',views.action_by_repo_and_user,name="action-by-repo-and-user"),

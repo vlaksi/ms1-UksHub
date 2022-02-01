@@ -121,3 +121,10 @@ def all_reactions_by_comment_id(request, comment_id):
     serializers=ReactionSerializer(reactions,many=True)
     return Response(serializers.data)
     
+@api_view(['DELETE'])
+def delete_by_comment_and_user_id(request,comment_id,user_id,type_name):
+    return Response({
+        "comment_id": comment_id,
+        "user_id": user_id,
+        "type_name": type_name
+    })
