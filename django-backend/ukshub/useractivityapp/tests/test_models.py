@@ -201,10 +201,7 @@ class TestCommentModel(TestCase):
         comment = get_comment()
         max_length = comment._meta.get_field('message').max_length
         self.assertEquals(max_length, 200)
-    
-    def test_empty_comment_reactions(self):
-        comment = get_comment()
-        self.assertEqual(comment.reaction.count(),0)
+
 
     
 
