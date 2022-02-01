@@ -81,8 +81,12 @@ const CommentListItem = ({ comment }) => {
 
   const setNumberOfLikes = async () => {
     let newReactions = await getAllReactionsByCommentId(comment.pk);
-    setReactions(newReactions);
+    if (!newReactions) {
+      setShowNumberOfLikes(0);
+      return;
+    }
 
+    setReactions(newReactions);
     newReactions = newReactions.filter((reaction) => reaction.type == 'like');
 
     let numberOfLikes = newReactions?.length;
