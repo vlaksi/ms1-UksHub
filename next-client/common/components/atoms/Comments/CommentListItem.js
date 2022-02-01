@@ -1,8 +1,9 @@
 import { Card, Badge, Modal, Button, Form } from "react-bootstrap";
 import { MdEdit } from "react-icons/md";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillLike } from "react-icons/ai";
 import { BsFillChatQuoteFill } from "react-icons/bs";
-import { FaRegSmile } from "react-icons/fa";
+import { FcLike } from "react-icons/fc";
+
 import {
   deleteComment,
   updateComment,
@@ -11,6 +12,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { getUserById } from "../../../services/useractivity/userService";
+import { getAllReactionsByCommentId } from "../../../services/useractivity/reactionsService";
 
 const CommentListItem = ({ comment }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -28,7 +30,7 @@ const CommentListItem = ({ comment }) => {
   const handleChangingCommentMessage = (commentMessage) => {
     setCommentMessage(commentMessage);
   };
-
+  const [reactions, setReactions] = useState([]);
   const notifyDeleted = () => toast.success("Successfully deleted comment!");
 
   const notifyUpdated = () =>
@@ -69,6 +71,19 @@ const CommentListItem = ({ comment }) => {
     let authorComment = await getUserById(comment.author);
     setAuthor(authorComment);
   }, []);
+
+  useEffect(async () => {
+    let reactionsByComment = await getAllReactionsByCommentId(comment.pk);
+    setReactions(reactionsByComment);
+  }, []);
+
+  /*const getNumberOfLikes = async (commentId) => {
+    let allReactions = await getAllReactionsByCommentId(commentId);
+    setReactions(allReactions);
+    lengthOfLikeReactions = reactions.length;
+    return lengthOfLikeReactions;
+  };*/
+
   return (
     <>
       <div>
@@ -93,7 +108,7 @@ const CommentListItem = ({ comment }) => {
                 marginRight: "15px",
                 cursor: "pointer",
                 color: "green",
-                marginLeft: "77%",
+                marginLeft: "65%",
               }}
               onClick={() => {
                 handleShow();
@@ -108,7 +123,22 @@ const CommentListItem = ({ comment }) => {
               size={15}
               style={{ cursor: "pointer", marginRight: "15px" }}
             />
-            <FaRegSmile />
+            <AiFillLike
+              size={19}
+              style={{
+                color: "blue",
+                cursor: "pointer",
+                marginRight: "15px",
+              }}
+            />
+            <FcLike
+              size={20}
+              style={{
+                cursor: "pointer",
+                marginRight: "15px",
+                color: "red",
+              }}
+            />
           </Card.Footer>
         </Card>
         <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
