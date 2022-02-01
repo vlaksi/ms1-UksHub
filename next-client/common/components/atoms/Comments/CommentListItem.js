@@ -89,19 +89,10 @@ const CommentListItem = ({ comment }) => {
 
   const getNumberOfLikes = async () => {
     let reactions = await getAllReactionsByCommentId(comment.pk);
-    let numberOfLikes = reactions.length;
+    let numberOfLikes = reactions?.length;
 
     return numberOfLikes;
   };
-
-  // const getNumberOfLikes = async (commentId) => {
-  //   let allReactions = await getAllReactionsByCommentId(commentId);
-  //   setReactions(allReactions);
-  //   console.log("Sve reakcije za komentar su:", allReactions);
-
-  //   console.log("Reackije iz funkcije", reactions.length);
-  //   return reactions.length;
-  // };
 
   return (
     <>

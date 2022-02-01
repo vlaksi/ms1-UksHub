@@ -22,3 +22,27 @@ export const getAllReactionsByCommentId = async (commentId) => {
     });
   return reactions;
 };
+export const addReaction = async (authorId, reactionType) => {
+  let reaction = null;
+  await axios
+    .request({
+      url: `/useractivity/reactions/`,
+      method: "post",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        author: authorId,
+        type: reactionType,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      comment = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+
+  return reaction;
+};
