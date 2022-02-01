@@ -7,6 +7,7 @@ import {
 	LinearScale,
 	PointElement,
 	LineElement,
+	Filler
 } from 'chart.js';
 import { Pie, Line } from 'react-chartjs-2';
 import styles from './RepositoryInsights.module.scss';
@@ -31,19 +32,19 @@ const RepositoryInsights = ({
 	Chart.register(LinearScale);
 	Chart.register(PointElement);
 	Chart.register(LineElement);
-
+	Chart.register(Filler);
 	// TODO: NEMANJA FIX THIS !, this is only tmp solution
-	if (
-		!!repositoryIssues === false ||
-		!!repositoryPRs === false ||
-		!!commitsToMainBranch === false
-	) {
-		return (
-			<p>
-				There is no any repository issue, repository pull request or commits
-			</p>
-		);
-	}
+	// if (
+	// 	!!repositoryIssues === false ||
+	// 	!!repositoryPRs === false ||
+	// 	!!commitsToMainBranch === false
+	// ) {
+	// 	return (
+	// 		<p>
+	// 			There is no any repository issue, repository pull request or commits
+	// 		</p>
+	// 	);
+	// }
 
 	const getCommitsDates = () => {
 		var commitsDates = [];
@@ -57,6 +58,20 @@ const RepositoryInsights = ({
 		counts[x] = (counts[x] || 0) + 1;
 	});
 
+
+	const getCommitsUsers = () => {
+		var commitsUsers = [];
+		commitsToMainBranch?.map((item) => {
+			commitsUsers.push(item.author);
+		});
+		return commitsUsers;
+	};
+	const countsUsersCommits = {};
+	getCommitsUsers().forEach(function (x) {
+		countsUsersCommits[x] = (countsUsersCommits[x] || 0) + 1;
+	});
+	console.log('countsUsersCommits', countsUsersCommits)
+	console.log(counts, 'counts')
 	const getVisitDates = () => {
 		var visitDates = [];
 		visitsOfRepo?.map((item) => {
@@ -82,7 +97,7 @@ const RepositoryInsights = ({
 
 	const getOpenedIssues = () => {
 		var numberOfOpenedIssues = 0;
-		repositoryIssues.map((item) => {
+		repositoryIssues?.map((item) => {
 			if (item.is_opened) {
 				numberOfOpenedIssues = numberOfOpenedIssues + 1;
 			}
@@ -91,7 +106,7 @@ const RepositoryInsights = ({
 	};
 	const getOpenedPRs = () => {
 		var numberOfOpenedMRs = 0;
-		repositoryPRs.map((item) => {
+		repositoryPRs?.map((item) => {
 			if (!item.is_merged) {
 				numberOfOpenedMRs = numberOfOpenedMRs + 1;
 			}
@@ -234,6 +249,11 @@ const RepositoryInsights = ({
 								Contributions to main, excluding merge commits and bot accounts
 								<div className={styles.lineChart}>
 									<Line data={data} />
+									<h3>Commits per users:</h3>
+									{Object.keys(countsUsersCommits)?.map((key, value) => {
+										return <div><h5><AiOutlineUser /> {key}: {countsUsersCommits[key]}</h5></div>
+									})}
+
 								</div>
 							</Tab.Pane>
 							<Tab.Pane eventKey="#link3">
