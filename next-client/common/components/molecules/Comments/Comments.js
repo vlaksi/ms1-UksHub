@@ -1,27 +1,27 @@
-import CommentListItem from "../../atoms/Comments/CommentListItem";
-import { Button, Modal, Form } from "react-bootstrap";
-import { MdAddCircle } from "react-icons/md";
-import { useState, useEffect } from "react";
+import CommentListItem from '../../atoms/Comments/CommentListItem';
+import { Button, Modal, Form } from 'react-bootstrap';
+import { MdAddCircle } from 'react-icons/md';
+import { useState, useEffect } from 'react';
 import {
   addCommentIssue,
   getAllCommentsIssues,
-} from "../../../services/useractivity/commentsService";
-import { ToastContainer, toast } from "react-toastify";
+} from '../../../services/useractivity/commentsService';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Comments = ({ issueId, authorId }) => {
   const [comments, setNewCommentList] = useState([]);
-  const [newCommentMessage, setNewCommentMessage] = useState("");
+  const [newCommentMessage, setNewCommentMessage] = useState('');
   const handleAddingCommentMessage = (newCommentMessage) => {
     setNewCommentMessage(newCommentMessage);
   };
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
-    setNewCommentMessage("");
+    setNewCommentMessage('');
   };
   const handleShow = () => setShow(true);
-  const notify = () => toast.success("Successfully created new comment!");
-  const notifyError = () => toast.error("Check if you entered all fields!");
+  const notify = () => toast.success('Successfully created new comment!');
+  const notifyError = () => toast.error('Check if you entered all fields!');
 
   useEffect(async () => {
     if (!issueId) return;
@@ -45,15 +45,18 @@ const Comments = ({ issueId, authorId }) => {
   };
   return (
     <>
-      <Button
-        style={{ marginTop: "5px", marginLeft: "75%", marginBottom: "2%" }}
-        variant="primary"
-        onClick={() => {
-          handleShow();
-        }}
-      >
-        <MdAddCircle size={18} /> Add comment
-      </Button>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          style={{ marginTop: '5px', marginBottom: '2%' }}
+          variant="primary"
+          onClick={() => {
+            handleShow();
+          }}
+        >
+          <MdAddCircle size={18} /> Add comment
+        </Button>
+      </div>
+
       <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>Add new comment</Modal.Title>
