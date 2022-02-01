@@ -1,6 +1,6 @@
 import { Card, Badge, Modal, Button, Form } from 'react-bootstrap';
 import { MdEdit } from 'react-icons/md';
-import { AiFillDelete, AiFillLike } from 'react-icons/ai';
+import { AiFillDelete, AiFillLike, AiFillDislike } from 'react-icons/ai';
 import { BsFillChatQuoteFill } from 'react-icons/bs';
 import { FcLike } from 'react-icons/fc';
 
@@ -29,6 +29,8 @@ const CommentListItem = ({ comment }) => {
   const handleClose = () => {
     setShow(false);
   };
+
+  const [isCommentLikedByMe, setIsCommentLikedByMe] = useState(true);
 
   const [commentMessage, setCommentMessage] = useState(comment.message);
   const handleChangingCommentMessage = (commentMessage) => {
@@ -132,20 +134,36 @@ const CommentListItem = ({ comment }) => {
                     alignItems: 'center',
                   }}
                 >
-                  <AiFillLike
-                    size={18}
-                    onClick={async () => {
-                      console.log('click on like');
-                      let loggedInUser = getLoggedInUserId();
-                      await addReaction(loggedInUser, 'like', comment.pk);
-                      setNumberOfLikes();
-                    }}
-                    style={{
-                      color: 'blue',
-                      cursor: 'pointer',
-                      marginRight: '5px',
-                    }}
-                  />
+                  {isCommentLikedByMe ? (
+                    // Dislike
+                    <AiFillLike
+                      size={18}
+                      onClick={async () => {
+                        alert('simulacija delete likea');
+                      }}
+                      style={{
+                        color: 'blue',
+                        cursor: 'pointer',
+                        marginRight: '5px',
+                      }}
+                    />
+                  ) : (
+                    // Like
+                    <AiFillLike
+                      size={18}
+                      onClick={async () => {
+                        console.log('click on like');
+                        let loggedInUser = getLoggedInUserId();
+                        await addReaction(loggedInUser, 'like', comment.pk);
+                        setNumberOfLikes();
+                      }}
+                      style={{
+                        cursor: 'pointer',
+                        marginRight: '5px',
+                      }}
+                    />
+                  )}
+
                   {showNumberOfLikes}
                 </div>
 
