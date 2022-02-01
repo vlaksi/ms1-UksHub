@@ -79,7 +79,8 @@ const CommentListItem = ({ comment }) => {
 
   useEffect(async () => {
     if (!comment?.pk) return;
-    setNumberOfLikes();
+    let newReactions = await setNumberOfLikes();
+    checkIsCommentLikedByMe(newReactions);
   }, [comment?.pk]);
 
   const setNumberOfLikes = async () => {
@@ -95,6 +96,20 @@ const CommentListItem = ({ comment }) => {
     let numberOfLikes = newReactions?.length;
     console.log('Svi brojevi lajkova su:', numberOfLikes);
     setShowNumberOfLikes(numberOfLikes);
+    return newReactions;
+  };
+
+  const checkIsCommentLikedByMe = (reactions) => {
+    console.log('\ncheckIsCommentLikedByMe');
+    console.log('newReactions: ', reactions);
+    let foundReaction = reactions?.find(
+      (reaction) => reaction.author == getLoggedInUserId()
+    );
+    if (foundReaction) {
+      setIsCommentLikedByMe(true);
+    } else {
+      setIsCommentLikedByMe(false);
+    }
   };
 
   useEffect(async () => {
