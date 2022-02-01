@@ -25,6 +25,7 @@ const CommentListItem = ({ comment }) => {
   const handleClose = () => {
     setShow(false);
   };
+  const [showNumberOfLikes, setShowNumberOfLikes] = useState("");
 
   const [commentMessage, setCommentMessage] = useState(comment.message);
   const handleChangingCommentMessage = (commentMessage) => {
@@ -72,18 +73,20 @@ const CommentListItem = ({ comment }) => {
     setAuthor(authorComment);
   }, []);
 
-  useEffect(async () => {
-    let reactionsByComment = await getAllReactionsByCommentId(comment.pk);
-    setReactions(reactionsByComment);
-  }, []);
-
-  /*const getNumberOfLikes = async (commentId) => {
+  const getNumberOfLikes = async (commentId) => {
     let allReactions = await getAllReactionsByCommentId(commentId);
     setReactions(allReactions);
-    lengthOfLikeReactions = reactions.length;
-    return lengthOfLikeReactions;
-  };*/
 
+    let lengthOfLikeReactions;
+    lengthOfLikeReactions = reactions.length;
+    console.log("Reackije iz funkcije", reactions.length);
+    return lengthOfLikeReactions;
+  };
+
+  useEffect(async () => {
+    if (!comment?.pk) return;
+    setShowNumberOfLikes(await getNumberOfLikes(comment.pk));
+  }, [comment?.pk]);
   return (
     <>
       <div>
@@ -99,7 +102,9 @@ const CommentListItem = ({ comment }) => {
             </Badge>
           </Card.Header>
           <Card.Body>
-            <Card.Text>{comment.message}</Card.Text>
+            <Card.Text>
+              {comment.message} {showNumberOfLikes}
+            </Card.Text>
           </Card.Body>
           <Card.Footer>
             <MdEdit
