@@ -49,25 +49,29 @@ export const addReaction = async (authorId, reactionType, commentId) => {
   return reaction;
 };
 
-// export const deleteReactionByCommentAndUserId = async (commentId) => {
-//   let success = false;
-//   await axios
-//     .request({
-//       url: `/useractivity/reactions/${commentId}`,
-//       method: 'delete',
-//       baseURL: 'http://127.0.0.1:8000/',
-//       headers: { Authorization: 'JWT ' + getToken() },
-//       data: {
-//         grant_type: 'client_credentials',
-//         scope: 'public',
-//       },
-//     })
-//     .then((response) => {
-//       console.log(response);
-//       success = true;
-//     })
-//     .catch((error) => {
-//       console.log(error.response.data.error);
-//     });
-//   return success;
-// };
+export const deleteReactionByCommentAndUserId = async (
+  commentId,
+  userId,
+  reactionType
+) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/useractivity/reactions/comments/${commentId}/user/${userId}/type/${reactionType}`,
+      method: 'delete',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return success;
+};

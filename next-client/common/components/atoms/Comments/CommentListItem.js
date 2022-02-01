@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import { getUserById } from '../../../services/useractivity/userService';
 import {
   addReaction,
+  deleteReactionByCommentAndUserId,
   getAllReactionsByCommentId,
 } from '../../../services/useractivity/reactionsService';
 import { getParsedToken } from '../../../services/authentication/token';
@@ -139,7 +140,14 @@ const CommentListItem = ({ comment }) => {
                     <AiFillLike
                       size={18}
                       onClick={async () => {
-                        alert('simulacija delete likea');
+                        let loggedInUser = getLoggedInUserId();
+                        await deleteReactionByCommentAndUserId(
+                          comment.pk,
+                          loggedInUser,
+                          'like'
+                        );
+                        setNumberOfLikes();
+                        setIsCommentLikedByMe(false);
                       }}
                       style={{
                         color: 'blue',
@@ -156,6 +164,7 @@ const CommentListItem = ({ comment }) => {
                         let loggedInUser = getLoggedInUserId();
                         await addReaction(loggedInUser, 'like', comment.pk);
                         setNumberOfLikes();
+                        setIsCommentLikedByMe(true);
                       }}
                       style={{
                         cursor: 'pointer',
