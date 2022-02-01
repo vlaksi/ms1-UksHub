@@ -7,6 +7,7 @@ import {
   getAllCommentsIssues,
 } from '../../../services/useractivity/commentsService';
 import { ToastContainer, toast } from 'react-toastify';
+import { getParsedToken } from '../../../services/authentication/token';
 
 const Comments = ({ issueId, authorId }) => {
   const [comments, setNewCommentList] = useState([]);
@@ -31,7 +32,7 @@ const Comments = ({ issueId, authorId }) => {
   const addNewComment = async () => {
     let createdComment = await addCommentIssue(
       newCommentMessage,
-      authorId,
+      getLoggedInUserId(),
       issueId
     );
 
@@ -43,6 +44,11 @@ const Comments = ({ issueId, authorId }) => {
       notifyError();
     }
   };
+
+  const getLoggedInUserId = () => {
+    return getParsedToken().user_id;
+  };
+
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -70,6 +76,7 @@ const Comments = ({ issueId, authorId }) => {
                 as="textarea"
                 rows={5}
                 placeholder="Enter comment message"
+                defaultValue={newCommentMessage}
                 onChange={(e) => {
                   handleAddingCommentMessage(e.target.value);
                 }}
@@ -90,7 +97,11 @@ const Comments = ({ issueId, authorId }) => {
       {comments?.map((commentItem) => {
         return (
           <div key={commentItem.pk}>
-            <CommentListItem comment={commentItem}></CommentListItem>
+            <CommentListItem
+              comment={commentItem}
+              handleShowAddComment={handleShow}
+              setNewCommentMessage={setNewCommentMessage}
+            ></CommentListItem>
           </div>
         );
       })}

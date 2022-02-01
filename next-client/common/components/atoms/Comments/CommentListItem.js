@@ -19,7 +19,11 @@ import {
 } from '../../../services/useractivity/reactionsService';
 import { getParsedToken } from '../../../services/authentication/token';
 
-const CommentListItem = ({ comment }) => {
+const CommentListItem = ({
+  comment,
+  handleShowAddComment,
+  setNewCommentMessage,
+}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
@@ -121,6 +125,10 @@ const CommentListItem = ({ comment }) => {
     return getParsedToken().user_id;
   };
 
+  const isItMyComment = () => {
+    return getLoggedInUserId() == comment.author;
+  };
+
   return (
     <>
       <div>
@@ -216,27 +224,40 @@ const CommentListItem = ({ comment }) => {
 
               {/* Actions */}
               <div>
-                <MdEdit
-                  size={20}
-                  style={{
-                    cursor: 'pointer',
-                    color: 'green',
-                  }}
+                {isItMyComment() && (
+                  <MdEdit
+                    size={20}
+                    style={{
+                      cursor: 'pointer',
+                      color: 'green',
+                    }}
+                    onClick={() => {
+                      handleShow();
+                    }}
+                  />
+                )}
+
+                {isItMyComment() && (
+                  <AiFillDelete
+                    size={18}
+                    style={{
+                      cursor: 'pointer',
+                      color: 'red',
+                      marginLeft: '10px',
+                      marginRight: '10px',
+                    }}
+                    onClick={handleShowDeleteModal}
+                  />
+                )}
+
+                <BsFillChatQuoteFill
+                  size={15}
+                  style={{ cursor: 'pointer' }}
                   onClick={() => {
-                    handleShow();
+                    setNewCommentMessage('" ' + comment.message + ' "');
+                    handleShowAddComment();
                   }}
                 />
-                <AiFillDelete
-                  size={18}
-                  style={{
-                    cursor: 'pointer',
-                    color: 'red',
-                    marginLeft: '10px',
-                    marginRight: '10px',
-                  }}
-                  onClick={handleShowDeleteModal}
-                />
-                <BsFillChatQuoteFill size={15} style={{ cursor: 'pointer' }} />
               </div>
             </div>
           </Card.Footer>
