@@ -46,7 +46,7 @@ const IssueDetails = ({ issueId }) => {
   }, [repository]);
 
   const isUserAlreadyAssignee = (user) => {
-    return issueAssignees.find((assignee) => assignee.username == user.title);
+    return issueAssignees?.find((assignee) => assignee.username == user.title);
   };
 
   useEffect(async () => {
@@ -59,7 +59,7 @@ const IssueDetails = ({ issueId }) => {
   }, [repository]);
 
   const isLabelAlreadyAdded = (label) => {
-    return issueAddedLabels.find(
+    return issueAddedLabels?.find(
       (addedLabel) => addedLabel.name == label.title
     );
   };
@@ -140,7 +140,7 @@ const IssueDetails = ({ issueId }) => {
                         <p> {issueAssignee.username} </p>
                       </div>
                       <div>
-                        {issueAssignees.length > 0 && (
+                        {issueAssignees?.length > 0 && (
                           <AiFillDelete
                             style={{ cursor: "pointer", marginBottom: "15px" }}
                             onClick={() => {
@@ -203,7 +203,7 @@ const IssueDetails = ({ issueId }) => {
               <Card.Body>
                 <UserSearch
                   placeholder="Add a label..."
-                  data={labelDataForSearch.filter(
+                  data={labelDataForSearch?.filter(
                     (label) => !isLabelAlreadyAdded(label)
                   )}
                   onSelectItem={async (selectedValue) => {
@@ -245,7 +245,7 @@ const IssueDetails = ({ issueId }) => {
                         </>
                       </div>
                       <div>
-                        {issueAddedLabels.length > 0 && (
+                        {issueAddedLabels?.length > 0 && (
                           <AiFillDelete
                             style={{ cursor: "pointer", marginBottom: "15px" }}
                             onClick={() => {
@@ -284,7 +284,7 @@ const IssueDetails = ({ issueId }) => {
                   variant="success"
                   onClick={async () => {
                     let currentIssueLabelsIds = getAllIssueLabelsIds();
-                    let newIssueLabelsIds = currentIssueLabelsIds.filter(
+                    let newIssueLabelsIds = currentIssueLabelsIds?.filter(
                       (labelId) => labelId != removeLabel.pk
                     );
 

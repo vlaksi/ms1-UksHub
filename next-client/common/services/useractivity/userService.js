@@ -23,7 +23,27 @@ export const getAllUsers = async () => {
     });
   return users;
 };
-
+export const searchAllUsers = async (search) => {
+  let users;
+  await axios
+    .request({
+      url: `/useractivity/users/?search=${search}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      users = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return users;
+};
 export const getUserDataForSearch = async () => {
   const users = await getAllUsers();
 

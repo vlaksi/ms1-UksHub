@@ -1,28 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
-import { AiOutlineEye, AiOutlineStar, AiOutlineBranches } from 'react-icons/ai';
+import { AiOutlineEye, AiOutlineStar, AiOutlineBranches, AiOutlineDownload } from 'react-icons/ai';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';
 
 import Link from 'next/link';
-import {
-  createRepositoryAction,
-  deleteActionById,
-  getActionByRepoAndAuthor,
-  updateActionNewForkedRepoId,
-} from '../../../services/useractivity/actionService';
-import {
-  addRepository,
-  deleteRepository,
-} from '../../../services/versioning/repositoryService';
+import { createRepositoryAction, deleteActionById, getActionByRepoAndAuthor, updateActionNewForkedRepoId } from '../../../services/useractivity/actionService';
+import { addRepository, deleteRepository } from '../../../services/versioning/repositoryService';
 import { getParsedToken } from '../../../services/authentication/token';
 
 const Actions = ({ username, repository }) => {
   const notify = (message = 'Successfully!') => toast.success(` ${message} `);
   const notifyError = () => toast.error('Smth went wrong!');
-  const [loggedInUserId, setLoggedInUserId] = useState(
-    getParsedToken().user_id
-  );
+  const [loggedInUserId, setLoggedInUserId] = useState(getParsedToken().user_id);
 
   const [isUserWatchRepo, setIsUserWatchRepo] = useState(false);
   const [isUserStarRepo, setIsUserStarRepo] = useState(false);
@@ -36,33 +26,21 @@ const Actions = ({ username, repository }) => {
     if (!repository) return;
 
     // Watch
-    let watchAction = await getActionByRepoAndAuthor(
-      'watch',
-      repository.pk,
-      loggedInUserId
-    );
+    let watchAction = await getActionByRepoAndAuthor('watch', repository.pk, loggedInUserId);
     if (watchAction?.pk) {
       setIsUserWatchRepo(true);
       setWatchAction(watchAction);
     }
 
     // Star
-    let starAction = await getActionByRepoAndAuthor(
-      'star',
-      repository.pk,
-      loggedInUserId
-    );
+    let starAction = await getActionByRepoAndAuthor('star', repository.pk, loggedInUserId);
     if (starAction?.pk) {
       setIsUserStarRepo(true);
       setStarAction(starAction);
     }
 
     // Fork
-    let forkAction = await getActionByRepoAndAuthor(
-      'fork',
-      repository.pk,
-      loggedInUserId
-    );
+    let forkAction = await getActionByRepoAndAuthor('fork', repository.pk, loggedInUserId);
     if (forkAction?.pk) {
       setIsUserForkRepo(true);
       setForkAction(forkAction);
@@ -71,9 +49,7 @@ const Actions = ({ username, repository }) => {
 
   const watchRepository = async () => {
     setIsUserWatchRepo(true);
-    setWatchAction(
-      await createRepositoryAction(loggedInUserId, repository.pk, 'watch')
-    );
+    setWatchAction(await createRepositoryAction(loggedInUserId, repository.pk, 'watch'));
     notify('Successfully watched repository!');
   };
 
@@ -85,9 +61,7 @@ const Actions = ({ username, repository }) => {
 
   const starRepository = async () => {
     setIsUserStarRepo(true);
-    setStarAction(
-      await createRepositoryAction(loggedInUserId, repository.pk, 'star')
-    );
+    setStarAction(await createRepositoryAction(loggedInUserId, repository.pk, 'star'));
     notify('Successfully stared repository!');
   };
 
@@ -97,25 +71,17 @@ const Actions = ({ username, repository }) => {
     notify('Successfully deleted repository!');
   };
 
+  const cloneRepository = () => {
+    navigator.clipboard.writeText('git clone ssh://git@127.0.0.1:2222/git-server/repos/' + repository.author + '/' + repository.name + '.git');
+    notify('Successfully copied clone command to clipboard!');
+  };
+
   const forkRepository = async () => {
     setIsUserForkRepo(true);
-    let createdForkAction = await createRepositoryAction(
-      loggedInUserId,
-      repository.pk,
-      'fork'
-    );
+    let createdForkAction = await createRepositoryAction(loggedInUserId, repository.pk, 'fork');
     setForkAction(createdForkAction);
-    let forkedRepository = await addRepository(
-      repository.name,
-      repository.description,
-      loggedInUserId,
-      repository.default_branch,
-      repository.author
-    );
-    let updatedForkAction = await updateActionNewForkedRepoId(
-      createdForkAction.pk,
-      forkedRepository.pk
-    );
+    let forkedRepository = await addRepository(repository.name, repository.description, loggedInUserId, repository.default_branch, repository.author);
+    let updatedForkAction = await updateActionNewForkedRepoId(createdForkAction.pk, forkedRepository.pk);
     setForkAction(updatedForkAction);
     notify('Successfully forked repository!');
   };
@@ -199,7 +165,7 @@ const Actions = ({ username, repository }) => {
           </ButtonGroup>
         </div>
         {/* Fork */}
-        <div style={{ marginLeft: '5px' }}>
+        <div style={{ marginRight: '5px', marginLeft: '5px' }}>
           <ButtonGroup aria-label="Basic example">
             {isUserForkRepo ? (
               <Button
@@ -227,6 +193,19 @@ const Actions = ({ username, repository }) => {
                 <FiMoreHorizontal />
               </Button>
             </Link>
+          </ButtonGroup>
+        </div>
+        {/* Clone */}
+        <div style={{ marginLeft: '5px' }}>
+          <ButtonGroup aria-label="Basic example">
+            <Button
+              variant="outline-secondary"
+              onClick={() => {
+                cloneRepository();
+              }}
+            >
+              <AiOutlineDownload size={22} /> Clone
+            </Button>
           </ButtonGroup>
         </div>
       </div>
