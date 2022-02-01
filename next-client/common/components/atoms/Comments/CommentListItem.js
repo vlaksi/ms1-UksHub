@@ -12,7 +12,11 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { getUserById } from '../../../services/useractivity/userService';
-import { getAllReactionsByCommentId } from '../../../services/useractivity/reactionsService';
+import {
+  addReaction,
+  getAllReactionsByCommentId,
+} from '../../../services/useractivity/reactionsService';
+import { getParsedToken } from '../../../services/authentication/token';
 
 const CommentListItem = ({ comment }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -73,11 +77,11 @@ const CommentListItem = ({ comment }) => {
   useEffect(async () => {
     if (!comment?.pk) return;
 
-    let reactions = await getAllReactionsByCommentId(comment.pk);
-    setReactions(reactions);
-    console.log('Sve reakcije su:', reactions);
+    let newReactions = await getAllReactionsByCommentId(comment.pk);
+    setReactions(newReactions);
+    console.log('Sve reakcije su:', newReactions);
 
-    let numberOfLikes = await getNumberOfLikes();
+    let numberOfLikes = newReactions?.length;
     console.log('Svi brojevi lajkova su:', numberOfLikes);
     setShowNumberOfLikes(numberOfLikes);
   }, [comment?.pk]);
@@ -87,11 +91,13 @@ const CommentListItem = ({ comment }) => {
     setAuthor(authorComment);
   }, []);
 
-  const getNumberOfLikes = async () => {
-    let reactions = await getAllReactionsByCommentId(comment.pk);
+  const getNumberOfLikes = async (reactions) => {
     let numberOfLikes = reactions?.length;
-
     return numberOfLikes;
+  };
+
+  const getLoggedInUserId = () => {
+    return getParsedToken().user_id;
   };
 
   return (
@@ -119,6 +125,11 @@ const CommentListItem = ({ comment }) => {
               <div style={{ marginLeft: '10px' }}>
                 <AiFillLike
                   size={19}
+                  onClick={async () => {
+                    console.log('click on like');
+                    let loggedInUser = getLoggedInUserId();
+                    await addReaction(loggedInUser, 'like');
+                  }}
                   style={{
                     color: 'blue',
                     cursor: 'pointer',
@@ -127,6 +138,9 @@ const CommentListItem = ({ comment }) => {
                 />
                 <FcLike
                   size={20}
+                  onClick={() => {
+                    console.log('click on heart');
+                  }}
                   style={{
                     cursor: 'pointer',
                     color: 'red',
