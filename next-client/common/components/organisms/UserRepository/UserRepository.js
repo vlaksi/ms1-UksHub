@@ -89,13 +89,13 @@ const UserRepository = ({ userId, repositoryId }) => {
 											<a style={{ textDecoration: 'none', color: '#444' }}>
 												{user.username}
 											</a>
-										</Link>{' '}
-										/{' '}
+										</Link>
+
 										<Link href={`/${userId}/${repository.pk}`}>
 											<a style={{ textDecoration: 'none', color: '#444' }}>
 												{repository.name}
 											</a>
-										</Link>{' '}
+										</Link>
 									</h4>
 								</div>
 								<Actions username={userId} repository={repository} />

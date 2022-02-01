@@ -7,9 +7,10 @@ import {
 	LinearScale,
 	PointElement,
 	LineElement,
-	Filler
+	Filler,
+	registerables
 } from 'chart.js';
-import { Pie, Line } from 'react-chartjs-2';
+import { Pie, Line, Bar } from 'react-chartjs-2';
 import styles from './RepositoryInsights.module.scss';
 import {
 	MdAssignment,
@@ -26,26 +27,13 @@ const RepositoryInsights = ({
 	repository,
 	visitsOfRepo
 }) => {
-	console.log('visitsOfRepo', visitsOfRepo)
 	Chart.register(ArcElement);
 	Chart.register(CategoryScale);
 	Chart.register(LinearScale);
 	Chart.register(PointElement);
 	Chart.register(LineElement);
 	Chart.register(Filler);
-	// TODO: NEMANJA FIX THIS !, this is only tmp solution
-	// if (
-	// 	!!repositoryIssues === false ||
-	// 	!!repositoryPRs === false ||
-	// 	!!commitsToMainBranch === false
-	// ) {
-	// 	return (
-	// 		<p>
-	// 			There is no any repository issue, repository pull request or commits
-	// 		</p>
-	// 	);
-	// }
-
+	Chart.register(...registerables)
 	const getCommitsDates = () => {
 		var commitsDates = [];
 		commitsToMainBranch?.map((item) => {
@@ -53,6 +41,7 @@ const RepositoryInsights = ({
 		});
 		return commitsDates;
 	};
+
 	const counts = {};
 	getCommitsDates().forEach(function (x) {
 		counts[x] = (counts[x] || 0) + 1;
@@ -70,8 +59,8 @@ const RepositoryInsights = ({
 	getCommitsUsers().forEach(function (x) {
 		countsUsersCommits[x] = (countsUsersCommits[x] || 0) + 1;
 	});
-	console.log('countsUsersCommits', countsUsersCommits)
-	console.log(counts, 'counts')
+
+
 	const getVisitDates = () => {
 		var visitDates = [];
 		visitsOfRepo?.map((item) => {
@@ -104,6 +93,7 @@ const RepositoryInsights = ({
 		});
 		return numberOfOpenedIssues;
 	};
+
 	const getOpenedPRs = () => {
 		var numberOfOpenedMRs = 0;
 		repositoryPRs?.map((item) => {
@@ -113,6 +103,7 @@ const RepositoryInsights = ({
 		});
 		return numberOfOpenedMRs;
 	};
+
 	const dataForIssuesChart = {
 		datasets: [
 			{
@@ -121,6 +112,7 @@ const RepositoryInsights = ({
 			},
 		],
 	};
+
 	const dataForPRsChart = {
 		datasets: [
 			{
@@ -134,7 +126,7 @@ const RepositoryInsights = ({
 		labels: Object.keys(counts),
 		datasets: [
 			{
-				label: 'My First dataset',
+				label: 'Contributions',
 				fill: true,
 				lineTension: 0.1,
 				backgroundColor: 'rgba(75,192,192,0.4)',
@@ -160,7 +152,7 @@ const RepositoryInsights = ({
 		labels: Object.keys(countsVisitDates),
 		datasets: [
 			{
-				label: 'My First dataset',
+				label: 'Number of Visits',
 				fill: true,
 				lineTension: 0.1,
 				backgroundColor: 'rgba(75,192,192,0.4)',
@@ -182,6 +174,18 @@ const RepositoryInsights = ({
 			},
 		],
 	};
+	const commitsData = {
+		labels: Object.keys(counts),
+		datasets: [{
+			label: 'Number of commits',
+			data: Object.values(counts),
+			backgroundColor:
+				'rgba(220,20,60,1)',
+			borderColor:
+				'rgba(255,0,0,1)',
+			borderWidth: 1
+		}]
+	}
 	return (
 		<>
 			<Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
@@ -199,6 +203,9 @@ const RepositoryInsights = ({
 							</ListGroup.Item>
 							<ListGroup.Item action href="#link4">
 								Traffic
+							</ListGroup.Item>
+							<ListGroup.Item action href="#link5">
+								Commits
 							</ListGroup.Item>
 						</ListGroup>
 					</Col>
@@ -250,7 +257,7 @@ const RepositoryInsights = ({
 								<div className={styles.lineChart}>
 									<Line data={data} />
 									<h3>Commits per users:</h3>
-									{Object.keys(countsUsersCommits)?.map((key, value) => {
+									{Object.keys(countsUsersCommits)?.map((key) => {
 										return <div><h5><AiOutlineUser /> {key}: {countsUsersCommits[key]}</h5></div>
 									})}
 
@@ -277,6 +284,14 @@ const RepositoryInsights = ({
 									<Line data={trafficData} />
 									<h4>Unique visitors: {uniqueVisitors?.length}</h4>
 								</div>
+							</Tab.Pane>
+							<Tab.Pane eventKey="#link5">
+								<h3>Commits</h3>
+								<Bar
+									data={commitsData}
+									width={400}
+									height={200}
+								/>
 							</Tab.Pane>
 						</Tab.Content>
 					</Col>

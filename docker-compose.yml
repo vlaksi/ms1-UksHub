@@ -49,6 +49,7 @@ services:
       - POSTGRES_DBNAME=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_DBHOST=db
+      - GIT_PYTHON_REFRESH=quiet
     volumes:
       - ./django-backend/ukshub/static:/code/static
     depends_on:
