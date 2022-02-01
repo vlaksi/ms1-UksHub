@@ -47,9 +47,9 @@ const RepositoryInsights = ({
 
 	const getCommitsDates = () => {
 		var commitsDates = [];
-		// commitsToMainBranch?.map((item) => {
-		// 	commitsDates.push(item.creation_date.substring(0, 10));
-		// });
+		commitsToMainBranch?.map((item) => {
+			commitsDates.push(item.committed_date?.substring(0, 10));
+		});
 		return commitsDates;
 	};
 	const counts = {};
