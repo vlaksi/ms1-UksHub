@@ -1,6 +1,6 @@
 from django.db.models import query
 from django.shortcuts import render
-from rest_framework import generics, serializers, permissions
+from rest_framework import generics, serializers, permissions, filters
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from authentication.models import UserAccount
@@ -19,6 +19,8 @@ class UserAdminDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
 class UserList(generics.ListCreateAPIView):
+    search_fields = ['username']
+    filter_backends = (filters.SearchFilter,)
     queryset = UserAccount.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer

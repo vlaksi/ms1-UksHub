@@ -28,6 +28,70 @@ export const addIssue = async (newIssueName, authorId, repoId) => {
 
   return milestone;
 };
+export const searchAllIssues = async (search) => {
+  let issues;
+  await axios
+    .request({
+      url: `/progresstrack/issues/?search=${search}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
+export const searchAllIssuesByRepoID = async (repoId, search) => {
+  let issues;
+  await axios
+    .request({
+      url: `/progresstrack/${repoId}/issues/${search}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
+
+export const searchAllIssuesOfAuthor = async (authorId, search) => {
+  let issues;
+  await axios
+    .request({
+      url: `progresstrack/issue/${authorId}/issues/${search}`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
 export const getAllIssues = async (repoId) => {
   let issues;
   await axios

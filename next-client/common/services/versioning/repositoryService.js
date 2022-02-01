@@ -1,11 +1,56 @@
 import axios from 'axios';
 import { getToken } from '../authentication/token';
 
+export const searchAllRepositories = async (search) => {
+  let repositories;
+  await axios
+    .request({
+      url: `/versioning/repositories/?search=${search}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositories = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return repositories;
+};
+
 export const getAllRepositoriesByAuthor = async (user_id) => {
   let repositories;
   await axios
     .request({
       url: `/versioning/users/${user_id}/repositories`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositories = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return repositories;
+};
+
+
+export const searchAllRepositoriesByAuthor = async (user_id, searchword) => {
+  let repositories;
+  await axios
+    .request({
+      url: `/versioning/users/${user_id}/repositories/${searchword}`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },
@@ -217,6 +262,28 @@ export const getRepositoryCollaboratos = async (repositoryId) => {
   await axios
     .request({
       url: `/versioning/repository/${repositoryId}/collaborators/`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositoryCollaborators = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return repositoryCollaborators;
+};
+
+export const searchRepositoryCollaboratos = async (repositoryId, search) => {
+  let repositoryCollaborators;
+  await axios
+    .request({
+      url: `/versioning/repository/${repositoryId}/collaborators/${search}`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },
