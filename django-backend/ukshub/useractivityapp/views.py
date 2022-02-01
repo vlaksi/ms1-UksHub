@@ -1,12 +1,15 @@
 from django.db.models import query
 from django.shortcuts import render
+from django.http import Http404
+
 from rest_framework import generics, serializers, permissions, filters
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
+
 from authentication.models import UserAccount
 from .models import Action, ActionType, Comment, Reaction, ReactionType
 from .serializers import UserSerializer, ActionSerializer, ActionTypeSerializer, CommentSerializer, ReactionSerializer, ReactionTypeSerializer
-from django.http import Http404
 
 class UserAdminList(generics.ListCreateAPIView):
     queryset = UserAccount.objects.all()
@@ -123,8 +126,10 @@ def all_reactions_by_comment_id(request, comment_id):
     
 @api_view(['DELETE'])
 def delete_by_comment_and_user_id(request,comment_id,user_id,type_name):
-    return Response({
-        "comment_id": comment_id,
-        "user_id": user_id,
-        "type_name": type_name
-    })
+    try:
+        reaction = Reaction.objects.get(comment = comment_id, author = user_id, type = type_name)
+        reaction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    except Reaction.DoesNotExist:
+        reaction = None
+        return Response(status=status.HTTP_404_NOT_FOUND)
