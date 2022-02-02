@@ -1,4 +1,4 @@
-
+import Link from 'next/link';
 
 const SearchListOfUsers = ({ listUsers }) => {
   return (
@@ -16,17 +16,20 @@ const SearchListOfUsers = ({ listUsers }) => {
       <tbody>
         {listUsers?.map((user, index) => {
           return (
-            <tr key={user.pk}>
-              <td>{index + 1}</td>
-              <td>{user.username}</td>
-              <td>{user.first_name}</td>
-              <td>{user.last_name}</td>
-              <td>{user.email}</td>
-            </tr>
+            <Link href={`/${user.pk}/`}>
+              <tr key={user.pk}>
+                <td>{index + 1}</td>
+                <td>{user.username}</td>
+                <td>{user.first_name}</td>
+                <td>{user.last_name}</td>
+                <td>{user.email}</td>
+              </tr>
+            </Link>
+
           );
         })}
       </tbody>
-    </table>
+    </table >
   );
 };
 
