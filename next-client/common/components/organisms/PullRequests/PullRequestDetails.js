@@ -45,6 +45,10 @@ const PullRequestDetails = ({ pullRequestId }) => {
   const handleDeleteLabelModalClose = () => setShowDeleteLabelModal(false);
   const handleShowDeleteLabelModal = () => setShowDeleteLabelModal(true);
 
+  const [showDeleteIssueModal, setShowDeleteIssueModal] = useState(false);
+  const handleDeleteIssueModalClose = () => setShowDeleteIssueModal(false);
+  const handleShowDeleteIssueModal = () => setShowDeleteIssueModal(true);
+
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
   const [issueDataForSearch, setIssueDataForSearch] = useState([]);
@@ -354,6 +358,38 @@ const PullRequestDetails = ({ pullRequestId }) => {
                 }}
               ></UserSearch>
             </Card.Body>
+            <ListGroup variant="flush">
+              {pullRequestAddedIssues?.map((prAddedIssue) => {
+                return (
+                  <ListGroup.Item
+                    key={prAddedIssue.pk}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ display: "flex" }}>
+                      <> {prAddedIssue.title}</>
+                    </div>
+                    <div>
+                      {pullRequestAddedIssues?.length > 0 && (
+                        <AiFillDelete
+                          style={{
+                            cursor: "pointer",
+                            marginBottom: "5px",
+                          }}
+                          onClick={() => {
+                            setRemoveIssue(prAddedIssue);
+                            handleShowDeleteIssueModal();
+                          }}
+                        />
+                      )}
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
+            </ListGroup>
           </Card>
         </div>
       </div>
@@ -440,6 +476,51 @@ const PullRequestDetails = ({ pullRequestId }) => {
               Remove
             </Button>
             <Button variant="danger" onClick={handleDeleteLabelModalClose}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* Delete issue modal from the issue */}
+        <Modal show={showDeleteIssueModal} onHide={handleDeleteIssueModalClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Remove confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: " baseline",
+            }}
+          >
+            <p>
+              Are you sure you want to remove chosen issue from pull request?
+            </p>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={async () => {
+                let currentPullRequestIssueIds = getAllPullRequestIssueIds();
+                let newPullRequestIssuesIds =
+                  currentPullRequestIssueIds?.filter(
+                    (issueId) => issueId != removeIssue.pk
+                  );
+
+                await updatePullRequestIssues(
+                  pullRequestId,
+                  newPullRequestIssuesIds
+                );
+                setPullRequestAddedIssues(
+                  await getAllPullRequestIssues(pullRequestId)
+                );
+
+                handleDeleteIssueModalClose();
+              }}
+            >
+              Remove
+            </Button>
+            <Button variant="danger" onClick={handleDeleteIssueModalClose}>
               Cancel
             </Button>
           </Modal.Footer>
