@@ -121,7 +121,6 @@ class TestPullRequestListView(TestCase):
         self.assertEqual(res_obj['issues'], [])
         self.assertEqual(res_obj['milestones'], [])
         self.assertEqual(res_obj['labels'], [])
-        self.assertEqual(res_obj['comments'], [])
 
     def test_get_HTTP404_wrong_endpoint_call_pull_request_by_id(self):
         pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE) 

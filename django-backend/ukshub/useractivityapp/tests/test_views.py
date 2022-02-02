@@ -1,93 +1,23 @@
 import json
 
 from django.test import TestCase, Client
-
+from django.urls import reverse
+from django.http import Http404
 from ..models import ActionType, ReactionType, Action, Reaction, Comment
 from versioningapp.models import Repository
+from progresstrackapp.models import Issue,PullRequest
 
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+from .test_models import initialize_db_with_test_data,USER1_USERNAME,USER2_USERNAME,USER1_PASSWORD,USER2_PASSWORD,USER2_EMAIL,USER2_FIRST_NAME,USER2_LAST_NAME,REPO1_NAME,COMMENT_MESSAGE_1,REACTION_TYPE_NAME
+
 from rest_framework.test import APIClient
 
-# User init consts
-USER1_USERNAME = 'user1'
-USER1_PASSWORD = 'Ovojejakasifra!'
-USER1_FIRST_NAME = 'Ivana'
-USER1_LAST_NAME = 'Perisic'
-USER1_EMAIL = 'ica@gmail.com'
 
-USER2_USERNAME = 'user2'
-USER2_PASSWORD = 'Ovojejakasifra!'
-USER2_FIRST_NAME = 'Ivana'
-USER2_LAST_NAME = 'Perisic'
-USER2_EMAIL = 'ica2@gmail.com'
-
-USER3_USERNAME = 'user3'
-USER3_PASSWORD = 'Ovojejakasifra!'
-USER3_FIRST_NAME = 'Ivana'
-USER3_LAST_NAME = 'Perisic'
-USER3_EMAIL = 'ica3@gmail.com'
-
-REPO1_NAME = 'RepoUKS'
-ACTION_TYPE_NAME = 'fork'
-REACTION_TYPE_NAME = 'Reaction'
 
 JSON = 'application/json'
-# INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
-def initialize_db_with_test_data():
-    # Create users
-    user1 = User.objects.create_user(
-      username=USER1_USERNAME, 
-      password=USER1_PASSWORD,
-      first_name=USER1_FIRST_NAME,
-      last_name=USER1_LAST_NAME,
-      email=USER1_EMAIL,
-      is_superuser = True, 
-      is_staff=True)
-
-    user2 = User.objects.create_user(
-      username=USER2_USERNAME, 
-      password=USER2_PASSWORD,
-      first_name=USER2_FIRST_NAME,
-      last_name=USER2_LAST_NAME,
-      email=USER2_EMAIL,
-      is_superuser = False, 
-      is_staff=False)
-
-    user3 = User.objects.create_user(
-      username=USER3_USERNAME, 
-      password=USER3_PASSWORD,
-      first_name=USER3_FIRST_NAME,
-      last_name=USER3_LAST_NAME,
-      email=USER3_EMAIL,
-      is_superuser = False, 
-      is_staff=False)
-
-    user1.save()
-    user2.save()
-    user3.save()
-
-    # Create repositories
-    repository1 = Repository.objects.create(author=user1, name=REPO1_NAME)
-    
-    repository1.save()
-
-    # Create ActionType
-    actionType1 = ActionType.objects.create(name=ACTION_TYPE_NAME)
-
-    actionType1.save()
-
-    # Create ReactionType
-    reactionType1 = ReactionType.objects.create(name=REACTION_TYPE_NAME)
-
-    reactionType1.save()
-
-    # Create actions
-    action1 = Action.objects.create(author=user1, repository=repository1, action_type=actionType1.name, new_forked_repository=repository1)
-
-    action1.save()
 
 def get_jwt_token(is_admin):
     c = Client()
@@ -107,11 +37,59 @@ def get_mocked_user(username, password, first_name, last_name, email):
     }
     return user
 
+def get_mocked_comment(test_comment_message='Some_Comment_Test'):
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+
+    comment = {
+       "message":test_comment_message,
+       "creation_date":"2022-01-31 10:53:15.739+01",
+       "author":user_id
+    }
+    return comment
+
+def get_mocked_reactions(test_type_reaction='Some_Reaction_Type'):
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+    comment_id = Comment.objects.get(message=COMMENT_MESSAGE_1).pk
+
+    reaction = {
+       "type":test_type_reaction,
+       "comment":comment_id,
+       "author":user_id
+    }
+    return reaction
+
 def get_action(index=0):
     return Action.objects.all()[index]
 
 def get_repository(index=0):
     return Repository.objects.all()[index]
+
+def get_comment(index=0):
+    return Comment.objects.all()[index]
+
+def get_comment_id(commentReaction_id=0):
+    if commentReaction_id != -1:
+        comment_id = Comment.objects.all()[commentReaction_id].id
+    else: # return comment_id that for sure does not exist
+        comments = Comment.objects.all()
+        comment_id = comments[len(comments) - 1].id + 999
+    return comment_id
+
+def get_issue_id(issueComment_id=0):
+    if issueComment_id != -1:
+        issue_id = Issue.objects.all()[issueComment_id].id
+    else: # return issue_id that for sure does not exist
+        issues = Issue.objects.all()
+        issue_id = issues[len(issues) - 1].id + 999
+    return issue_id
+
+def get_pull_request_id(pullRequest_id=0):
+    if pullRequest_id!= -1:
+        pull_request_id = PullRequest.objects.all()[pullRequest_id].id
+    else: # return pull_request_id that for sure does not exist
+        pull_requests = PullRequest.objects.all()
+        pull_request_id = pull_requests[len(pull_requests) - 1].id + 999
+    return pull_request_id
 
 class TestUserAdminListView(TestCase):
 
@@ -441,3 +419,289 @@ class TestActionDetailView(TestCase):
         )
 
         self.assertEquals(response.status_code, 404)
+
+class TestCommentListView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
+
+    def test_get_all_comments(self):
+        response = self.c.get('/useractivity/comments/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+
+    def test_get_all_comments_wrong_url(self):
+        response = self.c.get('/useractivity/comment', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def get_issue_comments(self, issueComment_id=0):
+        issue_id = get_issue_id(issueComment_id)
+        response = self.client.get(reverse('all-issue-comments', kwargs={'issue_id': issue_id}))
+        return response, issue_id
+
+    def test_get_all_issue_comments(self):
+        response, _ = self.get_issue_comments()
+        self.assertEqual(response.status_code, 200)
+
+    def get_pr_comments(self, prComment_id=0):
+        pull_request_id = get_pull_request_id(prComment_id)
+        response = self.client.get(reverse('all-pull-request-comments', kwargs={'pull_request_id': pull_request_id}))
+        return response, pull_request_id
+
+    def test_get_all_pr_comments(self):
+        response, _ = self.get_pr_comments()
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_create_comment_successfully(self):
+        comment = get_mocked_comment('Test comment message 1')
+
+        response = self.c.post(
+            '/useractivity/comments/',
+            data=json.dumps(comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+       
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['message'], 'Test comment message 1')
+
+    def test_post_create_comment_with_missing_message(self):
+        test_message_comment = None
+        comment = get_mocked_comment(test_message_comment)
+
+        response = self.c.post(
+            '/useractivity/comments/',
+            data=json.dumps(comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+
+class TestCommentDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
+
+    def test_get_HTTP404_comment_by_id(self):
+        response = self.c.get(
+            '/useractivity/comments/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+    
+    def test_get_comment_by_id_successfully(self):
+        comment = Comment.objects.get(message='Komentar1')
+        response = self.c.get(
+            '/useractivity/comments/'+str(comment.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['message'], 'Komentar1')
+
+    def test_delete_comment(self):
+        comment = Comment.objects.get(message='Komentar1')
+
+        response = self.c.delete(
+            '/useractivity/comments/'+str(comment.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+    
+    def test_delete_HTTP404_comment(self):
+        comment = Comment.objects.get(message='Komentar1')
+
+        response = self.c.delete(
+            '/useractivity/comments/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_put_HTTP404_comment_change_message(self):
+        comment = Comment.objects.get(message='Komentar2')
+        new_comment_message = 'New_Comment_Message'
+        new_comment = get_mocked_comment(new_comment_message)
+
+        response = self.c.put(
+            '/useractivity/comments/99999',
+            data=json.dumps(new_comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 404)
+    
+    def test_put_comment_change_message(self):
+        comment = Comment.objects.get(message='Komentar2')
+        new_comment_message = 'New_Comment_Message'
+        new_comment = get_mocked_comment(new_comment_message)
+
+        response = self.c.put(
+             '/useractivity/comments/'+str(comment.pk),
+            data=json.dumps(new_comment),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEquals(response.status_code, 200)
+        self.assertNotEqual(res_obj['message'], comment.message)
+        self.assertEqual(res_obj['message'], new_comment_message)
+    
+class TestReactionListView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
+
+    def test_get_all_reactions(self):
+        response = self.c.get('/useractivity/reactions/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+    
+    def test_get_all_reactions_wrong_url(self):
+        response = self.c.get('/useractivity/reaction', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_all_reaction_types(self):
+        response = self.c.get('/useractivity/reactiontypes/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_get_HTTP_404_all_reaction_types(self):
+        response = self.c.get('/useractivity/reactiontype', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def get_comment_reactions(self, commentReaction_id=0):
+        comment_id = get_comment_id(commentReaction_id)
+        response = self.client.get(reverse('all-comment-reactions', kwargs={'comment_id': comment_id}))
+        return response, comment_id
+
+    def test_get_all_comment_reactions(self):
+        response, _ = self.get_comment_reactions()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_HTTP404_if_reaction_does_not_exist(self):
+        response, _ = self.get_comment_reactions(-1)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_create_reaction_successfully(self):
+        reaction = get_mocked_reactions('Test reaction')
+
+        response = self.c.post(
+            '/useractivity/reactions/',
+            data=json.dumps(reaction),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+       
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['type'], 'Test reaction')
+
+    def test_post_create_reaction_with_missing_type(self):
+        test_reaction_type = None
+        reaction = get_mocked_reactions(test_reaction_type)
+
+        response = self.c.post(
+            '/useractivity/reactions/',
+            data=json.dumps(reaction),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+    
+class TestReactionDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
+
+    def test_get_HTTP404_reaction_by_id(self):
+        response = self.c.get(
+            '/useractivity/reactions/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+    
+    def test_get_reaction_by_id_successfully(self):
+        reaction = Reaction.objects.get(type=REACTION_TYPE_NAME)
+        response = self.c.get(
+            '/useractivity/reactions/'+str(reaction.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['type'], REACTION_TYPE_NAME)
+
+    def test_delete_reaction(self):
+        reaction = Reaction.objects.get(type=REACTION_TYPE_NAME)
+
+        response = self.c.delete(
+            '/useractivity/reactions/'+str(reaction.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+    
+    def test_delete_HTTP404_reaction(self):
+        reaction = Reaction.objects.get(type=REACTION_TYPE_NAME)
+
+        response = self.c.delete(
+            '/useractivity/reactions/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_delete_reaction_by_comment_user_id(self):
+        user_id = User.objects.get(username=USER1_USERNAME).pk
+        comment_id = Comment.objects.get(message=COMMENT_MESSAGE_1).pk
+        reaction = Reaction.objects.get(author=user_id,comment=comment_id)
+
+        response = self.c.delete(
+            '/useractivity/reactions/comments/'+str(comment_id)+'/user/'+str(user_id)+'/type/'+str(reaction.type),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+    
+
+    
