@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .test_models import initialize_db_with_test_data,USER1_USERNAME,USER2_USERNAME,USER1_PASSWORD,USER2_PASSWORD,USER2_EMAIL,USER2_FIRST_NAME,USER2_LAST_NAME,REPO1_NAME
+from .test_models import initialize_db_with_test_data,USER1_USERNAME,USER2_USERNAME,USER1_PASSWORD,USER2_PASSWORD,USER2_EMAIL,USER2_FIRST_NAME,USER2_LAST_NAME,REPO1_NAME,COMMENT_MESSAGE_1
 
 from rest_framework.test import APIClient
 
@@ -46,6 +46,17 @@ def get_mocked_comment(test_comment_message='Some_Comment_Test'):
        "author":user_id
     }
     return comment
+
+def get_mocked_reactions(test_type_reaction='Some_Reaction_Type'):
+    user_id = User.objects.get(username=USER1_USERNAME).pk
+    comment_id = Comment.objects.get(message=COMMENT_MESSAGE_1).pk
+
+    reaction = {
+       "type":test_type_reaction,
+       "comment":comment_id,
+       "author":user_id
+    }
+    return reaction
 
 def get_action(index=0):
     return Action.objects.all()[index]
@@ -541,6 +552,35 @@ class TestReactionListView(TestCase):
     def test_get_HTTP_404_all_reaction_types(self):
         response = self.c.get('/useractivity/reactiontype', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
+
+    def test_post_create_reaction_successfully(self):
+        reaction = get_mocked_reactions('Test reaction')
+
+        response = self.c.post(
+            '/useractivity/reactions/',
+            data=json.dumps(reaction),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+       
+        self.assertEquals(response.status_code, 201)
+        self.assertEquals(res_obj['type'], 'Test reaction')
+
+    def test_post_create_reaction_with_missing_type(self):
+        test_reaction_type = None
+        reaction = get_mocked_reactions(test_reaction_type)
+
+        response = self.c.post(
+            '/useractivity/reactions/',
+            data=json.dumps(reaction),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 400)
+    
+
 
    
        
