@@ -88,8 +88,6 @@ def repository_branches(request, pk):
     returnBranches = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
-        print("\n\n\n\n\n\n")
-        print(repo.branches)
         branches = repo.branches
         for branch in branches:
             print(branch)
@@ -108,7 +106,23 @@ def branch_last_commit(request, repository_id, name):
     # branch = Branch.objects.get(name = name, repository_id = repository.id)
     commits = []
     try:
+        print("\n\n\n\nusli u try branch_last_commita")
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
+
+        blobs = repo.tree(name).blobs # returns a list of blobs
+        print("\n\tblobs")
+        print(blobs)
+
+        data = blobs[0].data_stream.read()
+        print("\ndata")
+        print(data)
+
+
+        trees = repo.tree(name).trees # returns a list of trees
+        print("\n\ttrees")
+        print(trees)
+      
+        print("\n\nolaaaaa")
         commits = list(repo.iter_commits(name))
     except:
         return Response({})
