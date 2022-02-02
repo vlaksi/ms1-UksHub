@@ -533,5 +533,14 @@ class TestReactionListView(TestCase):
         response = self.c.get('/useractivity/reaction', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
 
+    def test_get_all_reaction_types(self):
+        response = self.c.get('/useractivity/reactiontypes/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        res_obj = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_get_HTTP_404_all_reaction_types(self):
+        response = self.c.get('/useractivity/reactiontype', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
    
        
