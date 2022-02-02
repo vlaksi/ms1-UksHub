@@ -5,6 +5,7 @@ import {
   Badge,
   InputGroup,
   FormControl,
+  ListGroup,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import {
@@ -20,6 +21,7 @@ import CommentPR from "../../molecules/Comments/CommentPR";
 import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
 import { getUserDataForPullRequestAssigneesSearch } from "../../../services/useractivity/userService";
 import UserSearch from "../../atoms/UserSearch/UserSearch";
+import { AiFillDelete } from "react-icons/ai";
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -162,6 +164,38 @@ const PullRequestDetails = ({ pullRequestId }) => {
                 }}
               ></UserSearch>
             </Card.Body>
+            <ListGroup variant="flush">
+              {pullRequestAssignees?.map((prAssignee) => {
+                return (
+                  <ListGroup.Item
+                    key={prAssignee.id}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ display: "flex" }}>
+                      <p> {prAssignee.username} </p>
+                    </div>
+                    <div>
+                      {pullRequestAssignees?.length > 0 && (
+                        <AiFillDelete
+                          style={{
+                            cursor: "pointer",
+                            marginBottom: "15px",
+                          }}
+                          onClick={() => {
+                            // setRemoveCandidate(prAssignee);
+                            // handleShowDeleteModal();
+                          }}
+                        />
+                      )}
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
+            </ListGroup>
           </Card>
         </div>
       </div>
