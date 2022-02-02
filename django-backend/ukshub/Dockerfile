@@ -18,3 +18,6 @@ RUN pip install -r requirements.txt
 EXPOSE 8000
 
 CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "ukshub.wsgi:application"]
+
+RUN ["chmod", "+x", "waitforpostgres.sh"]
+RUN ["chmod", "+x", "start.sh"]
