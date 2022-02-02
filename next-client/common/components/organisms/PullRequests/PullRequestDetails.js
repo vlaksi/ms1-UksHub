@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import {
   deletePullRequest,
+  getAllPullRequestAssignees,
   getPullRequestById,
   updatePullRequestName,
 } from "../../../services/progresstrackapp/pullRequestService";
@@ -62,7 +63,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
 
   useEffect(async () => {
     if (!repository) return;
-    //setPullRequestAssignees(await getAllIssueAssignees(issueId));
+    setPullRequestAssignees(await getAllPullRequestAssignees(pullRequestId));
 
     setUserDataForSearch(
       await getUserDataForPullRequestAssigneesSearch(repository)
@@ -141,14 +142,16 @@ const PullRequestDetails = ({ pullRequestId }) => {
                 data={userDataForSearch.filter(
                   (user) => !isUserAlreadyAssignee(user)
                 )}
-                // onSelectItem={async (selectedValue) => {
-                //   let currentAssignesIds = getAllAssignesIds();
-                //   await updateIssueAssigness(issueId, [
-                //     ...currentAssignesIds,
-                //     selectedValue.pk,
-                //   ]);
-                //   setIssueAssignees(await getAllIssueAssignees(issueId));
-                // }}
+                onSelectItem={async (selectedValue) => {
+                  // let currentAssignesIds = getAllAssignesIds();
+                  // // await updateIssueAssigness(pullRequestId, [
+                  // //   ...currentAssignesIds,
+                  // //   selectedValue.pk,
+                  // // ]);
+                  setPullRequestAssignees(
+                    await getAllPullRequestAssignees(pullRequestId)
+                  );
+                }}
               ></UserSearch>
             </Card.Body>
           </Card>
