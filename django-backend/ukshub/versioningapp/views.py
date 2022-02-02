@@ -17,6 +17,16 @@ import os
 from datetime import datetime
 import time
 
+def get_tree_blobs(tree):
+    charset='ascii'
+    for blob in tree.blobs:
+        print("\n\n")
+        data = blob.data_stream.read()
+        path = blob.path
+        print("path")
+        print(path)
+        print("\ndata.decode(charset)")
+        print(data.decode(charset))
 
 class RepositoryList(generics.ListCreateAPIView):
     search_fields = ['name']
@@ -109,20 +119,18 @@ def branch_last_commit(request, repository_id, name):
         print("\n\n\n\nusli u try branch_last_commita")
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
 
-        blobs = repo.tree(name).blobs # returns a list of blobs
         print("\n\tblobs")
-        print(blobs)
-
-        data = blobs[0].data_stream.read()
-        print("\ndata")
-        print(data)
-
+        blobs = repo.tree(name).blobs # returns a list of blobs
+        get_tree_blobs(repo.tree(name))
+      
+            
+        # TODO: Make some recursion to get all from trees somehow
 
         trees = repo.tree(name).trees # returns a list of trees
-        print("\n\ttrees")
-        print(trees)
+        for tree in repo.tree(name).trees:
+            get_tree_blobs(tree)
       
-        print("\n\nolaaaaa")
+        print("\n\nKRAJ\n")
         commits = list(repo.iter_commits(name))
     except:
         return Response({})
