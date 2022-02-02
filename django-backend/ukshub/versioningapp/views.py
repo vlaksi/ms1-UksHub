@@ -22,16 +22,28 @@ from git import Repo
 def get_data_from_tree_blobs(tree, data_obj):
     charset='ascii'
     for blob in tree.blobs:
-        print("\n\n")
+        print("\n")
         data = blob.data_stream.read()
         path = blob.path
-        print("path")
         print(path)
-        print("\ndata.decode(charset)")
         print(data.decode(charset))
         data_obj[path] = data
 
     return data_obj
+
+def get_data_from_tree_trees(tree, data):
+    trees = tree.trees # returns a list of trees
+    print("trees")
+    print(trees)
+    for tree in trees:
+        data = get_data_from_tree_blobs(tree, data)
+        print("\t\ttree.trees")
+        print(tree.trees)
+        if(len(tree.trees) > 0):
+            print("vise od jednog")
+            data = get_data_from_tree_trees(tree, data)
+
+    return data
 
 class RepositoryList(generics.ListCreateAPIView):
     search_fields = ['name']
@@ -128,12 +140,8 @@ def branch_content(request, repo_id, name):
         data = get_data_from_tree_blobs(repo.tree(name), data)
         print("data")
             
-        # TODO: Make some recursion to get all from trees somehow
-
-        trees = repo.tree(name).trees # returns a list of trees
-        print("prosli trees")
-        for tree in repo.tree(name).trees:
-            data = get_data_from_tree_blobs(tree, data)
+        tree = repo.tree(name)
+        data = get_data_from_tree_trees(tree, data)
       
         print("\n\nKRAJ\n")
     except:
