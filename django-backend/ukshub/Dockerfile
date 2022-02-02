@@ -14,6 +14,7 @@ RUN pip install --upgrade wheel
 RUN pip install --upgrade setuptools
 RUN ls
 RUN pip install -r requirements.txt
+RUN apt-get -y install git
 
 EXPOSE 8000
 
