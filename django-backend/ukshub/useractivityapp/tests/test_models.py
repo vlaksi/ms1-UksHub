@@ -53,6 +53,9 @@ REPO1_NAME = 'RepoUKS'
 ACTION_TYPE_NAME = 'fork'
 REACTION_TYPE_NAME = 'Reaction'
 
+COMMENT_MESSAGE_1 = 'Komentar1'
+COMMENT_MESSAGE_2 = 'Komentar2'
+
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
 
@@ -111,11 +114,18 @@ def initialize_db_with_test_data():
 
     
     # Create comment
-    comment1 = Comment.objects.create(author=user1, message="Komentar1",  creation_date="2022-01-30 22:03:08.405+01")
-    comment2 = Comment.objects.create(author=user1, message="Komentar2",  creation_date="2022-01-30 22:03:08.405+01")
+    comment1 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_1,  creation_date="2022-01-30 22:03:08.405+01")
+    comment2 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_2,  creation_date="2022-01-30 22:03:08.405+01")
 
     comment1.save()
     comment2.save()
+
+    #Create reaction
+    reaction1 = Reaction.objects.create(author=user1,comment=comment1,type=reactionType1.name)
+    reaction2 = Reaction.objects.create(author=user1,comment=comment1,type=reactionType1.name)
+
+    reaction1.save()
+    reaction2.save()
     
 def get_action_type(index=0):
     return ActionType.objects.all()[index]
@@ -201,6 +211,25 @@ class TestCommentModel(TestCase):
         comment = get_comment()
         max_length = comment._meta.get_field('message').max_length
         self.assertEquals(max_length, 200)
+
+class TestReactionModel(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
+
+    def test_reaction_comment_message(self):
+        reaction = get_reaction()
+        self.assertEqual(reaction.comment.message, COMMENT_MESSAGE_1)
+
+    def test_reaction_author_username(self):
+        reaction = get_reaction()
+        self.assertEqual(reaction.author.username, USER1_USERNAME)
+
+    def test_reaction_type_name(self):
+        reaction = get_reaction()
+        self.assertEqual(reaction.type, REACTION_TYPE_NAME)
+
 
 
     
