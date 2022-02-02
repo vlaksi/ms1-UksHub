@@ -75,6 +75,7 @@ const Comments = ({ pullRequestId, authorId }) => {
                 as="textarea"
                 rows={5}
                 placeholder="Enter comment message"
+                defaultValue={newCommentMessage}
                 onChange={(e) => {
                   handleAddingCommentMessage(e.target.value);
                 }}
@@ -95,7 +96,11 @@ const Comments = ({ pullRequestId, authorId }) => {
       {comments?.map((commentItem) => {
         return (
           <div key={commentItem.pk}>
-            <CommentListItem comment={commentItem}></CommentListItem>
+            <CommentListItem
+              comment={commentItem}
+              handleShowAddComment={handleShow}
+              setNewCommentMessage={setNewCommentMessage}
+            ></CommentListItem>
           </div>
         );
       })}
