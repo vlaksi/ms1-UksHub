@@ -45,9 +45,9 @@ def initialize_db_with_test_data():
     branch4.save()
 
     # Create pull requests
-    pull_request1 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_1_TITLE, repository=repository1, base_branch=branch1, compare_branch=branch2, creation_date=timezone.now())
-    pull_request2 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_2_TITLE, repository=repository1, base_branch=branch1, compare_branch=branch2, creation_date=timezone.now())
-    pull_request3 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_3_TITLE, repository=repository2, base_branch=branch3, compare_branch=branch4, creation_date=timezone.now())
+    pull_request1 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_1_TITLE, repository=repository1, base_branch=branch1.name, compare_branch=branch2.name, creation_date=timezone.now())
+    pull_request2 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_2_TITLE, repository=repository1, base_branch=branch1.name, compare_branch=branch2.name, creation_date=timezone.now())
+    pull_request3 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_3_TITLE, repository=repository2, base_branch=branch3.name, compare_branch=branch4.name, creation_date=timezone.now())
     
     pull_request1.save()
     pull_request2.save()
@@ -163,7 +163,7 @@ class TestPullRequestModel(TestCase):
 
     def test_pr_compare_and_base_branch_names(self):
         pr = get_pull_request()
-        self.assertNotEqual(pr.base_branch.name, pr.compare_branch.name)
+        self.assertNotEqual(pr.base_branch, pr.compare_branch)
 
     def test_pr_author_username(self):
         pr = get_pull_request()
@@ -192,10 +192,6 @@ class TestPullRequestModel(TestCase):
     def test_empty_pr_labels(self):
         pr = get_pull_request()
         self.assertEqual(pr.labels.count(),0)
-
-    def test_empty_pr_comments(self):
-        pr = get_pull_request()
-        self.assertEqual(pr.comments.count(),0)
 
     def test_empty_pr_reviewes(self):
         pr = get_pull_request()

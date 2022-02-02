@@ -26,6 +26,7 @@ import { getAllRepositoryUsersByActionType } from '../../../services/useractivit
 import { getMyBrowserID } from '../../../services/progresstrackapp/fingerprint';
 
 const UserRepository = ({ userId, repositoryId }) => {
+
 	const [user, setUser] = useState();
 	const [repository, setRepository] = useState();
 	const [repositoryBranches, setRepositoryBranches] = useState();
@@ -60,9 +61,10 @@ const UserRepository = ({ userId, repositoryId }) => {
 
 	const isLoggedInUserCollaborator = () => {
 		let loggedInUserId = getParsedToken().user_id;
-		return repositoryCollaborators.find(
-			(collaborator) => collaborator.collaborator_id == loggedInUserId
-		);
+		return repositoryCollaborators.find((collaborator) => collaborator.collaborator_id == loggedInUserId);
+	};
+	const handleSelect = (key) => {
+		if (key === 'code') setShowCommits(false);
 	};
 
 	return (
@@ -105,6 +107,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 								defaultActiveKey="code"
 								id="uncontrolled-tab-example"
 								className="mb-3"
+								onSelect={handleSelect}
 							>
 								<Tab eventKey="code" title="Code">
 									<RepositoryCode
@@ -146,5 +149,4 @@ const UserRepository = ({ userId, repositoryId }) => {
 		</>
 	);
 };
-
 export default UserRepository;

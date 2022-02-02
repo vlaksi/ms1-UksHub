@@ -18,10 +18,12 @@ class GitServerCommitDto(models.Model):
     committed_date = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
     message = models.CharField(max_length=200)
+    files = models.CharField(max_length=30000)
+    total = models.CharField(max_length=200)
 
     @classmethod
-    def create(cls, hash, committed_date, author, message):
-        gitServerCommitDto = cls(hash=hash, committed_date=committed_date, author=author, message=message)
+    def create(cls, hash, committed_date, author, message, files, total):
+        gitServerCommitDto = cls(hash=hash, committed_date=committed_date, author=author, message=message, files=files, total=total)
         return gitServerCommitDto
 
 class GitServerBranchDto(models.Model):

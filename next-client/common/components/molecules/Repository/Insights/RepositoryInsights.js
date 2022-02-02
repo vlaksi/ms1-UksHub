@@ -1,5 +1,5 @@
-import React from 'react';
-import { Tab, Col, ListGroup, Row } from 'react-bootstrap';
+import React from "react";
+import { Tab, Col, ListGroup, Row } from "react-bootstrap";
 import {
 	Chart,
 	ArcElement,

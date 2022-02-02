@@ -27,15 +27,16 @@ class UserSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = [ "pk", "message", "creation_date", "author" , "reaction"]
+        fields = [ "pk", "message", "creation_date", "author" ,"issue","pull_request"]
         extra_kwargs = {
-             "reaction": {"required": False},
+             "issue": {"required": False},
+             "pull_request": {"required": False},
         }
 
 class ReactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reaction
-        fields = [ "pk", "author", "type" ]
+        fields = [ "pk", "author", "type", "comment" ]
 
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:

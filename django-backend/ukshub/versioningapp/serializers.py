@@ -43,7 +43,7 @@ class RepositorySerializer(serializers.ModelSerializer):
         # Create default main branch of this repository & update default branch of the repository
         default_branch = Branch.objects.create(name='master', repository=repository)
         default_branch.save()
-        repository.default_branch=default_branch
+        repository.default_branch=default_branch.name
         repository.save()
 
         # Create author of the repository to the collaboration table connected to his repository
@@ -75,15 +75,12 @@ class BranchSerializer(serializers.ModelSerializer):
 class CommitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commit
-        fields = [ "pk", "autor", "hash", "message" , "creation_date", "comments"]
-        extra_kwargs = {
-             "comments": {"required": False},
-        }
+        fields = [ "pk", "autor", "hash", "message" , "creation_date"]
 
 class GitServerCommitSerializer(serializers.ModelSerializer):
     class Meta:
         model = GitServerCommitDto
-        fields = [ "hash", "committed_date", "author", "message" ]
+        fields = [ "hash", "committed_date", "author", "message", "files", "total"]
 
 class GitServerBranchSerializer(serializers.ModelSerializer):
     class Meta:
