@@ -30,10 +30,16 @@ const PullRequestDetails = ({ pullRequestId }) => {
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
+  const [showDeleteAssigneeModal, setShowDeleteAssigneeModal] = useState(false);
+  const handleDeleteAssigneeModalClose = () =>
+    setShowDeleteAssigneeModal(false);
+  const handleShowDeleteAssigneeModal = () => setShowDeleteAssigneeModal(true);
+
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
 
   const [pullRequestAssignees, setPullRequestAssignees] = useState([]);
+  const [removeCandidate, setRemoveCandidate] = useState("");
 
   const router = useRouter();
   const { user, repository } = router.query;
@@ -186,8 +192,8 @@ const PullRequestDetails = ({ pullRequestId }) => {
                             marginBottom: "15px",
                           }}
                           onClick={() => {
-                            // setRemoveCandidate(prAssignee);
-                            // handleShowDeleteModal();
+                            setRemoveCandidate(prAssignee);
+                            handleShowDeleteAssigneeModal();
                           }}
                         />
                       )}
@@ -198,6 +204,49 @@ const PullRequestDetails = ({ pullRequestId }) => {
             </ListGroup>
           </Card>
         </div>
+      </div>
+      <div>
+        {/* Delete assignes modal from the pr */}
+        <Modal
+          show={showDeleteAssigneeModal}
+          onHide={handleDeleteAssigneeModalClose}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Remove confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: " baseline",
+            }}
+          >
+            <p>Are you sure you want to remove chosen user from assignees?</p>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={async () => {
+                let currentAssignesIds = getAllAssignesIds();
+                let newAssignesIds = currentAssignesIds.filter(
+                  (assigneId) => assigneId != removeCandidate.id
+                );
+                await updatePullRequestAssigness(pullRequestId, newAssignesIds);
+                setPullRequestAssignees(
+                  await getAllPullRequestAssignees(pullRequestId)
+                );
+
+                handleDeleteAssigneeModalClose();
+              }}
+            >
+              Remove
+            </Button>
+            <Button variant="danger" onClick={handleDeleteAssigneeModalClose}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
 
       <Card border="danger" style={{ width: "50%", marginTop: "30%" }}>

@@ -5,28 +5,28 @@ import {
   updateIssueAssigness,
   updateIssueClose,
   updateIssueLabels,
-} from '../../../services/progresstrackapp/issuesService';
-import { useState, useEffect } from 'react';
-import { Badge, Card, ListGroup, Modal, Button } from 'react-bootstrap';
-import UserSearch from '../../atoms/UserSearch/UserSearch';
-import { getUserDataForIssueAssigneesSearch } from '../../../services/useractivity/userService';
-import { useRouter } from 'next/router';
-import { AiFillDelete } from 'react-icons/ai';
-import { GiConfirmed } from 'react-icons/gi';
-import { getLabelDataForIssueLabellingSearch } from '../../../services/progresstrackapp/labelsService';
-import RepositoryNav from '../../atoms/RepositoryNav/RepositoryNav';
-import Comments from '../../molecules/Comments/Comments';
+} from "../../../services/progresstrackapp/issuesService";
+import { useState, useEffect } from "react";
+import { Badge, Card, ListGroup, Modal, Button } from "react-bootstrap";
+import UserSearch from "../../atoms/UserSearch/UserSearch";
+import { getUserDataForIssueAssigneesSearch } from "../../../services/useractivity/userService";
+import { useRouter } from "next/router";
+import { AiFillDelete } from "react-icons/ai";
+import { GiConfirmed } from "react-icons/gi";
+import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
+import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
+import Comments from "../../molecules/Comments/Comments";
 
 const IssueDetails = ({ issueId }) => {
-  const [issue, setIssue] = useState('');
+  const [issue, setIssue] = useState("");
 
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
 
   const [issueAssignees, setIssueAssignees] = useState([]);
-  const [removeCandidate, setRemoveCandidate] = useState('');
+  const [removeCandidate, setRemoveCandidate] = useState("");
   const [issueAddedLabels, setIssueAddedLabels] = useState([]);
-  const [removeLabel, setRemoveLabel] = useState('');
+  const [removeLabel, setRemoveLabel] = useState("");
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
@@ -94,20 +94,20 @@ const IssueDetails = ({ issueId }) => {
         <>
           <RepositoryNav />
           <h4>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: "flex" }}>
               <Badge
                 pill
                 bg="primary"
                 text="light"
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: "10px" }}
               >
                 #{issue.pk}
-              </Badge>{' '}
+              </Badge>{" "}
               {issue.title}
             </div>
           </h4>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '65%' }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ width: "65%" }}>
               <Comments issueId={issueId} authorId={user}></Comments>
             </div>
             <div>
@@ -136,20 +136,20 @@ const IssueDetails = ({ issueId }) => {
                       <ListGroup.Item
                         key={issueAssignee.id}
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: "flex" }}>
                           <p> {issueAssignee.username} </p>
                         </div>
                         <div>
                           {issueAssignees?.length > 0 && (
                             <AiFillDelete
                               style={{
-                                cursor: 'pointer',
-                                marginBottom: '15px',
+                                cursor: "pointer",
+                                marginBottom: "15px",
                               }}
                               onClick={() => {
                                 setRemoveCandidate(issueAssignee);
@@ -165,7 +165,7 @@ const IssueDetails = ({ issueId }) => {
               </Card>
 
               {/* Labels Card */}
-              <Card style={{ marginTop: '25px' }}>
+              <Card style={{ marginTop: "25px" }}>
                 <Card.Header>Labels</Card.Header>
                 <Card.Body>
                   <UserSearch
@@ -189,22 +189,22 @@ const IssueDetails = ({ issueId }) => {
                       <ListGroup.Item
                         key={issueAddedLabel.pk}
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: "flex" }}>
                           <>
-                            {' '}
+                            {" "}
                             <div
                               className="fw-bold"
                               style={{
                                 background: issueAddedLabel.color,
-                                borderRadius: '15px',
-                                padding: '4px',
-                                color: 'white',
-                                display: 'flex',
+                                borderRadius: "15px",
+                                padding: "4px",
+                                color: "white",
+                                display: "flex",
                               }}
                             >
                               {issueAddedLabel.name}
@@ -215,8 +215,8 @@ const IssueDetails = ({ issueId }) => {
                           {issueAddedLabels?.length > 0 && (
                             <AiFillDelete
                               style={{
-                                cursor: 'pointer',
-                                marginBottom: '15px',
+                                cursor: "pointer",
+                                marginBottom: "15px",
                               }}
                               onClick={() => {
                                 setRemoveLabel(issueAddedLabel);
@@ -240,9 +240,9 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Header>
               <Modal.Body
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: ' baseline',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: " baseline",
                 }}
               >
                 <p>
@@ -282,9 +282,9 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Header>
               <Modal.Body
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: ' baseline',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: " baseline",
                 }}
               >
                 <p>Are you sure you want to remove chosen label from issue?</p>
@@ -313,7 +313,7 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Footer>
             </Modal>
           </div>
-          <div style={{ marginTop: '5%' }}>
+          <div style={{ marginTop: "5%" }}>
             {issue.is_opened === true ? (
               <Button
                 onClick={async () => {
