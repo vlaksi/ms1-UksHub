@@ -28,7 +28,6 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
     setCommit(commit);
     var commits = await getBranchCommits(repository.pk, branch.name);
     setCommits(commits);
-    console.log(commits);
   };
 
   const notify = () => toast.success('Successfully created new branch!');
@@ -72,8 +71,6 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
   };
 
   useEffect(async () => {
-    // repositoryBranches = await getRepositoryBranches(repository.pk);
-    // console.log(repositoryBranches);
     setCurrentBrach(repositoryBranches[0]);
   }, []);
 

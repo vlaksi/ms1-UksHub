@@ -197,7 +197,6 @@ export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
       },
     })
     .then((response) => {
-      console.log(response);
       success = true;
     })
     .catch((error) => {
@@ -222,7 +221,6 @@ export const updateRepositoryDescription = async (newRepositoryDescription, repo
       },
     })
     .then((response) => {
-      console.log(response);
       success = true;
     })
     .catch((error) => {
@@ -246,7 +244,6 @@ export const deleteRepository = async (repositoryId) => {
       },
     })
     .then((response) => {
-      console.log(response);
       success = true;
     })
     .catch((error) => {
