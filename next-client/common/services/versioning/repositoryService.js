@@ -45,7 +45,6 @@ export const getAllRepositoriesByAuthor = async (user_id) => {
   return repositories;
 };
 
-
 export const searchAllRepositoriesByAuthor = async (user_id, searchword) => {
   let repositories;
   await axios
@@ -90,7 +89,7 @@ export const getRepositoryById = async (repositoryId) => {
   return repository;
 };
 
-export const addRepository = async (newRepositoryName, newRepositoryDescription, authorId, defaultBranch = null, forkedFromAuthorId = null) => {
+export const addRepository = async (newRepositoryName, newRepositoryDescription, authorId, defaultBranch = 'master', forkedFromAuthorId = null) => {
   let repository = null;
   await axios
     .request({
@@ -118,7 +117,7 @@ export const addRepository = async (newRepositoryName, newRepositoryDescription,
   return repository;
 };
 
-export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBranchId) => {
+export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBranchName) => {
   let updatedBranch;
   await axios
     .request({
@@ -127,7 +126,7 @@ export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBran
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        default_branch: newDefaultBranchId,
+        default_branch: newDefaultBranchName,
         grant_type: 'client_credentials',
         scope: 'public',
       },
