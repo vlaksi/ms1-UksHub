@@ -64,6 +64,14 @@ def get_action(index=0):
 def get_repository(index=0):
     return Repository.objects.all()[index]
 
+def get_comment_id(commentReaction_id=0):
+    if commentReaction_id != -1:
+        comment_id = Comment.objects.all()[commentReaction_id].id
+    else: # return repo_id that for sure does not exist
+        comments = Comment.objects.all()
+        comment_id = comments[len(comments) - 1].id + 999
+    return comment_id
+
 class TestUserAdminListView(TestCase):
 
     @classmethod
@@ -411,6 +419,19 @@ class TestCommentListView(TestCase):
 
     def test_get_all_comments_wrong_url(self):
         response = self.c.get('/useractivity/comment', HTTP_AUTHORIZATION=self.token, content_type=JSON)
+        self.assertEqual(response.status_code, 404)
+
+    def get_comment_reactions(self, commentReaction_id=0):
+        comment_id = get_comment_id(commentReaction_id)
+        response = self.client.get(reverse('all-comment-reactions', kwargs={'comment_id': comment_id}))
+        return response, comment_id
+
+    def test_get_all_comment_reactions(self):
+        response, _ = self.get_comment_reactions()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_HTTP404_if_reaction_does_not_exist(self):
+        response, _ = self.get_comment_reactions(-1)
         self.assertEqual(response.status_code, 404)
 
     def test_post_create_comment_successfully(self):
