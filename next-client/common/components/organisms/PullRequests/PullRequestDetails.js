@@ -16,6 +16,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 import CommentPR from "../../molecules/Comments/CommentPR";
 import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
+import { getUserDataForPullRequestAssigneesSearch } from "../../../services/useractivity/userService";
+import UserSearch from "../../atoms/UserSearch/UserSearch";
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -23,6 +25,11 @@ const PullRequestDetails = ({ pullRequestId }) => {
   const [newPullRequestName, setNewPullRequestName] = useState("");
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
+
+  const [userDataForSearch, setUserDataForSearch] = useState([]);
+  const [labelDataForSearch, setLabelDataForSearch] = useState([]);
+
+  const [pullRequestAssignees, setPullRequestAssignees] = useState([]);
 
   const router = useRouter();
   const { user, repository } = router.query;
@@ -52,6 +59,21 @@ const PullRequestDetails = ({ pullRequestId }) => {
     let pullRequest = await getPullRequestById(pullRequestId);
     setPullRequest(pullRequest);
   }, [pullRequestId]);
+
+  useEffect(async () => {
+    if (!repository) return;
+    //setPullRequestAssignees(await getAllIssueAssignees(issueId));
+
+    setUserDataForSearch(
+      await getUserDataForPullRequestAssigneesSearch(repository)
+    );
+  }, [repository]);
+
+  const isUserAlreadyAssignee = (user) => {
+    return pullRequestAssignees?.find(
+      (assignee) => assignee.username == user.title
+    );
+  };
 
   const updateNewPullRequestName = async () => {
     let isSuccessfulUpdated = await updatePullRequestName(
@@ -100,11 +122,37 @@ const PullRequestDetails = ({ pullRequestId }) => {
             Change
           </Button>
         </InputGroup>
+      </div>
 
-        <CommentPR
-          pullRequestId={pullRequest.pk}
-          authorId={pullRequest.author}
-        ></CommentPR>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ width: "65%" }}>
+          <CommentPR
+            pullRequestId={pullRequest.pk}
+            authorId={pullRequest.author}
+          ></CommentPR>
+        </div>
+        <div>
+          {/* Assignes Card */}
+          <Card>
+            <Card.Header>Assignees</Card.Header>
+            <Card.Body>
+              <UserSearch
+                placeholder="Add an assignee..."
+                data={userDataForSearch.filter(
+                  (user) => !isUserAlreadyAssignee(user)
+                )}
+                // onSelectItem={async (selectedValue) => {
+                //   let currentAssignesIds = getAllAssignesIds();
+                //   await updateIssueAssigness(issueId, [
+                //     ...currentAssignesIds,
+                //     selectedValue.pk,
+                //   ]);
+                //   setIssueAssignees(await getAllIssueAssignees(issueId));
+                // }}
+              ></UserSearch>
+            </Card.Body>
+          </Card>
+        </div>
       </div>
 
       <Card border="danger" style={{ width: "50%", marginTop: "30%" }}>
