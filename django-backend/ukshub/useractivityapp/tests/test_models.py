@@ -125,7 +125,7 @@ def initialize_db_with_test_data():
 
     #Create reaction
     reaction1 = Reaction.objects.create(author=user1,comment=comment1,type=reactionType1.name)
-    reaction2 = Reaction.objects.create(author=user1,comment=comment1,type=reactionType2.name)
+    reaction2 = Reaction.objects.create(author=user2,comment=comment1,type=reactionType2.name)
 
     reaction1.save()
     reaction2.save()
