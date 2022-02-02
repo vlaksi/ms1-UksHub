@@ -18,6 +18,7 @@ import {
   updatePullRequestClose,
   updatePullRequestIssues,
   updatePullRequestLabels,
+  updatePullRequestMerge,
   updatePullRequestName,
 } from "../../../services/progresstrackapp/pullRequestService";
 import { ToastContainer, toast } from "react-toastify";
@@ -28,6 +29,7 @@ import { getUserDataForPullRequestAssigneesSearch } from "../../../services/user
 import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { AiFillDelete } from "react-icons/ai";
 import { GiConfirmed } from "react-icons/gi";
+import { BiGitMerge } from "react-icons/bi";
 import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
 import { getIssueDataForPullRequestIssueSearch } from "../../../services/progresstrackapp/issuesService";
 
@@ -548,6 +550,31 @@ const PullRequestDetails = ({ pullRequestId }) => {
               }}
             >
               <GiConfirmed size={20}></GiConfirmed> Reopen pull request
+            </Button>
+          </p>
+        )}
+        {pullRequest.is_merged === true ? (
+          <Card border="success" style={{ width: "23%" }}>
+            <Card.Body
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Card.Text>Successfully merged pull request</Card.Text>
+            </Card.Body>
+          </Card>
+        ) : (
+          <p>
+            <Button
+              variant="success"
+              onClick={async () => {
+                await updatePullRequestMerge(true, pullRequestId);
+                setPullRequest(await getPullRequestById(pullRequest.pk));
+              }}
+            >
+              <BiGitMerge size={20}></BiGitMerge> Merge pull request
             </Button>
           </p>
         )}
