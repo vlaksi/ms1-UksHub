@@ -15,6 +15,7 @@ import {
   getAllPullRequestLabels,
   getPullRequestById,
   updatePullRequestAssigness,
+  updatePullRequestClose,
   updatePullRequestIssues,
   updatePullRequestLabels,
   updatePullRequestName,
@@ -26,6 +27,7 @@ import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
 import { getUserDataForPullRequestAssigneesSearch } from "../../../services/useractivity/userService";
 import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { AiFillDelete } from "react-icons/ai";
+import { GiConfirmed } from "react-icons/gi";
 import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
 import { getIssueDataForPullRequestIssueSearch } from "../../../services/progresstrackapp/issuesService";
 
@@ -525,6 +527,30 @@ const PullRequestDetails = ({ pullRequestId }) => {
             </Button>
           </Modal.Footer>
         </Modal>
+      </div>
+      <div>
+        {pullRequest.is_opened === true ? (
+          <Button
+            onClick={async () => {
+              await updatePullRequestClose(true, pullRequestId);
+              setPullRequest(await getPullRequestById(pullRequest.pk));
+            }}
+          >
+            <GiConfirmed size={20}></GiConfirmed> Close pull request
+          </Button>
+        ) : (
+          <p>
+            <Button
+              variant="outline-primary"
+              onClick={async () => {
+                await updatePullRequestClose(false, pullRequestId);
+                setPullRequest(await getPullRequestById(pullRequest.pk));
+              }}
+            >
+              <GiConfirmed size={20}></GiConfirmed> Reopen pull request
+            </Button>
+          </p>
+        )}
       </div>
 
       <Card border="danger" style={{ width: "50%", marginTop: "30%" }}>
