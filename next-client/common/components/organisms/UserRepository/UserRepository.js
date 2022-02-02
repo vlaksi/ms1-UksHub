@@ -36,6 +36,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 	const [commitsToMainBranch, setCommitsToMainBranch] = useState([]);
 	const [forksOfRepo, setForksOfRepo] = useState([]);
 	const [visitsOfRepo, setVisitsOfRepo] = useState([]);
+	const [showCommits, setShowCommits] = useState(false);
 
 	useEffect(async () => {
 		if (!repositoryId) return;
@@ -111,6 +112,8 @@ const UserRepository = ({ userId, repositoryId }) => {
 							>
 								<Tab eventKey="code" title="Code">
 									<RepositoryCode
+										showCommits={showCommits}
+										setShowCommits={setShowCommits}
 										repository={repository}
 										repositoryBranches={repositoryBranches}
 										isLoggedInUserCollaborator={isLoggedInUserCollaborator()}
