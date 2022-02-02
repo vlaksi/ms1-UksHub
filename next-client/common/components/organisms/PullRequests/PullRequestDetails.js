@@ -11,8 +11,10 @@ import { useState, useEffect } from "react";
 import {
   deletePullRequest,
   getAllPullRequestAssignees,
+  getAllPullRequestLabels,
   getPullRequestById,
   updatePullRequestAssigness,
+  updatePullRequestLabels,
   updatePullRequestName,
 } from "../../../services/progresstrackapp/pullRequestService";
 import { ToastContainer, toast } from "react-toastify";
@@ -22,6 +24,7 @@ import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
 import { getUserDataForPullRequestAssigneesSearch } from "../../../services/useractivity/userService";
 import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { AiFillDelete } from "react-icons/ai";
+import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -40,6 +43,8 @@ const PullRequestDetails = ({ pullRequestId }) => {
 
   const [pullRequestAssignees, setPullRequestAssignees] = useState([]);
   const [removeCandidate, setRemoveCandidate] = useState("");
+  const [pullRequestAddedLabels, setPullRequestAddedLabels] = useState([]);
+  const [removeLabel, setRemoveLabel] = useState("");
 
   const router = useRouter();
   const { user, repository } = router.query;
@@ -90,6 +95,29 @@ const PullRequestDetails = ({ pullRequestId }) => {
       currentAssignesIds.push(assigne.id);
     });
     return currentAssignesIds;
+  };
+
+  useEffect(async () => {
+    if (!repository) return;
+    setPullRequestAddedLabels(await getAllPullRequestLabels(pullRequestId));
+
+    setLabelDataForSearch(
+      await getLabelDataForIssueLabellingSearch(repository)
+    );
+  }, [repository]);
+
+  const isLabelAlreadyAdded = (label) => {
+    return pullRequestAddedLabels?.find(
+      (addedLabel) => addedLabel.name == label.title
+    );
+  };
+  const getAllPullRequestLabelsIds = () => {
+    // Be careful with structure, unique id of the label is named pk, but unique id of the usser ie. assigne is id !
+    let currentPullRequestLabelsIds = [];
+    pullRequestAddedLabels.forEach((label) => {
+      currentPullRequestLabelsIds.push(label.pk);
+    });
+    return currentPullRequestLabelsIds;
   };
 
   const updateNewPullRequestName = async () => {
@@ -202,6 +230,30 @@ const PullRequestDetails = ({ pullRequestId }) => {
                 );
               })}
             </ListGroup>
+          </Card>
+
+          {/* Labels Card */}
+          <Card style={{ marginTop: "25px" }}>
+            <Card.Header>Labels</Card.Header>
+            <Card.Body>
+              <UserSearch
+                placeholder="Add a label..."
+                data={labelDataForSearch?.filter(
+                  (label) => !isLabelAlreadyAdded(label)
+                )}
+                onSelectItem={async (selectedValue) => {
+                  let currentPullRequestLabelsIds =
+                    getAllPullRequestLabelsIds();
+                  await updatePullRequestLabels(pullRequestId, [
+                    ...currentPullRequestLabelsIds,
+                    selectedValue.pk,
+                  ]);
+                  setPullRequestAddedLabels(
+                    await getAllPullRequestLabels(pullRequestId)
+                  );
+                }}
+              ></UserSearch>
+            </Card.Body>
           </Card>
         </div>
       </div>

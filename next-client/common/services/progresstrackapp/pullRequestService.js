@@ -182,3 +182,49 @@ export const updatePullRequestAssigness = async (
     });
   return success;
 };
+export const getAllPullRequestLabels = async (pullRequestId) => {
+  let issue = null;
+  await axios
+    .request({
+      url: `/progresstrack/pullrequest/${pullRequestId}/labels`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issue = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return issue;
+};
+export const updatePullRequestLabels = async (pullRequestId, labelId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/pullrequests/${pullRequestId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        labels: labelId,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};
