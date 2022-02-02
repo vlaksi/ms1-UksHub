@@ -126,7 +126,7 @@ def branch_last_commit(request, repository_id, name):
     if diff == 0 :
         diff = difference.seconds
         commited_date = str(int(diff)) + " seconds ago"
-    returnCommits.append(GitServerCommitDto.create(commits[0], commited_date, commits[0].author, commits[0].summary))
+    returnCommits.append(GitServerCommitDto.create(commits[0], commited_date, commits[0].author, commits[0].summary, commits[0].stats.files, commits[0].stats.total))
     serializers = GitServerCommitSerializer(returnCommits, many=True)
     return Response(serializers.data)
     
@@ -153,7 +153,6 @@ def search_repository_collaborators(request, repo_id, searchword):
 @api_view(['GET'])
 def branch_commits(request, repository_id, name):
     repository = Repository.objects.get(id = repository_id)
-    # branch = Branch.objects.get(name = name, repository_id = repository.id)
     commits = []
     try:
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
@@ -164,23 +163,29 @@ def branch_commits(request, repository_id, name):
     now = datetime.fromtimestamp(int(time.time()))
     returnCommits = []
     for commit in commits:
+        files = commit.stats.files
+        commitFiles = []
+        for file in files:
+            commitFiles.append(file)
+        total = commit.stats.total
+
         commited = datetime.fromtimestamp(commit.committed_date)
         difference = now - commited
-        diff = divmod(difference.total_seconds(), 31536000)[0]
-        commited_date = str(int(diff)) + " years ago"
-        if diff == 0 :
-            diff = difference.days
-            commited_date = str(int(diff)) + " days ago"
-        if diff == 0 :
-            diff = divmod(difference.total_seconds(), 3600)[0]
-            commited_date = str(int(diff)) + " hours ago"
-        if diff == 0 :
-            diff = divmod(difference.total_seconds(), 60)[0]
-            commited_date = str(int(diff)) + " minutes ago"
-        if diff == 0 :
-            diff = difference.seconds
-            commited_date = str(int(diff)) + " seconds ago"
-        returnCommits.append(GitServerCommitDto.create(commit, commited_date, commit.author, commit.summary))
+        total_seconds = divmod(difference.total_seconds(), 31536000)[0]
+        commited_date = str(int(total_seconds)) + " years ago"
+        if total_seconds == 0 :
+            total_seconds = difference.days
+            commited_date = str(int(total_seconds)) + " days ago"
+        if total_seconds == 0 :
+            total_seconds = divmod(difference.total_seconds(), 3600)[0]
+            commited_date = str(int(total_seconds)) + " hours ago"
+        if total_seconds == 0 :
+            total_seconds = divmod(difference.total_seconds(), 60)[0]
+            commited_date = str(int(total_seconds)) + " minutes ago"
+        if total_seconds == 0 :
+            total_seconds = difference.seconds
+            commited_date = str(int(total_seconds)) + " seconds ago"
+        returnCommits.append(GitServerCommitDto.create(commit, commited_date, commit.author, commit.summary, commitFiles, total))
     serializers = GitServerCommitSerializer(returnCommits, many=True)
     return Response(serializers.data)
 
@@ -193,7 +198,7 @@ def main_branch_commits(request, repo_id):
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
         commits = repo.iter_commits('master')
         for commit in commits:
-            returnCommits.append(GitServerCommitDto.create(commit, datetime.fromtimestamp(commit.committed_date), commit.author, commit.message))
+            returnCommits.append(GitServerCommitDto.create(commit, datetime.fromtimestamp(commit.committed_date), commit.author, commit.message, commit.stats.files, commit.stats.total))
     except:
         return Response({})
     serializers = GitServerCommitSerializer(returnCommits, many=True)
