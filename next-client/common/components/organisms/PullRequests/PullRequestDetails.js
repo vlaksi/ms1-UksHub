@@ -38,6 +38,10 @@ const PullRequestDetails = ({ pullRequestId }) => {
     setShowDeleteAssigneeModal(false);
   const handleShowDeleteAssigneeModal = () => setShowDeleteAssigneeModal(true);
 
+  const [showDeleteLabelModal, setShowDeleteLabelModal] = useState(false);
+  const handleDeleteLabelModalClose = () => setShowDeleteLabelModal(false);
+  const handleShowDeleteLabelModal = () => setShowDeleteLabelModal(true);
+
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
 
@@ -254,6 +258,52 @@ const PullRequestDetails = ({ pullRequestId }) => {
                 }}
               ></UserSearch>
             </Card.Body>
+            <ListGroup variant="flush">
+              {pullRequestAddedLabels?.map((prAddedLabel) => {
+                return (
+                  <ListGroup.Item
+                    key={prAddedLabel.pk}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ display: "flex" }}>
+                      <>
+                        {" "}
+                        <div
+                          className="fw-bold"
+                          style={{
+                            background: prAddedLabel.color,
+                            borderRadius: "15px",
+                            padding: "4px",
+                            color: "white",
+                            display: "flex",
+                          }}
+                        >
+                          {prAddedLabel.name}
+                        </div>
+                      </>
+                    </div>
+                    <div>
+                      {pullRequestAddedLabels?.length > 0 && (
+                        <AiFillDelete
+                          style={{
+                            cursor: "pointer",
+                            marginBottom: "15px",
+                          }}
+                          onClick={() => {
+                            setRemoveLabel(prAddedLabel);
+                            handleShowDeleteLabelModal();
+                          }}
+                        />
+                      )}
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
+            </ListGroup>
           </Card>
         </div>
       </div>
@@ -295,6 +345,51 @@ const PullRequestDetails = ({ pullRequestId }) => {
               Remove
             </Button>
             <Button variant="danger" onClick={handleDeleteAssigneeModalClose}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* Delete label modal from the issue */}
+        <Modal show={showDeleteLabelModal} onHide={handleDeleteLabelModalClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Remove confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: " baseline",
+            }}
+          >
+            <p>
+              Are you sure you want to remove chosen label from pull request?
+            </p>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={async () => {
+                let currentPullRequestLabelsIds = getAllPullRequestLabelsIds();
+                let newPullRequestLabelsIds =
+                  currentPullRequestLabelsIds?.filter(
+                    (labelId) => labelId != removeLabel.pk
+                  );
+
+                await updatePullRequestLabels(
+                  pullRequestId,
+                  newPullRequestLabelsIds
+                );
+                setPullRequestAddedLabels(
+                  await getAllPullRequestLabels(pullRequestId)
+                );
+
+                handleDeleteLabelModalClose();
+              }}
+            >
+              Remove
+            </Button>
+            <Button variant="danger" onClick={handleDeleteLabelModalClose}>
               Cancel
             </Button>
           </Modal.Footer>
