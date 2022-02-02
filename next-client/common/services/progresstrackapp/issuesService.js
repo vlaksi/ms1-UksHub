@@ -332,3 +332,16 @@ export const getIssueDataForMilestoneIssueSearch = async (repositoryId) => {
 
   return dataForSearch;
 };
+export const getIssueDataForPullRequestIssueSearch = async (repositoryId) => {
+  const issues = await getAllIssues(repositoryId);
+
+  let dataForSearch = [];
+  issues?.map((issue) => {
+    dataForSearch.push({
+      title: issue.title,
+      pk: issue.pk,
+    });
+  });
+
+  return dataForSearch;
+};

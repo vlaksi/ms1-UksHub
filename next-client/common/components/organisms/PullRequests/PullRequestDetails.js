@@ -11,9 +11,11 @@ import { useState, useEffect } from "react";
 import {
   deletePullRequest,
   getAllPullRequestAssignees,
+  getAllPullRequestIssues,
   getAllPullRequestLabels,
   getPullRequestById,
   updatePullRequestAssigness,
+  updatePullRequestIssues,
   updatePullRequestLabels,
   updatePullRequestName,
 } from "../../../services/progresstrackapp/pullRequestService";
@@ -25,6 +27,7 @@ import { getUserDataForPullRequestAssigneesSearch } from "../../../services/user
 import UserSearch from "../../atoms/UserSearch/UserSearch";
 import { AiFillDelete } from "react-icons/ai";
 import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
+import { getIssueDataForPullRequestIssueSearch } from "../../../services/progresstrackapp/issuesService";
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,11 +47,14 @@ const PullRequestDetails = ({ pullRequestId }) => {
 
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
+  const [issueDataForSearch, setIssueDataForSearch] = useState([]);
 
   const [pullRequestAssignees, setPullRequestAssignees] = useState([]);
   const [removeCandidate, setRemoveCandidate] = useState("");
   const [pullRequestAddedLabels, setPullRequestAddedLabels] = useState([]);
   const [removeLabel, setRemoveLabel] = useState("");
+  const [pullRequestAddedIssues, setPullRequestAddedIssues] = useState([]);
+  const [removeIssue, setRemoveIssue] = useState("");
 
   const router = useRouter();
   const { user, repository } = router.query;
@@ -122,6 +128,28 @@ const PullRequestDetails = ({ pullRequestId }) => {
       currentPullRequestLabelsIds.push(label.pk);
     });
     return currentPullRequestLabelsIds;
+  };
+  useEffect(async () => {
+    if (!repository) return;
+    setPullRequestAddedIssues(await getAllPullRequestIssues(pullRequestId));
+
+    setIssueDataForSearch(
+      await getIssueDataForPullRequestIssueSearch(repository)
+    );
+  }, [repository]);
+
+  const isIssueAlreadyAdded = (issue) => {
+    return pullRequestAddedIssues?.find(
+      (addedIssue) => addedIssue.title == issue.title
+    );
+  };
+  const getAllPullRequestIssueIds = () => {
+    // Be careful with structure, unique id of the label is named pk, but unique id of the usser ie. assigne is id !
+    let currentPullRequestIssueIds = [];
+    pullRequestAddedIssues.forEach((issue) => {
+      currentPullRequestIssueIds.push(issue.pk);
+    });
+    return currentPullRequestIssueIds;
   };
 
   const updateNewPullRequestName = async () => {
@@ -304,6 +332,28 @@ const PullRequestDetails = ({ pullRequestId }) => {
                 );
               })}
             </ListGroup>
+          </Card>
+          {/* Issues Card */}
+          <Card style={{ marginTop: "25px" }}>
+            <Card.Header>Issues</Card.Header>
+            <Card.Body>
+              <UserSearch
+                placeholder="Add an issue..."
+                data={issueDataForSearch?.filter(
+                  (issue) => !isIssueAlreadyAdded(issue)
+                )}
+                onSelectItem={async (selectedValue) => {
+                  let currentIssueIds = getAllPullRequestIssueIds();
+                  await updatePullRequestIssues(pullRequestId, [
+                    ...currentIssueIds,
+                    selectedValue.pk,
+                  ]);
+                  setPullRequestAddedIssues(
+                    await getAllPullRequestIssues(pullRequestId)
+                  );
+                }}
+              ></UserSearch>
+            </Card.Body>
           </Card>
         </div>
       </div>

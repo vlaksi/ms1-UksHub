@@ -204,6 +204,28 @@ export const getAllPullRequestLabels = async (pullRequestId) => {
 
   return issue;
 };
+export const getAllPullRequestIssues = async (pullRequestId) => {
+  let issue = null;
+  await axios
+    .request({
+      url: `/progresstrack/pullrequest/${pullRequestId}/issues`,
+      method: "get",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      issue = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return issue;
+};
 export const updatePullRequestLabels = async (pullRequestId, labelId) => {
   let success = false;
   await axios
@@ -214,6 +236,30 @@ export const updatePullRequestLabels = async (pullRequestId, labelId) => {
       headers: { Authorization: "JWT " + getToken() },
       data: {
         labels: labelId,
+        grant_type: "client_credentials",
+        scope: "public",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      success = true;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+      success = false;
+    });
+  return success;
+};
+export const updatePullRequestIssues = async (pullRequestId, issueId) => {
+  let success = false;
+  await axios
+    .request({
+      url: `/progresstrack/pullrequests/${pullRequestId}`,
+      method: "patch",
+      baseURL: "http://127.0.0.1:8000/",
+      headers: { Authorization: "JWT " + getToken() },
+      data: {
+        issues: issueId,
         grant_type: "client_credentials",
         scope: "public",
       },

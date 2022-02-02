@@ -15,6 +15,7 @@ urlpatterns = [
     path('pullrequests/<int:pk>', views.PullRequestDetail.as_view(), name="pull-request-detail"),
     path('pullrequest/<int:pull_request_id>/assignes', views.all_assignes_by_pull_request_id,name="all-pull-request-assignes"),
     path('pullrequest/<int:pull_request_id>/labels', views.all_labels_by_pull_request_id,name="all-pull-request-labels"),
+    path('pullrequest/<int:pull_request_id>/issues', views.all_issues_by_pull_request_id,name="all-pull-request-issues"),
     path('repository/<int:repo_id>/pullrequests',views.all_pull_requests_by_repository_id,name="all-repository-pull-requests"),
     path('repository/<int:repo_id>/labels',views.all_labels_by_repository_id,name="all-repository-labels"),
     path('repository/<int:repo_id>/milestones',views.all_milestones_by_repository_id,name="all-repository-milestones"),
