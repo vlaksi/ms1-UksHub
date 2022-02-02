@@ -2,8 +2,8 @@ from django.utils import timezone
 from django.test import TestCase
 
 from ..models import ActionType, ReactionType, Action, Reaction, Comment
-from versioningapp.models import Repository
-from progresstrackapp.models import Issue
+from versioningapp.models import Repository,Branch
+from progresstrackapp.models import Issue,PullRequest
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -120,9 +120,12 @@ def initialize_db_with_test_data():
 
     
     # Create comment
+    branch1 = Branch.objects.create(repository=repository1, name='main')
     issue_comment1 = Issue.objects.create(title='issue1',creation_date='2022-01-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    pull_request1 = PullRequest.objects.create(author=user1, title='Prvi pr', repository=repository1, base_branch=branch1.name, compare_branch=branch1.name, creation_date=timezone.now())
+    
     comment1 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_1,  creation_date="2022-01-30 22:03:08.405+01",issue=issue_comment1)
-    comment2 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_2,  creation_date="2022-01-30 22:03:08.405+01")
+    comment2 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_2,  creation_date="2022-01-30 22:03:08.405+01",pull_request=pull_request1)
 
     comment1.save()
     comment2.save()

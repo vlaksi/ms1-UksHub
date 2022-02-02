@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.http import Http404
 from ..models import ActionType, ReactionType, Action, Reaction, Comment
 from versioningapp.models import Repository
-from progresstrackapp.models import Issue
+from progresstrackapp.models import Issue,PullRequest
 
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -82,6 +82,14 @@ def get_issue_id(issueComment_id=0):
         issues = Issue.objects.all()
         issue_id = issues[len(issues) - 1].id + 999
     return issue_id
+
+def get_pull_request_id(pullRequest_id=0):
+    if pullRequest_id!= -1:
+        pull_request_id = PullRequest.objects.all()[pullRequest_id].id
+    else: # return pull_request_id that for sure does not exist
+        pull_requests = PullRequest.objects.all()
+        pull_request_id = pull_requests[len(pull_requests) - 1].id + 999
+    return pull_request_id
 
 class TestUserAdminListView(TestCase):
 
@@ -439,6 +447,15 @@ class TestCommentListView(TestCase):
 
     def test_get_all_issue_comments(self):
         response, _ = self.get_issue_comments()
+        self.assertEqual(response.status_code, 200)
+
+    def get_pr_comments(self, prComment_id=0):
+        pull_request_id = get_pull_request_id(prComment_id)
+        response = self.client.get(reverse('all-pull-request-comments', kwargs={'pull_request_id': pull_request_id}))
+        return response, pull_request_id
+
+    def test_get_all_pr_comments(self):
+        response, _ = self.get_pr_comments()
         self.assertEqual(response.status_code, 200)
 
     def test_post_create_comment_successfully(self):
