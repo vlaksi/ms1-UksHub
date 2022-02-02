@@ -64,6 +64,9 @@ def get_action(index=0):
 def get_repository(index=0):
     return Repository.objects.all()[index]
 
+def get_comment(index=0):
+    return Comment.objects.all()[index]
+
 def get_comment_id(commentReaction_id=0):
     if commentReaction_id != -1:
         comment_id = Comment.objects.all()[commentReaction_id].id
@@ -71,6 +74,14 @@ def get_comment_id(commentReaction_id=0):
         comments = Comment.objects.all()
         comment_id = comments[len(comments) - 1].id + 999
     return comment_id
+
+def get_issue_id(issueComment_id=0):
+    if issueComment_id != -1:
+        issue_id = Issue.objects.all()[issueComment_id].id
+    else: # return issue_id that for sure does not exist
+        issues = Issue.objects.all()
+        issue_id = issues[len(issues) - 1].id + 999
+    return issue_id
 
 class TestUserAdminListView(TestCase):
 
@@ -420,6 +431,15 @@ class TestCommentListView(TestCase):
     def test_get_all_comments_wrong_url(self):
         response = self.c.get('/useractivity/comment', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         self.assertEqual(response.status_code, 404)
+
+    def get_issue_comments(self, issueComment_id=0):
+        issue_id = get_issue_id(issueComment_id)
+        response = self.client.get(reverse('all-issue-comments', kwargs={'issue_id': issue_id}))
+        return response, issue_id
+
+    def test_get_all_issue_comments(self):
+        response, _ = self.get_issue_comments()
+        self.assertEqual(response.status_code, 200)
 
     def test_post_create_comment_successfully(self):
         comment = get_mocked_comment('Test comment message 1')

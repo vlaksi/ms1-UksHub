@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from ..models import ActionType, ReactionType, Action, Reaction, Comment
 from versioningapp.models import Repository
+from progresstrackapp.models import Issue
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -56,6 +57,8 @@ REACTION_TYPE_NAME_2 = 'Reaction 2'
 
 COMMENT_MESSAGE_1 = 'Komentar1'
 COMMENT_MESSAGE_2 = 'Komentar2'
+
+
 
 # INFO: Do not change some values without a very good testing, because a lot of test cases are checked by those values
 def initialize_db_with_test_data():
@@ -117,7 +120,8 @@ def initialize_db_with_test_data():
 
     
     # Create comment
-    comment1 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_1,  creation_date="2022-01-30 22:03:08.405+01")
+    issue_comment1 = Issue.objects.create(title='issue1',creation_date='2022-01-22 22:05:48.078+01',is_opened=True,author=user1,repository=repository1)
+    comment1 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_1,  creation_date="2022-01-30 22:03:08.405+01",issue=issue_comment1)
     comment2 = Comment.objects.create(author=user1, message=COMMENT_MESSAGE_2,  creation_date="2022-01-30 22:03:08.405+01")
 
     comment1.save()
