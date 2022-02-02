@@ -7,6 +7,7 @@ import {
   getAllCommentsPullRequests,
 } from "../../../services/useractivity/commentsService";
 import { ToastContainer, toast } from "react-toastify";
+import { getParsedToken } from "../../../services/authentication/token";
 
 const Comments = ({ pullRequestId, authorId }) => {
   const [comments, setNewCommentList] = useState([]);
@@ -31,7 +32,7 @@ const Comments = ({ pullRequestId, authorId }) => {
   const addNewComment = async () => {
     let createdComment = await addCommentPullRequest(
       newCommentMessage,
-      authorId,
+      getLoggedInUserId(),
       pullRequestId
     );
 
@@ -43,17 +44,24 @@ const Comments = ({ pullRequestId, authorId }) => {
       notifyError();
     }
   };
+  const getLoggedInUserId = () => {
+    return getParsedToken().user_id;
+  };
+
   return (
     <>
-      <Button
-        style={{ marginLeft: "85%", marginBottom: "2%" }}
-        variant="primary"
-        onClick={() => {
-          handleShow();
-        }}
-      >
-        <MdAddCircle size={18} /> Add comment
-      </Button>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          style={{ marginTop: "5px", marginBottom: "2%" }}
+          variant="primary"
+          onClick={() => {
+            handleShow();
+          }}
+        >
+          <MdAddCircle size={18} /> Add comment
+        </Button>
+      </div>
+
       <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>Add new comment</Modal.Title>
