@@ -11,6 +11,7 @@ import {
   deletePullRequest,
   getAllPullRequestAssignees,
   getPullRequestById,
+  updatePullRequestAssigness,
   updatePullRequestName,
 } from "../../../services/progresstrackapp/pullRequestService";
 import { ToastContainer, toast } from "react-toastify";
@@ -74,6 +75,13 @@ const PullRequestDetails = ({ pullRequestId }) => {
     return pullRequestAssignees?.find(
       (assignee) => assignee.username == user.title
     );
+  };
+  const getAllAssignesIds = () => {
+    let currentAssignesIds = [];
+    pullRequestAssignees.forEach((assigne) => {
+      currentAssignesIds.push(assigne.id);
+    });
+    return currentAssignesIds;
   };
 
   const updateNewPullRequestName = async () => {
@@ -143,11 +151,11 @@ const PullRequestDetails = ({ pullRequestId }) => {
                   (user) => !isUserAlreadyAssignee(user)
                 )}
                 onSelectItem={async (selectedValue) => {
-                  // let currentAssignesIds = getAllAssignesIds();
-                  // // await updateIssueAssigness(pullRequestId, [
-                  // //   ...currentAssignesIds,
-                  // //   selectedValue.pk,
-                  // // ]);
+                  let currentAssignesIds = getAllAssignesIds();
+                  await updatePullRequestAssigness(pullRequestId, [
+                    ...currentAssignesIds,
+                    selectedValue.pk,
+                  ]);
                   setPullRequestAssignees(
                     await getAllPullRequestAssignees(pullRequestId)
                   );
