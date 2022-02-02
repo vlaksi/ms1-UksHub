@@ -69,10 +69,7 @@ class BranchSerializer(serializers.ModelSerializer):
 class CommitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commit
-        fields = [ "pk", "autor", "hash", "message" , "creation_date", "comments"]
-        extra_kwargs = {
-             "comments": {"required": False},
-        }
+        fields = [ "pk", "autor", "hash", "message" , "creation_date"]
 
 class GitServerCommitSerializer(serializers.ModelSerializer):
     class Meta:

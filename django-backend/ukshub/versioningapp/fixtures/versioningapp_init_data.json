@@ -12,5 +12,19 @@
     "fields": {
       "name": "developer"
     }
+  },
+  {
+    "model": "useractivityapp.ReactionType",
+    "pk": 1,
+    "fields": {
+      "name": "like"
+    }
+  },
+  {
+    "model": "useractivityapp.ReactionType",
+    "pk": 2,
+    "fields": {
+      "name": "heart"
+    }
   }
 ]

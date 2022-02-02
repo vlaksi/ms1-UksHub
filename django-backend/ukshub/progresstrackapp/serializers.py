@@ -10,10 +10,9 @@ class LabelSerializer(serializers.ModelSerializer):
 class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
-        fields = [ "pk", "repository", "author", "assigness","comments", "title","creation_date", "is_opened", "labels" ]
+        fields = [ "pk", "repository", "author", "assigness", "title","creation_date", "is_opened", "labels" ]
         extra_kwargs = {
              "labels": {"required": False},
-             "comments": {"required": False},
         }
 
 class MilestoneSerializer(serializers.ModelSerializer):
@@ -28,12 +27,11 @@ class MilestoneSerializer(serializers.ModelSerializer):
 class PullRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PullRequest
-        fields = [ "pk", "repository", "reviewes", "assigness","base_branch","compare_branch","is_able_to_merge","is_merged","is_approved","creation_date", "title","issues","milestones","labels","comments","author" ]
+        fields = [ "pk", "repository", "reviewes", "assigness","base_branch","compare_branch","is_able_to_merge","is_merged","is_approved","creation_date", "title","issues","milestones","labels","author" ]
         extra_kwargs = {
              "reviewes": {"required": False},
              "assigness": {"required": False},
              "issues": {"required": False},
              "milestones": {"required": False},
              "labels": {"required": False},
-             "comments": {"required": False},
         }
