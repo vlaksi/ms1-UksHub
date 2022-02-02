@@ -233,7 +233,6 @@ const CommentListItem = ({
                 >
                   {isCommentHeartByMe ? (
                     <RiHeart3Fill
-                      color="black"
                       size={20}
                       onClick={async () => {
                         let loggedInUser = getLoggedInUserId();

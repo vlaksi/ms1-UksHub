@@ -52,6 +52,7 @@ USER3_EMAIL = 'ica3@gmail.com'
 REPO1_NAME = 'RepoUKS'
 ACTION_TYPE_NAME = 'fork'
 REACTION_TYPE_NAME = 'Reaction'
+REACTION_TYPE_NAME_2 = 'Reaction 2'
 
 COMMENT_MESSAGE_1 = 'Komentar1'
 COMMENT_MESSAGE_2 = 'Komentar2'
@@ -104,8 +105,10 @@ def initialize_db_with_test_data():
 
     # Create ReactionType
     reactionType1 = ReactionType.objects.create(name=REACTION_TYPE_NAME)
+    reactionType2 = ReactionType.objects.create(name=REACTION_TYPE_NAME_2)
 
     reactionType1.save()
+    reactionType2.save()
 
     # Create actions
     action1 = Action.objects.create(author=user1, repository=repository1, action_type=actionType1.name, new_forked_repository=repository1)
@@ -122,7 +125,7 @@ def initialize_db_with_test_data():
 
     #Create reaction
     reaction1 = Reaction.objects.create(author=user1,comment=comment1,type=reactionType1.name)
-    reaction2 = Reaction.objects.create(author=user1,comment=comment1,type=reactionType1.name)
+    reaction2 = Reaction.objects.create(author=user1,comment=comment1,type=reactionType2.name)
 
     reaction1.save()
     reaction2.save()

@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from .test_models import initialize_db_with_test_data,USER1_USERNAME,USER2_USERNAME,USER1_PASSWORD,USER2_PASSWORD,USER2_EMAIL,USER2_FIRST_NAME,USER2_LAST_NAME,REPO1_NAME,COMMENT_MESSAGE_1
+from .test_models import initialize_db_with_test_data,USER1_USERNAME,USER2_USERNAME,USER1_PASSWORD,USER2_PASSWORD,USER2_EMAIL,USER2_FIRST_NAME,USER2_LAST_NAME,REPO1_NAME,COMMENT_MESSAGE_1,REACTION_TYPE_NAME
 
 from rest_framework.test import APIClient
 
@@ -580,7 +580,58 @@ class TestReactionListView(TestCase):
 
         self.assertEquals(response.status_code, 400)
     
+class TestReactionDetailView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        initialize_db_with_test_data()
 
+    def setUp(self) -> None:
+        self.c = Client()
+        self.token = f'JWT {get_jwt_token(True)}'
+        self.unauthorisedТoken = f'JWT {get_jwt_token(False)}'
 
-   
-       
+    def test_get_HTTP404_reaction_by_id(self):
+        response = self.c.get(
+            '/useractivity/reactions/99999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        self.assertEqual(response.status_code, 404)
+    
+    def test_get_reaction_by_id_successfully(self):
+        reaction = Reaction.objects.get(type=REACTION_TYPE_NAME)
+        response = self.c.get(
+            '/useractivity/reactions/'+str(reaction.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_obj['type'], REACTION_TYPE_NAME)
+
+    def test_delete_reaction(self):
+        reaction = Reaction.objects.get(type=REACTION_TYPE_NAME)
+
+        response = self.c.delete(
+            '/useractivity/reactions/'+str(reaction.pk),
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 204)
+    
+    def test_delete_HTTP404_reaction(self):
+        reaction = Reaction.objects.get(type=REACTION_TYPE_NAME)
+
+        response = self.c.delete(
+            '/useractivity/reactions/999',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+
+        self.assertEquals(response.status_code, 404)
+
+    
+
+    
