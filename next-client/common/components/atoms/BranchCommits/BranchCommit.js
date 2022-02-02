@@ -4,10 +4,30 @@ import { useState } from 'react';
 const BranchCommit = ({ commits }) => {
   const [show, setShow] = useState(false);
   const [commit, setCommit] = useState('');
+  const [files, setFiles] = useState([]);
+  const [total, setTotal] = useState([]);
 
   const handleShow = (commit) => {
     setShow(true);
     setCommit(commit);
+    var commitFiles = commit.files;
+    var files = commitFiles.substring(1, commitFiles.length - 1);
+    var allFiles = [];
+    files.split(', ').map(function (file, index) {
+      allFiles.push(file.substring(1, file.length - 1));
+    });
+    setFiles(allFiles);
+    var commitTotal = commit.total;
+    var total = commitTotal.substring(1, commitTotal.length - 1);
+    var totals = [];
+    total.split(', ').map(function (t, index) {
+      var tot = '';
+      t.split(': ').map(function (item, index) {
+        tot += index == 0 ? item.substring(1, item.length - 1) : ': ' + item;
+      });
+      totals.push(tot);
+    });
+    setTotal(totals);
   };
 
   const handleClose = () => {
@@ -22,10 +42,20 @@ const BranchCommit = ({ commits }) => {
         </Modal.Header>
         <Modal.Body>
           <p>
-            Files affected by this commit: <br /> {commit.files}
+            Files affected by this commit: <br />
+            <ul>
+              {files?.map((file, index) => {
+                return <li>{file}</li>;
+              })}
+            </ul>
           </p>
           <p>
-            Total: <br /> {commit.total}
+            Total: <br />
+            <ul>
+              {total?.map((item, index) => {
+                return <li>{item}</li>;
+              })}
+            </ul>
           </p>
         </Modal.Body>
         <Modal.Footer>
