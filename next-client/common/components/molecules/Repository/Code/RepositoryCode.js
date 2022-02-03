@@ -250,7 +250,7 @@ const RepositoryCode = ({
             <ListGroup>
               {activeFolders?.map((folder) => {
                 return (
-                  <ListGroup.Item key={folder.name} onClick={() => {}}>
+                  <ListGroup.Item key={folder.name} onClick={() => { }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <BsFillFolderFill style={{ marginRight: '8px' }} />
                       {folder.name}

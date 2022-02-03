@@ -88,7 +88,6 @@ def all_users_by_repo_and_action(request, repo_id, action_name):
     users = []
     actions = Action.objects.filter(repository_id = repo_id, action_type = action_name)
     for action in actions:
-        print(action.author)
         users.append(action.author)
     serializers = UserSerializer(users, many=True)
     return Response(serializers.data)

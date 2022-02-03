@@ -8,6 +8,8 @@ services:
       context: ./git-server
       dockerfile: Dockerfile
     restart: always
+    environment:
+      - GIT_PYTHON_GIT_EXECUTABLE=/usr/bin/git python myscript.py
     ports:
       - '2222:22'
     volumes:
@@ -40,7 +42,7 @@ services:
     build:
       context: ./django-backend/ukshub
       dockerfile: Dockerfile
-    # command: ['./waitforpostgres.sh']
+    command: ['./waitforpostgres.sh']
     ports:
       - 8000:8000
     environment:
@@ -49,6 +51,7 @@ services:
       - POSTGRES_DBNAME=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_DBHOST=db
+      - GIT_PYTHON_REFRESH=quiet
     volumes:
       - ./django-backend/ukshub/static:/code/static
     depends_on:

@@ -9,14 +9,14 @@ const Search = () => {
     const { search, repository, user } = router.query;
     const [searchedIssues, setSearchedIssues] = useState([]);
     const [searchedRepositories, setSearchedRepositories] = useState([]);
-    console.log(searchedRepositories)
+
     useEffect(async () => {
         let issues = await searchAllIssuesOfAuthor(user, search);
         let repositories = await searchAllRepositoriesByAuthor(user, search);
         setSearchedIssues(issues)
         setSearchedRepositories(repositories)
     }, [search]);
-    console.log('searchedIssues', searchedIssues)
+
     return (
         <>
             <SearchPage isSearchInThisUser={true} isSearchInThisRepo={false} searchedIssues={searchedIssues} searchedRepositories={searchedRepositories} />

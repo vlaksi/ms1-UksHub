@@ -13,8 +13,8 @@ from rest_framework import generics, permissions,filters
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import CollaborationType, Branch, Commit, Repository, Collaboration
-from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, GitServerBranchSerializer, GitServerCommitSerializer, RepositorySerializer, CollaborationSerializer
+from .models import CollaborationType, Branch, Commit, Repository, Collaboration, Visit
+from .serializers import CollaborationTypeSerializer, CollaboratorSerializer, BranchSerializer, CommitSerializer, GitServerBranchSerializer, GitServerCommitSerializer, RepositorySerializer, CollaborationSerializer, VisitsSerializer
 from .dtos import CollaboratorDto, GitServerBranchDto, GitServerCommitDto
 
 from git import Repo
@@ -51,7 +51,7 @@ def get_data_from_tree_trees(tree, data):
 
 class RepositoryList(generics.ListCreateAPIView):
     search_fields = ['name']
-    filter_backends = (filters.SearchFilter)
+    filter_backends = (filters.SearchFilter,)
     queryset = Repository.objects.all()
     # permission_classes = [permissions.IsAuthenticated]
     serializer_class = RepositorySerializer
@@ -91,11 +91,29 @@ class CommitDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CommitSerializer
 
+class VisitList(generics.ListCreateAPIView):
+    queryset = Commit.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = VisitsSerializer
+
+class VisitDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Commit.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = VisitsSerializer
+
+
 @api_view(['GET'])
 def all_repositories_by_user(request, user_id):
     repositories= Repository.objects.filter(author_id=user_id)
     if(len(repositories) == 0): raise Http404('No repositories matches the given query.')
     serializers=RepositorySerializer(repositories,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def all_visitors_by_repository(request, repository_id):
+    visitors= Visit.objects.filter(repository=repository_id)
+    if(len(visitors) == 0): raise Http404('No repositories matches the given query.')
+    serializers=VisitsSerializer(visitors,many=True)
     return Response(serializers.data)
 
 @api_view(['GET'])

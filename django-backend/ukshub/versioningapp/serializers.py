@@ -1,7 +1,7 @@
 from django.db.models import fields
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Branch, Commit, Repository, Collaboration, CollaborationType
+from .models import Branch, Commit, Repository, Collaboration, CollaborationType, Visit
 from .dtos import CollaboratorDto, GitServerBranchDto, GitServerCommitDto
 
 import pygit2
@@ -24,14 +24,14 @@ class CollaboratorSerializer(serializers.ModelSerializer):
 class RepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Repository
-        fields = [ "pk", "author", "actions" , "name", "description", "default_branch", "forked_from_author"]
+        fields = [ "pk", "author", "actions", "visits" , "name", "description", "default_branch", "forked_from_author"]
         extra_kwargs = {
              "members": {"required": False},
              "actions": {"required": False},
+             "visits": {"required": False},
         }
 
     def create(self, validated_data):
-        print("\n\n\nsss")
         # Create repository
         author = validated_data.get('author')
         name = validated_data.get('name')
@@ -57,6 +57,11 @@ class CollaborationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collaboration
         fields = [ "pk", "collaborator", "repository", "collaboration_type"]
+
+class VisitsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Visit
+        fields = [ "pk", "unique_fingerprint", "repository", "visit_date"]
 
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:
