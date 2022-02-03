@@ -30,6 +30,7 @@ const RepositoryCode = ({
 	isLoggedInUserCollaborator,
 }) => {
 	const [show, setShow] = useState(false);
+	const [showContent, setShowContent] = useState(false);
 	const [branches, setBranches] = useState(repositoryBranches);
 	const [newBranchName, setNewBranchName] = useState('');
 	const [deleteBranchId, setDeleteBranch] = useState('');
@@ -39,6 +40,8 @@ const RepositoryCode = ({
 	const [activeFilesPath, setActiveFilesPath] = useState([]);
 	const [commit, setCommit] = useState([]);
 	const [commits, setCommits] = useState([]);
+	const [contentTitle, setContentTitle] = useState();
+	const [contentBody, setContentBody] = useState();
 
 	const setCurrentBrach = async (branch) => {
 		setActiveBranch(branch);
@@ -46,7 +49,6 @@ const RepositoryCode = ({
 		setCommit(commit);
 		var commits = await getBranchCommits(repository.pk, branch.name);
 		setCommits(commits);
-		console.log(commits);
 	};
 
 	const notify = () => toast.success('Successfully created new branch!');
@@ -61,6 +63,10 @@ const RepositoryCode = ({
 	const handleClose = () => {
 		setShow(false);
 		setNewBranchName('');
+	};
+
+	const handleContentClose = () => {
+		setShowContent(false);
 	};
 
 	const handleBranchNameChange = (newBranchName) => {
@@ -98,12 +104,12 @@ const RepositoryCode = ({
 			repository.pk,
 			activeBranch?.name
 		);
-		console.log('branchContent: ', branchContent);
 		setActiveFiles(branchContent);
 	}, []);
 
 	return (
 		<>
+			{/* Manage branches Modal */}
 			<Modal show={show} onHide={handleClose} backdrop="static">
 				<Modal.Header closeButton>
 					<Modal.Title>Manage branches</Modal.Title>
@@ -255,7 +261,9 @@ const RepositoryCode = ({
 									action
 									key={file.name}
 									onClick={() => {
-										alert(file.name);
+										setShowContent(true);
+										setContentTitle(file.name);
+										setContentBody(file.value);
 									}}
 								>
 									<div style={{ display: 'flex', alignItems: 'center' }}>
@@ -274,6 +282,21 @@ const RepositoryCode = ({
 					</div>
 				</Card.Footer>
 			</Card>
+
+			{/* Show content of the file Modal */}
+			<Modal show={showContent} onHide={handleContentClose} backdrop="static">
+				<Modal.Header closeButton>
+					<Modal.Title> {contentTitle} </Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<div>{contentBody}</div>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="danger" onClick={handleContentClose}>
+						Cancel
+					</Button>
+				</Modal.Footer>
+			</Modal>
 		</>
 	);
 };
