@@ -23,7 +23,7 @@ const Search = () => {
 
     return (
         <>
-            <SearchPage isSearchInThisRepo={false} isSearchInThisRepo={true} earchedIssues={searchedIssues} searchedUsers={searchedUsers} commitsToMainBranch={commitsToMainBranch} />
+            <SearchPage isSearchInThisRepo={false} isSearchInThisRepo={true} searchedIssues={searchedIssues} searchedUsers={searchedUsers} commitsToMainBranch={commitsToMainBranch} />
         </>
     );
 };
