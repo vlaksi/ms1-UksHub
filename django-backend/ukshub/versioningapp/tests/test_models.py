@@ -118,7 +118,7 @@ class TestRepositoryModel(TestCase):
 
     def test_repository_default_branch_name(self):
         repository = get_repository()
-        self.assertEqual(repository.default_branch, None)
+        self.assertEqual(repository.default_branch, 'master')
     
     def test_repository_forked_from_author(self):
         repository = get_repository()

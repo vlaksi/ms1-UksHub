@@ -10,7 +10,7 @@ import {
 import { BsFillFolderFill } from 'react-icons/bs';
 import { MdAddCircle } from 'react-icons/md';
 import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import styles from './RepositoryCode.module.scss';
 
 import {
@@ -23,8 +23,11 @@ import {
   getBranchContent,
   getRepositoryBranches,
 } from '../../../../services/versioning/branchService';
+import BranchCommit from '../../../atoms/BranchCommits/BranchCommit';
 
 const RepositoryCode = ({
+  showCommits,
+  setShowCommits,
   repository,
   repositoryBranches,
   isLoggedInUserCollaborator,
@@ -34,7 +37,7 @@ const RepositoryCode = ({
   const [branches, setBranches] = useState(repositoryBranches);
   const [newBranchName, setNewBranchName] = useState('');
   const [deleteBranchId, setDeleteBranch] = useState('');
-  const [activeBranch, setActiveBranch] = useState(repositoryBranches[0]);
+  const [activeBranch, setActiveBranch] = useState();
   const [activeFolders, setActiveFolders] = useState([]);
   const [activeFiles, setActiveFiles] = useState([]);
   const [activeFilesPath, setActiveFilesPath] = useState([]);
@@ -48,7 +51,7 @@ const RepositoryCode = ({
     var commit = await getBranchLastCommit(repository.pk, branch.name);
     setCommit(commit);
     var commits = await getBranchCommits(repository.pk, branch.name);
-    setCommits(commits);
+    if (Object.keys(commits).length > 0) setCommits(commits);
   };
 
   const notify = () => toast.success('Successfully created new branch!');
@@ -97,14 +100,13 @@ const RepositoryCode = ({
   };
 
   useEffect(async () => {
-    // repositoryBranches = await getRepositoryBranches(repository.pk);
-    // console.log(repositoryBranches);
     setCurrentBrach(repositoryBranches[0]);
     let branchContent = await getBranchContent(
       repository.pk,
       activeBranch?.name
     );
     setActiveFiles(branchContent);
+    console.log('branchContent: ', branchContent);
   }, []);
 
   return (
@@ -247,41 +249,53 @@ const RepositoryCode = ({
           </div>
         </Card.Header>
         <Card.Body>
-          <ListGroup>
-            {activeFolders?.map((folder) => {
-              return (
-                <ListGroup.Item key={folder.name} onClick={() => {}}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <BsFillFolderFill style={{ marginRight: '8px' }} />
-                    {folder.name}
-                  </div>
-                </ListGroup.Item>
-              );
-            })}
-            {activeFiles?.map((file) => {
-              return (
-                <ListGroup.Item
-                  action
-                  key={file.name}
-                  onClick={() => {
-                    setShowContent(true);
-                    setContentTitle(file.name);
-                    setContentBody(file.value);
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <AiOutlineFile style={{ marginRight: '8px' }} /> {file.name}
-                  </div>
-                </ListGroup.Item>
-              );
-            })}
-          </ListGroup>
+          {showCommits == true ? (
+            <BranchCommit commits={commits}></BranchCommit>
+          ) : (
+            <ListGroup>
+              {activeFolders?.map((folder) => {
+                return (
+                  <ListGroup.Item key={folder.name} onClick={() => {}}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <BsFillFolderFill style={{ marginRight: '8px' }} />
+                      {folder.name}
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
+              {activeFiles?.map((file) => {
+                return (
+                  <ListGroup.Item
+                    action
+                    key={file.name}
+                    onClick={() => {
+                      setShowContent(true);
+                      setContentTitle(file.name);
+                      setContentBody(file.value);
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <AiOutlineFile style={{ marginRight: '8px' }} />{' '}
+                      {file.name}
+                    </div>
+                  </ListGroup.Item>
+                );
+              })}
+            </ListGroup>
+          )}
         </Card.Body>
         <Card.Footer className="text-muted">
           <div className={styles.repositoryFooter}>
             {commit != null && commit[0] != null && commit[0].committed_date}
             &nbsp; &nbsp; &nbsp; &nbsp;
-            <span> {commits != null && commits.length} commits</span>
+            <span
+              onClick={() => {
+                setShowCommits(true);
+              }}
+            >
+              {' '}
+              {commits != null && commits.length} commits
+            </span>
           </div>
         </Card.Footer>
       </Card>
