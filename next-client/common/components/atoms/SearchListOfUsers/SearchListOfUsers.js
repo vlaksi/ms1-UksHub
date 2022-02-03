@@ -1,26 +1,33 @@
 
-const SearchListOfCommits = ({ commit }) => {
+
+const SearchListOfUsers = ({ listUsers }) => {
   return (
     <table className="table">
       <thead>
         <tr>
-          <th scope="col">Hash</th>
-          <th scope="col">Comitted date</th>
-          <th scope="col">Author</th>
-          <th scope="col">Message</th>
+          <th scope="col">#</th>
+          <th scope="col">Username</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Email</th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
-        <tr >
-          <td>{commit?.hash}</td>
-          <td>{commit?.committed_date}</td>
-          <td>{commit?.author}</td>
-          <td>{commit?.message}</td>
-        </tr>
+        {listUsers?.map((user, index) => {
+          return (
+            <tr key={user.pk}>
+              <td>{index + 1}</td>
+              <td>{user.username}</td>
+              <td>{user.first_name}</td>
+              <td>{user.last_name}</td>
+              <td>{user.email}</td>
+            </tr>
+          );
+        })}
       </tbody>
-    </table >
+    </table>
   );
 };
 
-export default SearchListOfCommits;
+export default SearchListOfUsers;
