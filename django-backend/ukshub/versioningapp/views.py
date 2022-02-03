@@ -19,7 +19,7 @@ from .dtos import CollaboratorDto, GitServerBranchDto, GitServerCommitDto
 
 from git import Repo
 
-def get_data_from_tree_blobs(tree, data_obj):
+def get_data_from_tree_blobs(tree, data_array):
     charset='ascii'
     for blob in tree.blobs:
         print("\n")
@@ -27,9 +27,13 @@ def get_data_from_tree_blobs(tree, data_obj):
         path = blob.path
         print(path)
         print(data.decode(charset))
-        data_obj[path] = data
+        new_obj = {
+            "name": path,
+            "value": data
+        }
+        data_array.append(new_obj)
 
-    return data_obj
+    return data_array
 
 def get_data_from_tree_trees(tree, data):
     trees = tree.trees # returns a list of trees
@@ -130,7 +134,7 @@ def repository_branches(request, pk):
 @api_view(['GET'])
 def branch_content(request, repo_id, name):
     repository = Repository.objects.get(id = repo_id)
-    data = {}
+    data = []
     try:
         print("\n\n\n\nusli u branch_content")
         repo = Repo(os.getenv('GIT_SERVER_PATH')+str(repository.author.id)+"/"+repository.name+'.git')
