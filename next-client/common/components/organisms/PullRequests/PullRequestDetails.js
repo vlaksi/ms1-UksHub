@@ -6,8 +6,8 @@ import {
   InputGroup,
   FormControl,
   ListGroup,
-} from "react-bootstrap";
-import { useState, useEffect } from "react";
+} from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 import {
   deletePullRequest,
   getAllPullRequestAssignees,
@@ -20,23 +20,23 @@ import {
   updatePullRequestLabels,
   updatePullRequestMerge,
   updatePullRequestName,
-} from "../../../services/progresstrackapp/pullRequestService";
-import { ToastContainer, toast } from "react-toastify";
-import { useRouter } from "next/router";
-import CommentPR from "../../molecules/Comments/CommentPR";
-import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
-import { getUserDataForPullRequestAssigneesSearch } from "../../../services/useractivity/userService";
-import UserSearch from "../../atoms/UserSearch/UserSearch";
-import { AiFillDelete } from "react-icons/ai";
-import { GiConfirmed } from "react-icons/gi";
-import { BiGitMerge } from "react-icons/bi";
-import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
-import { getIssueDataForPullRequestIssueSearch } from "../../../services/progresstrackapp/issuesService";
+} from '../../../services/progresstrackapp/pullRequestService';
+import { ToastContainer, toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+import CommentPR from '../../molecules/Comments/CommentPR';
+import RepositoryNav from '../../atoms/RepositoryNav/RepositoryNav';
+import { getUserDataForPullRequestAssigneesSearch } from '../../../services/useractivity/userService';
+import UserSearch from '../../atoms/UserSearch/UserSearch';
+import { AiFillDelete } from 'react-icons/ai';
+import { GiConfirmed } from 'react-icons/gi';
+import { BiGitMerge } from 'react-icons/bi';
+import { getLabelDataForIssueLabellingSearch } from '../../../services/progresstrackapp/labelsService';
+import { getIssueDataForPullRequestIssueSearch } from '../../../services/progresstrackapp/issuesService';
 
 const PullRequestDetails = ({ pullRequestId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [pullRequest, setPullRequest] = useState("");
-  const [newPullRequestName, setNewPullRequestName] = useState("");
+  const [pullRequest, setPullRequest] = useState('');
+  const [newPullRequestName, setNewPullRequestName] = useState('');
   const handleDeleteModalClose = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
@@ -58,24 +58,24 @@ const PullRequestDetails = ({ pullRequestId }) => {
   const [issueDataForSearch, setIssueDataForSearch] = useState([]);
 
   const [pullRequestAssignees, setPullRequestAssignees] = useState([]);
-  const [removeCandidate, setRemoveCandidate] = useState("");
+  const [removeCandidate, setRemoveCandidate] = useState('');
   const [pullRequestAddedLabels, setPullRequestAddedLabels] = useState([]);
-  const [removeLabel, setRemoveLabel] = useState("");
+  const [removeLabel, setRemoveLabel] = useState('');
   const [pullRequestAddedIssues, setPullRequestAddedIssues] = useState([]);
-  const [removeIssue, setRemoveIssue] = useState("");
+  const [removeIssue, setRemoveIssue] = useState('');
 
   const router = useRouter();
   const { user, repository } = router.query;
 
   const notifyDeleted = () =>
-    toast.success("Successfully deleted pull request!");
+    toast.success('Successfully deleted pull request!');
 
   const notifyName = () => {
-    toast.success("Successfully changed title!");
+    toast.success('Successfully changed title!');
   };
 
   const notifyError = () => {
-    toast.error("Check if you entered all fields!");
+    toast.error('Check if you entered all fields!');
   };
   const handlePullRequestNameChanging = (newName) => {
     setNewPullRequestName(newName);
@@ -177,40 +177,50 @@ const PullRequestDetails = ({ pullRequestId }) => {
       <RepositoryNav />
       <ToastContainer position="top-right" autoClose={3000}></ToastContainer>
       <h4>
-        <div style={{ display: "flex" }}>
-          <Badge pill bg="primary" text="light" style={{ marginRight: "10px" }}>
-            #{pullRequest.pk}
-          </Badge>{" "}
-          {pullRequest.title}
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            <Badge
+              pill
+              bg="primary"
+              text="light"
+              style={{ marginRight: '10px' }}
+            >
+              #{pullRequest.pk}
+            </Badge>{' '}
+            {pullRequest.title}
+          </div>
+          <div>
+            <InputGroup
+              className="mb-3"
+              style={{ width: '227px', marginTop: '2%' }}
+            >
+              <FormControl
+                size="sm"
+                defaultValue={pullRequest.title}
+                aria-label="Pull request title"
+                aria-describedby="basic-addon2"
+                onChange={(e) => {
+                  handlePullRequestNameChanging(e.target.value);
+                }}
+              />
+              <Button
+                size="sm"
+                variant="success"
+                id="button-addon2"
+                onClick={async () => {
+                  await updateNewPullRequestName();
+                  setPullRequest(await getPullRequestById(pullRequestId));
+                }}
+              >
+                Change
+              </Button>
+            </InputGroup>
+          </div>
         </div>
       </h4>
-      <div>
-        <InputGroup className="mb-3" style={{ width: "40%", marginTop: "2%" }}>
-          <FormControl
-            size="sm"
-            defaultValue={pullRequest.title}
-            aria-label="Pull request title"
-            aria-describedby="basic-addon2"
-            onChange={(e) => {
-              handlePullRequestNameChanging(e.target.value);
-            }}
-          />
-          <Button
-            size="sm"
-            variant="success"
-            id="button-addon2"
-            onClick={async () => {
-              await updateNewPullRequestName();
-              setPullRequest(await getPullRequestById(pullRequestId));
-            }}
-          >
-            Change
-          </Button>
-        </InputGroup>
-      </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ width: "65%" }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ width: '65%' }}>
           <CommentPR
             pullRequestId={pullRequest.pk}
             authorId={pullRequest.author}
@@ -244,20 +254,20 @@ const PullRequestDetails = ({ pullRequestId }) => {
                   <ListGroup.Item
                     key={prAssignee.id}
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}
                   >
-                    <div style={{ display: "flex" }}>
+                    <div style={{ display: 'flex' }}>
                       <p> {prAssignee.username} </p>
                     </div>
                     <div>
                       {pullRequestAssignees?.length > 0 && (
                         <AiFillDelete
                           style={{
-                            cursor: "pointer",
-                            marginBottom: "15px",
+                            cursor: 'pointer',
+                            marginBottom: '15px',
                           }}
                           onClick={() => {
                             setRemoveCandidate(prAssignee);
@@ -273,7 +283,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
           </Card>
 
           {/* Labels Card */}
-          <Card style={{ marginTop: "25px" }}>
+          <Card style={{ marginTop: '25px' }}>
             <Card.Header>Labels</Card.Header>
             <Card.Body>
               <UserSearch
@@ -300,22 +310,22 @@ const PullRequestDetails = ({ pullRequestId }) => {
                   <ListGroup.Item
                     key={prAddedLabel.pk}
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}
                   >
-                    <div style={{ display: "flex" }}>
+                    <div style={{ display: 'flex' }}>
                       <>
-                        {" "}
+                        {' '}
                         <div
                           className="fw-bold"
                           style={{
                             background: prAddedLabel.color,
-                            borderRadius: "15px",
-                            padding: "4px",
-                            color: "white",
-                            display: "flex",
+                            borderRadius: '15px',
+                            padding: '4px',
+                            color: 'white',
+                            display: 'flex',
                           }}
                         >
                           {prAddedLabel.name}
@@ -326,8 +336,8 @@ const PullRequestDetails = ({ pullRequestId }) => {
                       {pullRequestAddedLabels?.length > 0 && (
                         <AiFillDelete
                           style={{
-                            cursor: "pointer",
-                            marginBottom: "15px",
+                            cursor: 'pointer',
+                            marginBottom: '15px',
                           }}
                           onClick={() => {
                             setRemoveLabel(prAddedLabel);
@@ -342,7 +352,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
             </ListGroup>
           </Card>
           {/* Issues Card */}
-          <Card style={{ marginTop: "25px" }}>
+          <Card style={{ marginTop: '25px' }}>
             <Card.Header>Issues</Card.Header>
             <Card.Body>
               <UserSearch
@@ -368,20 +378,20 @@ const PullRequestDetails = ({ pullRequestId }) => {
                   <ListGroup.Item
                     key={prAddedIssue.pk}
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}
                   >
-                    <div style={{ display: "flex" }}>
+                    <div style={{ display: 'flex' }}>
                       <> {prAddedIssue.title}</>
                     </div>
                     <div>
                       {pullRequestAddedIssues?.length > 0 && (
                         <AiFillDelete
                           style={{
-                            cursor: "pointer",
-                            marginBottom: "5px",
+                            cursor: 'pointer',
+                            marginBottom: '5px',
                           }}
                           onClick={() => {
                             setRemoveIssue(prAddedIssue);
@@ -408,9 +418,9 @@ const PullRequestDetails = ({ pullRequestId }) => {
           </Modal.Header>
           <Modal.Body
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: " baseline",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: ' baseline',
             }}
           >
             <p>Are you sure you want to remove chosen user from assignees?</p>
@@ -446,9 +456,9 @@ const PullRequestDetails = ({ pullRequestId }) => {
           </Modal.Header>
           <Modal.Body
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: " baseline",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: ' baseline',
             }}
           >
             <p>
@@ -491,9 +501,9 @@ const PullRequestDetails = ({ pullRequestId }) => {
           </Modal.Header>
           <Modal.Body
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: " baseline",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: ' baseline',
             }}
           >
             <p>
@@ -554,12 +564,12 @@ const PullRequestDetails = ({ pullRequestId }) => {
           </p>
         )}
         {pullRequest.is_merged === true ? (
-          <Card border="success" style={{ width: "23%" }}>
+          <Card border="success" style={{ width: '23%' }}>
             <Card.Body
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
               <Card.Text>Successfully merged pull request</Card.Text>
@@ -580,13 +590,13 @@ const PullRequestDetails = ({ pullRequestId }) => {
         )}
       </div>
 
-      <Card border="danger" style={{ width: "50%", marginTop: "30%" }}>
+      <Card border="danger" style={{ width: '50%', marginTop: '30%' }}>
         <Card.Header>Danger Zone</Card.Header>
         <Card.Body
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <Card.Title>Delete this pull request</Card.Title>
@@ -603,9 +613,9 @@ const PullRequestDetails = ({ pullRequestId }) => {
         </Modal.Header>
         <Modal.Body
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: " baseline",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: ' baseline',
           }}
         >
           <p>Are you sure you want to delete this pull request ?</p>
