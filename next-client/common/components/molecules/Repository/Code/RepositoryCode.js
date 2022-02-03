@@ -100,10 +100,11 @@ const RepositoryCode = ({
   };
 
   useEffect(async () => {
-    setCurrentBrach(repositoryBranches[0]);
+    let gettedCurrentBranch = repositoryBranches[0];
+    setCurrentBrach(gettedCurrentBranch);
     let branchContent = await getBranchContent(
       repository.pk,
-      activeBranch?.name
+      gettedCurrentBranch?.name
     );
     setActiveFiles(branchContent);
     console.log('branchContent: ', branchContent);
@@ -222,16 +223,10 @@ const RepositoryCode = ({
                 })}
               </div>
             </div>
-            {isLoggedInUserCollaborator && (
-              <div>
-                <Button variant="outline-primary" onClick={showAddBranch}>
-                  {' '}
-                  <MdAddCircle size={24} /> Manage branches
-                </Button>
-              </div>
-            )}
 
             <div>
+              {/* TMP: Until we enable folder structure */}
+              {/*               
               <AiFillHome
                 onClick={() => {
                   setActiveFolders(activeBranch?.folders);
@@ -244,7 +239,7 @@ const RepositoryCode = ({
                   height: '20px',
                   width: '20px',
                 }}
-              />
+              /> */}
             </div>
           </div>
         </Card.Header>
