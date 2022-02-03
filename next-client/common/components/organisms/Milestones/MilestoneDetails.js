@@ -1,4 +1,4 @@
-import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
+import RepositoryNav from '../../atoms/RepositoryNav/RepositoryNav';
 import {
   Badge,
   Card,
@@ -6,28 +6,28 @@ import {
   Modal,
   Button,
   ProgressBar,
-} from "react-bootstrap";
-import { useState, useEffect } from "react";
+} from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 import {
   getAllMilestoneIssues,
   getMilestoneById,
   updateMilestoneClose,
   updateMilestoneIssues,
-} from "../../../services/progresstrackapp/milestonesService";
-import { GiConfirmed } from "react-icons/gi";
-import UserSearch from "../../atoms/UserSearch/UserSearch";
-import { useRouter } from "next/router";
-import { getIssueDataForMilestoneIssueSearch } from "../../../services/progresstrackapp/issuesService";
-import { AiFillDelete } from "react-icons/ai";
-import IssueListItem from "../../atoms/IssueListItem/IssueListItem";
-import { getParsedToken } from "../../../services/authentication/token";
-import { getRepositoryCollaboratos } from "../../../services/versioning/repositoryService";
+} from '../../../services/progresstrackapp/milestonesService';
+import { GiConfirmed } from 'react-icons/gi';
+import UserSearch from '../../atoms/UserSearch/UserSearch';
+import { useRouter } from 'next/router';
+import { getIssueDataForMilestoneIssueSearch } from '../../../services/progresstrackapp/issuesService';
+import { AiFillDelete } from 'react-icons/ai';
+import IssueListItem from '../../atoms/IssueListItem/IssueListItem';
+import { getParsedToken } from '../../../services/authentication/token';
+import { getRepositoryCollaboratos } from '../../../services/versioning/repositoryService';
 
 const MilestoneDetails = ({ milestoneId }) => {
-  const [milestone, setMilestone] = useState("");
+  const [milestone, setMilestone] = useState('');
   const [issueDataForSearch, setIssueDataForSearch] = useState([]);
   const [milestonesIssue, setMilestonesIssue] = useState([]);
-  const [removeIssue, setRemoveIssue] = useState("");
+  const [removeIssue, setRemoveIssue] = useState('');
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = async () => {
@@ -36,7 +36,7 @@ const MilestoneDetails = ({ milestoneId }) => {
   };
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
-  const [showPercentage, setShowPercentage] = useState("");
+  const [showPercentage, setShowPercentage] = useState('');
   const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const getPercents = async () => {
@@ -91,30 +91,33 @@ const MilestoneDetails = ({ milestoneId }) => {
     );
   };
   const isLoggedInUserCollaborator = () => {
-    let loggedInUserId = getParsedToken().user_id;
-    return repositoryCollaborators.find(
-      (collaborator) => collaborator.collaborator_id == loggedInUserId
-    );
+    if (typeof window !== 'undefined') {
+      let loggedInUserId = getParsedToken().user_id;
+      return repositoryCollaborators.find(
+        (collaborator) => collaborator.collaborator_id == loggedInUserId
+      );
+    }
+    return false;
   };
 
   return (
     <>
       <RepositoryNav></RepositoryNav>
       <h4>
-        <div style={{ display: "flex" }}>
-          <Badge pill bg="primary" text="light" style={{ marginRight: "10px" }}>
+        <div style={{ display: 'flex' }}>
+          <Badge pill bg="primary" text="light" style={{ marginRight: '10px' }}>
             #{milestone.pk}
-          </Badge>{" "}
+          </Badge>{' '}
           {milestone.title}
         </div>
       </h4>
-      <div style={{ width: "15%" }}>
+      <div style={{ width: '15%' }}>
         <ProgressBar
           now={showPercentage}
           label={`${showPercentage}%`}
         ></ProgressBar>
       </div>
-      <div style={{ marginTop: "35px", width: "75%" }}>
+      <div style={{ marginTop: '35px', width: '75%' }}>
         {milestonesIssue?.map((issueItem) => {
           return (
             <div key={issueItem.pk}>
@@ -124,7 +127,7 @@ const MilestoneDetails = ({ milestoneId }) => {
         })}
       </div>
       {isLoggedInUserCollaborator() && (
-        <Card style={{ width: "20%", marginLeft: "85%", marginTop: "2px" }}>
+        <Card style={{ width: '20%', marginLeft: '85%', marginTop: '2px' }}>
           <Card.Header>Issues</Card.Header>
           <Card.Body>
             <UserSearch
@@ -149,18 +152,18 @@ const MilestoneDetails = ({ milestoneId }) => {
                 <ListGroup.Item
                   key={milestoneIssue.pk}
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                   }}
                 >
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: 'flex' }}>
                     <p> {milestoneIssue.title} </p>
                   </div>
                   <div>
                     {milestonesIssue.length > 0 && (
                       <AiFillDelete
-                        style={{ cursor: "pointer", marginBottom: "15px" }}
+                        style={{ cursor: 'pointer', marginBottom: '15px' }}
                         onClick={() => {
                           setRemoveIssue(milestoneIssue);
                           handleShowDeleteModal();
@@ -173,16 +176,16 @@ const MilestoneDetails = ({ milestoneId }) => {
             })}
           </ListGroup>
         </Card>
-      )}{" "}
+      )}{' '}
       <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Remove confirmation</Modal.Title>
         </Modal.Header>
         <Modal.Body
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: " baseline",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: ' baseline',
           }}
         >
           <p>Are you sure you want to remove chosen issue from milestone?</p>
