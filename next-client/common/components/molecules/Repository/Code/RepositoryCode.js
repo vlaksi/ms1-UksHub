@@ -287,12 +287,19 @@ const RepositoryCode = ({
 			</Card>
 
 			{/* Show content of the file Modal */}
-			<Modal show={showContent} onHide={handleContentClose} backdrop="static">
+			<Modal
+				size="xl"
+				show={showContent}
+				onHide={handleContentClose}
+				backdrop="static"
+			>
 				<Modal.Header closeButton>
 					<Modal.Title> {contentTitle} </Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<div>{contentBody}</div>
+					<pre>
+						<code>{contentBody}</code>
+					</pre>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="danger" onClick={handleContentClose}>
