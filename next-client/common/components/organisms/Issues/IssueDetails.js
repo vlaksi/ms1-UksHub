@@ -15,9 +15,13 @@ import { AiFillDelete } from "react-icons/ai";
 import { GiConfirmed } from "react-icons/gi";
 import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
 import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
+import Comments from "../../molecules/Comments/Comments";
+import { getRepositoryCollaboratos } from "../../../services/versioning/repositoryService";
+import { getParsedToken } from "../../../services/authentication/token";
 
 const IssueDetails = ({ issueId }) => {
   const [issue, setIssue] = useState("");
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
@@ -36,7 +40,7 @@ const IssueDetails = ({ issueId }) => {
   const handleShowDeleteLabelModal = () => setShowDeleteLabelModal(true);
 
   const router = useRouter();
-  const { repository } = router.query;
+  const { user, repository } = router.query;
 
   useEffect(async () => {
     if (!repository) return;
@@ -46,7 +50,7 @@ const IssueDetails = ({ issueId }) => {
   }, [repository]);
 
   const isUserAlreadyAssignee = (user) => {
-    return issueAssignees.find((assignee) => assignee.username == user.title);
+    return issueAssignees?.find((assignee) => assignee.username == user.title);
   };
 
   useEffect(async () => {
@@ -56,10 +60,18 @@ const IssueDetails = ({ issueId }) => {
     setLabelDataForSearch(
       await getLabelDataForIssueLabellingSearch(repository)
     );
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repository));
   }, [repository]);
 
+  const isLoggedInUserCollaborator = () => {
+    let loggedInUserId = getParsedToken().user_id;
+    return repositoryCollaborators.find(
+      (collaborator) => collaborator.collaborator_id == loggedInUserId
+    );
+  };
+
   const isLabelAlreadyAdded = (label) => {
-    return issueAddedLabels.find(
+    return issueAddedLabels?.find(
       (addedLabel) => addedLabel.name == label.title
     );
   };
@@ -105,57 +117,136 @@ const IssueDetails = ({ issueId }) => {
               {issue.title}
             </div>
           </h4>
-          <div>
-            {/* Assignes Card */}
-            <Card style={{ width: "25%", marginLeft: "75%" }}>
-              <Card.Header>Assignees</Card.Header>
-              <Card.Body>
-                <UserSearch
-                  placeholder="Add an assignee..."
-                  data={userDataForSearch.filter(
-                    (user) => !isUserAlreadyAssignee(user)
-                  )}
-                  onSelectItem={async (selectedValue) => {
-                    let currentAssignesIds = getAllAssignesIds();
-                    await updateIssueAssigness(issueId, [
-                      ...currentAssignesIds,
-                      selectedValue.pk,
-                    ]);
-                    setIssueAssignees(await getAllIssueAssignees(issueId));
-                  }}
-                ></UserSearch>
-              </Card.Body>
-              <ListGroup variant="flush">
-                {issueAssignees?.map((issueAssignee) => {
-                  return (
-                    <ListGroup.Item
-                      key={issueAssignee.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ width: "65%" }}>
+              <Comments issueId={issueId} authorId={user}></Comments>
+            </div>
+            <div>
+              {/* Assignes Card */}
+              <Card>
+                <Card.Header>Assignees</Card.Header>
+                {isLoggedInUserCollaborator() && (
+                  <Card.Body>
+                    <UserSearch
+                      placeholder="Add an assignee..."
+                      data={userDataForSearch.filter(
+                        (user) => !isUserAlreadyAssignee(user)
+                      )}
+                      onSelectItem={async (selectedValue) => {
+                        let currentAssignesIds = getAllAssignesIds();
+                        await updateIssueAssigness(issueId, [
+                          ...currentAssignesIds,
+                          selectedValue.pk,
+                        ]);
+                        setIssueAssignees(await getAllIssueAssignees(issueId));
                       }}
-                    >
-                      <div style={{ display: "flex" }}>
-                        <p> {issueAssignee.username} </p>
-                      </div>
-                      <div>
-                        {issueAssignees.length > 0 && (
-                          <AiFillDelete
-                            style={{ cursor: "pointer", marginBottom: "15px" }}
-                            onClick={() => {
-                              setRemoveCandidate(issueAssignee);
-                              handleShowDeleteModal();
-                            }}
-                          />
-                        )}
-                      </div>
-                    </ListGroup.Item>
-                  );
-                })}
-              </ListGroup>
-            </Card>
+                    ></UserSearch>
+                  </Card.Body>
+                )}
+                <ListGroup variant="flush">
+                  {issueAssignees?.map((issueAssignee) => {
+                    return (
+                      <ListGroup.Item
+                        key={issueAssignee.id}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div style={{ display: "flex" }}>
+                          <p> {issueAssignee.username} </p>
+                        </div>
+                        <div>
+                          {issueAssignees?.length > 0 &&
+                            isLoggedInUserCollaborator() && (
+                              <AiFillDelete
+                                style={{
+                                  cursor: "pointer",
+                                  marginBottom: "15px",
+                                }}
+                                onClick={() => {
+                                  setRemoveCandidate(issueAssignee);
+                                  handleShowDeleteModal();
+                                }}
+                              />
+                            )}
+                        </div>
+                      </ListGroup.Item>
+                    );
+                  })}
+                </ListGroup>
+              </Card>
 
+              {/* Labels Card */}
+              <Card style={{ marginTop: "25px" }}>
+                <Card.Header>Labels</Card.Header>
+                <Card.Body>
+                  <UserSearch
+                    placeholder="Add a label..."
+                    data={labelDataForSearch?.filter(
+                      (label) => !isLabelAlreadyAdded(label)
+                    )}
+                    onSelectItem={async (selectedValue) => {
+                      let currentIssueLabelsIds = getAllIssueLabelsIds();
+                      await updateIssueLabels(issueId, [
+                        ...currentIssueLabelsIds,
+                        selectedValue.pk,
+                      ]);
+                      setIssueAddedLabels(await getAllIssueLabels(issueId));
+                    }}
+                  ></UserSearch>
+                </Card.Body>
+                <ListGroup variant="flush">
+                  {issueAddedLabels?.map((issueAddedLabel) => {
+                    return (
+                      <ListGroup.Item
+                        key={issueAddedLabel.pk}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div style={{ display: "flex" }}>
+                          <>
+                            {" "}
+                            <div
+                              className="fw-bold"
+                              style={{
+                                background: issueAddedLabel.color,
+                                borderRadius: "15px",
+                                padding: "4px",
+                                color: "white",
+                                display: "flex",
+                              }}
+                            >
+                              {issueAddedLabel.name}
+                            </div>
+                          </>
+                        </div>
+                        <div>
+                          {issueAddedLabels?.length > 0 && (
+                            <AiFillDelete
+                              style={{
+                                cursor: "pointer",
+                                marginBottom: "15px",
+                              }}
+                              onClick={() => {
+                                setRemoveLabel(issueAddedLabel);
+                                handleShowDeleteLabelModal();
+                              }}
+                            />
+                          )}
+                        </div>
+                      </ListGroup.Item>
+                    );
+                  })}
+                </ListGroup>
+              </Card>
+            </div>
+          </div>
+          <div>
             {/* Delete assignes modal from the issue */}
             <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
               <Modal.Header closeButton>
@@ -195,72 +286,6 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Footer>
             </Modal>
 
-            {/* Labels Card */}
-            <Card
-              style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
-            >
-              <Card.Header>Labels</Card.Header>
-              <Card.Body>
-                <UserSearch
-                  placeholder="Add a label..."
-                  data={labelDataForSearch.filter(
-                    (label) => !isLabelAlreadyAdded(label)
-                  )}
-                  onSelectItem={async (selectedValue) => {
-                    let currentIssueLabelsIds = getAllIssueLabelsIds();
-                    await updateIssueLabels(issueId, [
-                      ...currentIssueLabelsIds,
-                      selectedValue.pk,
-                    ]);
-                    setIssueAddedLabels(await getAllIssueLabels(issueId));
-                  }}
-                ></UserSearch>
-              </Card.Body>
-              <ListGroup variant="flush">
-                {issueAddedLabels?.map((issueAddedLabel) => {
-                  return (
-                    <ListGroup.Item
-                      key={issueAddedLabel.pk}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div style={{ display: "flex" }}>
-                        <>
-                          {" "}
-                          <div
-                            className="fw-bold"
-                            style={{
-                              background: issueAddedLabel.color,
-                              borderRadius: "15px",
-                              padding: "4px",
-                              color: "white",
-                              display: "flex",
-                            }}
-                          >
-                            {issueAddedLabel.name}
-                          </div>
-                        </>
-                      </div>
-                      <div>
-                        {issueAddedLabels.length > 0 && (
-                          <AiFillDelete
-                            style={{ cursor: "pointer", marginBottom: "15px" }}
-                            onClick={() => {
-                              setRemoveLabel(issueAddedLabel);
-                              handleShowDeleteLabelModal();
-                            }}
-                          />
-                        )}
-                      </div>
-                    </ListGroup.Item>
-                  );
-                })}
-              </ListGroup>
-            </Card>
-
             {/* Delete label modal from the issue */}
             <Modal
               show={showDeleteLabelModal}
@@ -284,7 +309,7 @@ const IssueDetails = ({ issueId }) => {
                   variant="success"
                   onClick={async () => {
                     let currentIssueLabelsIds = getAllIssueLabelsIds();
-                    let newIssueLabelsIds = currentIssueLabelsIds.filter(
+                    let newIssueLabelsIds = currentIssueLabelsIds?.filter(
                       (labelId) => labelId != removeLabel.pk
                     );
 
@@ -301,40 +326,33 @@ const IssueDetails = ({ issueId }) => {
                 </Button>
               </Modal.Footer>
             </Modal>
-            <Card
-              border="light"
-              style={{ width: "25%", marginLeft: "75%", marginTop: "25px" }}
-            >
-              <Card.Header>Milestones</Card.Header>
-              <Card.Body>
-                <UserSearch placeholder="Add a milestone..."></UserSearch>
-              </Card.Body>
-            </Card>
           </div>
-          <div>
-            {issue.is_opened === true ? (
-              <Button
-                onClick={async () => {
-                  await updateIssueClose(true, issueId);
-                  setIssue(await getIssueById(issue.pk));
-                }}
-              >
-                <GiConfirmed size={20}></GiConfirmed> Close issue
-              </Button>
-            ) : (
-              <p>
+          {isLoggedInUserCollaborator() && (
+            <div style={{ marginTop: "5%" }}>
+              {issue.is_opened === true ? (
                 <Button
-                  variant="outline-primary"
                   onClick={async () => {
-                    await updateIssueClose(false, issueId);
+                    await updateIssueClose(true, issueId);
                     setIssue(await getIssueById(issue.pk));
                   }}
                 >
-                  <GiConfirmed size={20}></GiConfirmed> Reopen issue
+                  <GiConfirmed size={20}></GiConfirmed> Close issue
                 </Button>
-              </p>
-            )}
-          </div>
+              ) : (
+                <p>
+                  <Button
+                    variant="outline-primary"
+                    onClick={async () => {
+                      await updateIssueClose(false, issueId);
+                      setIssue(await getIssueById(issue.pk));
+                    }}
+                  >
+                    <GiConfirmed size={20}></GiConfirmed> Reopen issue
+                  </Button>
+                </p>
+              )}
+            </div>
+          )}
         </>
       )}
     </>

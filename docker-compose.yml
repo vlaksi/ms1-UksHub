@@ -1,19 +1,35 @@
-version: "3.2"
+version: '3.2'
 
 services:
+  git-server:
+    container_name: git-server
+    image: uks-git-server:latest
+    build:
+      context: ./git-server
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - GIT_PYTHON_GIT_EXECUTABLE=/usr/bin/git python myscript.py
+    ports:
+      - '2222:22'
+    volumes:
+      - ~/git-server/keys:/git-server/keys
+      - ~/git-server/repos:/git-server/repos
+
   client:
     image: next_client:latest
     container_name: next_client
     build:
       context: ./next-client
       dockerfile: Dockerfile
-    command: ["npm", "start"]
+    command: ['npm', 'start']
   db:
     restart: always
     image: postgres:14-alpine
     container_name: postgres_db
     ports:
-      - 5432:5432
+      # - 5432:5432
+      - 5432
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -26,7 +42,7 @@ services:
     build:
       context: ./django-backend/ukshub
       dockerfile: Dockerfile
-    command: ["./waitforpostgres.sh"]
+    command: ['./waitforpostgres.sh']
     ports:
       - 8000:8000
     environment:
@@ -35,6 +51,7 @@ services:
       - POSTGRES_DBNAME=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_DBHOST=db
+      - GIT_PYTHON_REFRESH=quiet
     volumes:
       - ./django-backend/ukshub/static:/code/static
     depends_on:

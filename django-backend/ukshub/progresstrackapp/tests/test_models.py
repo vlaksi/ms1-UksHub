@@ -45,9 +45,9 @@ def initialize_db_with_test_data():
     branch4.save()
 
     # Create pull requests
-    pull_request1 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_1_TITLE, repository=repository1, base_branch=branch1, compare_branch=branch2, creation_date=timezone.now())
-    pull_request2 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_2_TITLE, repository=repository1, base_branch=branch1, compare_branch=branch2, creation_date=timezone.now())
-    pull_request3 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_3_TITLE, repository=repository2, base_branch=branch3, compare_branch=branch4, creation_date=timezone.now())
+    pull_request1 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_1_TITLE, repository=repository1, base_branch=branch1.name, compare_branch=branch2.name, creation_date=timezone.now())
+    pull_request2 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_2_TITLE, repository=repository1, base_branch=branch1.name, compare_branch=branch2.name, creation_date=timezone.now())
+    pull_request3 = PullRequest.objects.create(author=user1, title=PULL_REQUEST_3_TITLE, repository=repository2, base_branch=branch3.name, compare_branch=branch4.name, creation_date=timezone.now())
     
     pull_request1.save()
     pull_request2.save()
@@ -60,13 +60,7 @@ def initialize_db_with_test_data():
     label1.save()
     label2.save()
 
-    #Create milestones
-    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01',repository=repository1)
-    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01',repository=repository1)
-
-    milestone1.save()
-    milestone2.save()
-
+   
     #Create issues
     labelsAll=[label1,label2]
     assignessAll=[user1]
@@ -79,6 +73,18 @@ def initialize_db_with_test_data():
     issue1.save()
     issue2.save()
     issue3.save()
+
+    #Create milestones
+    issuesAll=[issue1,issue3]
+    milestone1 = Milestone.objects.create(title='milestone1',description='desc1',due_date='2022-01-29 01:00:00+01',repository=repository1)
+    milestone2 = Milestone.objects.create(title='milestone2',description='desc2',due_date='2022-03-29 01:00:00+01',repository=repository1)
+    milestone3 = Milestone.objects.create(title='milestone3',description='desc3',due_date='2022-03-29 01:00:00+01',repository=repository1)
+    milestone3.issues.set(issuesAll)
+
+    milestone1.save()
+    milestone2.save()
+    milestone3.save()
+
 
 def get_label(index=0):
     return Label.objects.all()[index]
@@ -157,7 +163,7 @@ class TestPullRequestModel(TestCase):
 
     def test_pr_compare_and_base_branch_names(self):
         pr = get_pull_request()
-        self.assertNotEqual(pr.base_branch.name, pr.compare_branch.name)
+        self.assertNotEqual(pr.base_branch, pr.compare_branch)
 
     def test_pr_author_username(self):
         pr = get_pull_request()
@@ -186,10 +192,6 @@ class TestPullRequestModel(TestCase):
     def test_empty_pr_labels(self):
         pr = get_pull_request()
         self.assertEqual(pr.labels.count(),0)
-
-    def test_empty_pr_comments(self):
-        pr = get_pull_request()
-        self.assertEqual(pr.comments.count(),0)
 
     def test_empty_pr_reviewes(self):
         pr = get_pull_request()
@@ -262,4 +264,18 @@ class TestMilestoneModel(TestCase):
         milestone = get_milestone()
         max_length = milestone._meta.get_field('description').max_length
         self.assertEquals(max_length, 200)
+
+    def test_empty_milestone_issues(self):
+        milestone = get_milestone()
+        self.assertEqual(milestone.issues.count(),0)
+
+    def test_not_empty_milestone_issues(self):
+        milestone = get_milestone(2)
+        self.assertEqual(milestone.issues.count(),2)
+
+
+   
+
+    
+
     

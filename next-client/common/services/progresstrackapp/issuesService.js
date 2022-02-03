@@ -1,22 +1,22 @@
-import axios from "axios";
-import { getToken } from "../authentication/token";
+import axios from 'axios';
+import { getToken } from '../authentication/token';
 
 export const addIssue = async (newIssueName, authorId, repoId) => {
   let milestone = null;
   await axios
     .request({
       url: `/progresstrack/issues/`,
-      method: "post",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'post',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         title: newIssueName,
         creation_date: new Date(),
         is_opened: true,
         author: authorId,
         repository: repoId,
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -28,17 +28,81 @@ export const addIssue = async (newIssueName, authorId, repoId) => {
 
   return milestone;
 };
+export const searchAllIssues = async (search) => {
+  let issues;
+  await axios
+    .request({
+      url: `/progresstrack/issues/?search=${search}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
+export const searchAllIssuesByRepoID = async (repoId, search) => {
+  let issues;
+  await axios
+    .request({
+      url: `/progresstrack/${repoId}/issues/${search}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
+
+export const searchAllIssuesOfAuthor = async (authorId, search) => {
+  let issues;
+  await axios
+    .request({
+      url: `progresstrack/issue/${authorId}/issues/${search}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      issues = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return issues;
+};
 export const getAllIssues = async (repoId) => {
   let issues;
   await axios
     .request({
       url: `/progresstrack/repository/${repoId}/issues`,
-      method: "get",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -54,12 +118,12 @@ export const deleteIssue = async (issueId) => {
   await axios
     .request({
       url: `/progresstrack/issues/${issueId}`,
-      method: "delete",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'delete',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -76,13 +140,13 @@ export const updateIssue = async (newIssueName, issueId) => {
   await axios
     .request({
       url: `/progresstrack/issues/${issueId}`,
-      method: "patch",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'patch',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         title: newIssueName,
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -100,12 +164,12 @@ export const getIssueById = async (issueId) => {
   await axios
     .request({
       url: `/progresstrack/issues/${issueId}`,
-      method: "get",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -123,13 +187,13 @@ export const updateIssueAssigness = async (issueId, userAccountId) => {
   await axios
     .request({
       url: `/progresstrack/issues/${issueId}`,
-      method: "patch",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'patch',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         assigness: userAccountId,
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -147,13 +211,13 @@ export const updateIssueLabels = async (issueId, labelId) => {
   await axios
     .request({
       url: `/progresstrack/issues/${issueId}`,
-      method: "patch",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'patch',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         labels: labelId,
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -172,12 +236,12 @@ export const getAllIssueAssignees = async (issueId) => {
   await axios
     .request({
       url: `/progresstrack/issue/${issueId}/assignes`,
-      method: "get",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -194,12 +258,12 @@ export const getAllIssueLabels = async (issueId) => {
   await axios
     .request({
       url: `/progresstrack/issue/${issueId}/labels`,
-      method: "get",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -215,12 +279,12 @@ export const deleteIssueAssigneeById = async (issueAssigneeId) => {
   await axios
     .request({
       //url: `/progresstrack/issues/${issueAssigneeId}/assigne`,
-      method: "delete",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'delete',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -235,13 +299,13 @@ export const updateIssueClose = async (isClosed, issueId) => {
   await axios
     .request({
       url: `/progresstrack/issues/${issueId}`,
-      method: "patch",
-      baseURL: "http://127.0.0.1:8000/",
-      headers: { Authorization: "JWT " + getToken() },
+      method: 'patch',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
       data: {
         is_opened: !isClosed,
-        grant_type: "client_credentials",
-        scope: "public",
+        grant_type: 'client_credentials',
+        scope: 'public',
       },
     })
     .then((response) => {
@@ -253,4 +317,31 @@ export const updateIssueClose = async (isClosed, issueId) => {
       success = false;
     });
   return success;
+};
+export const getIssueDataForMilestoneIssueSearch = async (repositoryId) => {
+  const issues = await getAllIssues(repositoryId);
+  console.log(issues);
+
+  let dataForSearch = [];
+  issues?.map((issue) => {
+    dataForSearch.push({
+      title: issue.title,
+      pk: issue.pk,
+    });
+  });
+
+  return dataForSearch;
+};
+export const getIssueDataForPullRequestIssueSearch = async (repositoryId) => {
+  const issues = await getAllIssues(repositoryId);
+
+  let dataForSearch = [];
+  issues?.map((issue) => {
+    dataForSearch.push({
+      title: issue.title,
+      pk: issue.pk,
+    });
+  });
+
+  return dataForSearch;
 };

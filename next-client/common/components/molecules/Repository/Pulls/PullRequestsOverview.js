@@ -13,10 +13,12 @@ import {
 } from '../../../../services/progresstrackapp/pullRequestService';
 import { ToastContainer, toast } from 'react-toastify';
 import { getParsedToken } from '../../../../services/authentication/token';
+import { getRepositoryCollaboratos } from '../../../../services/versioning/repositoryService';
 
 const PullRequestsOverview = ({ dbRepository }) => {
   const router = useRouter();
   const { user, repository } = router.query;
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -49,8 +51,8 @@ const PullRequestsOverview = ({ dbRepository }) => {
 
   const getRepositoryAllBranches = async () => {
     let branches = await getRepositoryBranches(dbRepository.pk);
-    setNewBaseBranch(branches[0].pk);
-    setNewCompareBranch(branches[0].pk);
+    setNewBaseBranch(branches[0].name);
+    setNewCompareBranch(branches[0].name);
     setAllBranches(branches);
   };
 
@@ -74,7 +76,18 @@ const PullRequestsOverview = ({ dbRepository }) => {
   useEffect(async () => {
     if (!dbRepository?.pk) return;
     setNewPullRequest(await getPullRequestsByRepository(dbRepository.pk));
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repository));
   }, [dbRepository?.pk]);
+
+  const isLoggedInUserCollaborator = () => {
+    if (typeof window !== 'undefined') {
+      let loggedInUserId = getParsedToken().user_id;
+      return repositoryCollaborators.find(
+        (collaborator) => collaborator.collaborator_id == loggedInUserId
+      );
+    }
+    return false;
+  };
 
   return (
     <>
@@ -101,17 +114,20 @@ const PullRequestsOverview = ({ dbRepository }) => {
             </a>
           </Link>
         </Button>
-        <Button
-          style={{ marginLeft: '5px' }}
-          variant="primary"
-          onClick={() => {
-            handleShow();
-            getRepositoryAllBranches();
-          }}
-        >
-          <MdAddCircle size={24} /> Add pull request
-        </Button>
+        {isLoggedInUserCollaborator() && (
+          <Button
+            style={{ marginLeft: '5px' }}
+            variant="primary"
+            onClick={() => {
+              handleShow();
+              getRepositoryAllBranches();
+            }}
+          >
+            <MdAddCircle size={24} /> Add pull request
+          </Button>
+        )}
 
+        {/* ADD PR Modal */}
         <Modal show={show} onHide={handleClose} backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>Add new pull request</Modal.Title>
@@ -136,11 +152,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
                   }}
                 >
                   {allBranches?.map((branch) => {
-                    return (
-                      <option key={branch.pk} value={branch.pk}>
-                        {branch.name}
-                      </option>
-                    );
+                    return <option key={branch.name}>{branch.name}</option>;
                   })}
                 </Form.Select>
 
@@ -152,11 +164,7 @@ const PullRequestsOverview = ({ dbRepository }) => {
                   }}
                 >
                   {allBranches?.map((branch) => {
-                    return (
-                      <option key={branch.pk} value={branch.pk}>
-                        {branch.name}
-                      </option>
-                    );
+                    return <option key={branch.name}>{branch.name}</option>;
                   })}
                 </Form.Select>
               </Form.Group>

@@ -121,7 +121,6 @@ class TestPullRequestListView(TestCase):
         self.assertEqual(res_obj['issues'], [])
         self.assertEqual(res_obj['milestones'], [])
         self.assertEqual(res_obj['labels'], [])
-        self.assertEqual(res_obj['comments'], [])
 
     def test_get_HTTP404_wrong_endpoint_call_pull_request_by_id(self):
         pr = PullRequest.objects.get(title=PULL_REQUEST_1_TITLE) 
@@ -406,7 +405,7 @@ class TestMilestoneListView(TestCase):
         response = self.c.get('/progresstrack/milestones/', HTTP_AUTHORIZATION=self.token, content_type=JSON)
         res_obj = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(res_obj),2)
+        self.assertEqual(len(res_obj),3)
 
     def test_get_all_milestones_wrong_url(self):
         response = self.c.get('/progresstrack/milestone', HTTP_AUTHORIZATION=self.token, content_type=JSON)
@@ -496,8 +495,31 @@ class TestMilestoneDetailView(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(res_obj['title'], 'milestone1')
-       
 
+    def test_get_all_milestone_issues_by_id_successfully(self):
+        milestone = Milestone.objects.get(title='milestone3')
+        response = self.c.get(
+            '/progresstrack/milestone/'+str(milestone.pk)+'/issues',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+ 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),2)
+    
+    def test_get_all_milestone_issues_by_id_successfully_empty(self):
+        milestone = Milestone.objects.get(title='milestone1')
+        response = self.c.get(
+            '/progresstrack/milestone/'+str(milestone.pk)+'/issues',
+            HTTP_AUTHORIZATION=self.token,
+            content_type=JSON
+        )
+        res_obj = json.loads(response.content.decode('UTF-8'))
+ 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_obj),0)
+       
     def test_delete_milestone(self):
         milestone = Milestone.objects.get(title='milestone1')
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Tab, Col, ListGroup, Row } from 'react-bootstrap';
+import React from "react";
+import { Tab, Col, ListGroup, Row } from "react-bootstrap";
 import {
 	Chart,
 	ArcElement,
@@ -7,70 +7,109 @@ import {
 	LinearScale,
 	PointElement,
 	LineElement,
+	Filler,
+	registerables
 } from 'chart.js';
-import { Pie, Line } from 'react-chartjs-2';
+import { Pie, Line, Bar } from 'react-chartjs-2';
 import styles from './RepositoryInsights.module.scss';
 import {
 	MdAssignment,
 	MdCheckCircleOutline,
 	MdExitToApp,
 } from 'react-icons/md';
-import { AiOutlinePullRequest } from 'react-icons/ai';
+import { AiOutlinePullRequest, AiOutlineUser, AiOutlineFork } from 'react-icons/ai';
 
 const RepositoryInsights = ({
 	repositoryIssues,
 	repositoryPRs,
 	commitsToMainBranch,
+	forksOfRepo,
+	repository,
+	visitsOfRepo
 }) => {
 	Chart.register(ArcElement);
 	Chart.register(CategoryScale);
 	Chart.register(LinearScale);
 	Chart.register(PointElement);
 	Chart.register(LineElement);
-
-	// TODO: NEMANJA FIX THIS !, this is only tmp solution
-	if (
-		!!repositoryIssues === false ||
-		!!repositoryPRs === false ||
-		!!commitsToMainBranch === false
-	) {
-		return (
-			<p>
-				There is no any repository issue, repository pull request or commits
-			</p>
-		);
-	}
-
+	Chart.register(Filler);
+	Chart.register(...registerables)
+	console.log('commitsToMainBranch', commitsToMainBranch)
 	const getCommitsDates = () => {
 		var commitsDates = [];
-		commitsToMainBranch.map((item) => {
-			commitsDates.push(item.creation_date.substring(0, 10));
-		});
+		if (JSON.stringify(commitsToMainBranch) !== '{}') {
+			commitsToMainBranch?.map((item) => {
+				commitsDates.push(item.committed_date?.substring(0, 10));
+			});
+		}
+
 		return commitsDates;
 	};
+
 	const counts = {};
 	getCommitsDates().forEach(function (x) {
 		counts[x] = (counts[x] || 0) + 1;
 	});
 
+
+	const getCommitsUsers = () => {
+		var commitsUsers = [];
+		if (JSON.stringify(commitsToMainBranch) !== '{}') {
+			commitsToMainBranch?.map((item) => {
+				commitsUsers.push(item.author);
+			});
+		}
+		return commitsUsers;
+	};
+	const countsUsersCommits = {};
+	getCommitsUsers().forEach(function (x) {
+		countsUsersCommits[x] = (countsUsersCommits[x] || 0) + 1;
+	});
+
+
+	const getVisitDates = () => {
+		var visitDates = [];
+		visitsOfRepo?.map((item) => {
+			visitDates.push(item.visit_date.substring(0, 10));
+		});
+		return visitDates;
+	};
+	const countsVisitDates = {};
+	getVisitDates().forEach(function (x) {
+		countsVisitDates[x] = (countsVisitDates[x] || 0) + 1;
+	});
+
+	//Count unique visitors
+	var tempResult = {}
+	for (let { unique_fingerprint } of visitsOfRepo)
+		tempResult[unique_fingerprint] = {
+			unique_fingerprint,
+			count: tempResult[unique_fingerprint] ? tempResult[unique_fingerprint].count + 1 : 1
+		}
+	let uniqueVisitors = Object.values(tempResult)
+	//End count unique visitors
+
+
 	const getOpenedIssues = () => {
 		var numberOfOpenedIssues = 0;
-		repositoryIssues.map((item) => {
+		repositoryIssues?.map((item) => {
 			if (item.is_opened) {
 				numberOfOpenedIssues = numberOfOpenedIssues + 1;
 			}
 		});
 		return numberOfOpenedIssues;
 	};
+
 	const getOpenedPRs = () => {
 		var numberOfOpenedMRs = 0;
-		repositoryPRs.map((item) => {
+		repositoryPRs?.map((item) => {
 			if (!item.is_merged) {
 				numberOfOpenedMRs = numberOfOpenedMRs + 1;
 			}
 		});
 		return numberOfOpenedMRs;
 	};
+
 	const dataForIssuesChart = {
 		datasets: [
 			{
@@ -79,6 +118,7 @@ const RepositoryInsights = ({
 			},
 		],
 	};
+
 	const dataForPRsChart = {
 		datasets: [
 			{
@@ -92,7 +132,7 @@ const RepositoryInsights = ({
 		labels: Object.keys(counts),
 		datasets: [
 			{
-				label: 'My First dataset',
+				label: 'Contributions',
 				fill: true,
 				lineTension: 0.1,
 				backgroundColor: 'rgba(75,192,192,0.4)',
@@ -114,6 +154,44 @@ const RepositoryInsights = ({
 			},
 		],
 	};
+	const trafficData = {
+		labels: Object.keys(countsVisitDates),
+		datasets: [
+			{
+				label: 'Number of Visits',
+				fill: true,
+				lineTension: 0.1,
+				backgroundColor: 'rgba(75,192,192,0.4)',
+				borderColor: 'rgba(75,192,192,1)',
+				borderCapStyle: 'butt',
+				borderDash: [],
+				borderDashOffset: 0.0,
+				borderJoinStyle: 'miter',
+				pointBorderColor: 'rgba(75,192,192,1)',
+				pointBackgroundColor: '#fff',
+				pointBorderWidth: 1,
+				pointHoverRadius: 5,
+				pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+				pointHoverBorderColor: 'rgba(220,220,220,1)',
+				pointHoverBorderWidth: 2,
+				pointRadius: 1,
+				pointHitRadius: 10,
+				data: Object.values(countsVisitDates),
+			},
+		],
+	};
+	const commitsData = {
+		labels: Object.keys(counts),
+		datasets: [{
+			label: 'Number of commits',
+			data: Object.values(counts),
+			backgroundColor:
+				'rgba(220,20,60,1)',
+			borderColor:
+				'rgba(255,0,0,1)',
+			borderWidth: 1
+		}]
+	}
 	return (
 		<>
 			<Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
@@ -125,6 +203,15 @@ const RepositoryInsights = ({
 							</ListGroup.Item>
 							<ListGroup.Item action href="#link2">
 								Contributors
+							</ListGroup.Item>
+							<ListGroup.Item action href="#link3">
+								Forks
+							</ListGroup.Item>
+							<ListGroup.Item action href="#link4">
+								Traffic
+							</ListGroup.Item>
+							<ListGroup.Item action href="#link5">
+								Commits
 							</ListGroup.Item>
 						</ListGroup>
 					</Col>
@@ -175,7 +262,42 @@ const RepositoryInsights = ({
 								Contributions to main, excluding merge commits and bot accounts
 								<div className={styles.lineChart}>
 									<Line data={data} />
+									<h3>Commits per users:</h3>
+									{Object.keys(countsUsersCommits)?.map((key) => {
+										return <div><h5><AiOutlineUser /> {key}: {countsUsersCommits[key]}</h5></div>
+									})}
+
 								</div>
+							</Tab.Pane>
+							<Tab.Pane eventKey="#link3">
+								<h3>Forks</h3>
+								<br />
+								{forksOfRepo.length == 0 &&
+									<div>
+										<AiOutlineFork />
+										No one has forked this repository yet.
+									</div>
+								}
+								{forksOfRepo?.map((item) => {
+									return <h5><AiOutlineUser /> {item.username} / {repository.name} <br /></h5>
+								})}
+							</Tab.Pane>
+							<Tab.Pane eventKey="#link4">
+								<h3>Traffic</h3>
+								<br />
+								<div className={styles.lineChart}>
+									Visits
+									<Line data={trafficData} />
+									<h4>Unique visitors: {uniqueVisitors?.length}</h4>
+								</div>
+							</Tab.Pane>
+							<Tab.Pane eventKey="#link5">
+								<h3>Commits</h3>
+								<Bar
+									data={commitsData}
+									width={400}
+									height={200}
+								/>
 							</Tab.Pane>
 						</Tab.Content>
 					</Col>

@@ -1,11 +1,55 @@
 import axios from 'axios';
 import { getToken } from '../authentication/token';
 
+export const searchAllRepositories = async (search) => {
+  let repositories;
+  await axios
+    .request({
+      url: `/versioning/repositories/?search=${search}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositories = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return repositories;
+};
+
 export const getAllRepositoriesByAuthor = async (user_id) => {
   let repositories;
   await axios
     .request({
       url: `/versioning/users/${user_id}/repositories`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositories = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return repositories;
+};
+
+export const searchAllRepositoriesByAuthor = async (user_id, searchword) => {
+  let repositories;
+  await axios
+    .request({
+      url: `/versioning/users/${user_id}/repositories/${searchword}`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },
@@ -45,7 +89,7 @@ export const getRepositoryById = async (repositoryId) => {
   return repository;
 };
 
-export const addRepository = async (newRepositoryName, newRepositoryDescription, authorId, defaultBranch = null, forkedFromAuthorId = null) => {
+export const addRepository = async (newRepositoryName, newRepositoryDescription, authorId, defaultBranch = 'master', forkedFromAuthorId = null) => {
   let repository = null;
   await axios
     .request({
@@ -73,7 +117,7 @@ export const addRepository = async (newRepositoryName, newRepositoryDescription,
   return repository;
 };
 
-export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBranchId) => {
+export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBranchName) => {
   let updatedBranch;
   await axios
     .request({
@@ -82,7 +126,7 @@ export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBran
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },
       data: {
-        default_branch: newDefaultBranchId,
+        default_branch: newDefaultBranchName,
         grant_type: 'client_credentials',
         scope: 'public',
       },
@@ -94,11 +138,33 @@ export const updateRepositoryDefaultBranch = async (repositoryId, newDefaultBran
   return updatedBranch;
 };
 
-export const getBranchCommit = async (branchId) => {
+export const getBranchLastCommit = async (repository_id, branchName) => {
   let files;
   await axios
     .request({
-      url: `/versioning/branch/${branchId}/commit/`,
+      url: `/versioning/branch/${repository_id}/${branchName}/commit/`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      files = response.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data.errorrr);
+    });
+  return files;
+};
+
+export const getBranchCommits = async (repository_id, branchName) => {
+  let files;
+  await axios
+    .request({
+      url: `/versioning/branch/${repository_id}/${branchName}/commits/`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },
@@ -131,7 +197,6 @@ export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
       },
     })
     .then((response) => {
-      console.log(response);
       success = true;
     })
     .catch((error) => {
@@ -140,6 +205,7 @@ export const updateRepositoryName = async (newRepositoryName, repositoryId) => {
     });
   return success;
 };
+
 
 export const updateRepositoryDescription = async (newRepositoryDescription, repositoryId) => {
   let success = false;
@@ -156,7 +222,6 @@ export const updateRepositoryDescription = async (newRepositoryDescription, repo
       },
     })
     .then((response) => {
-      console.log(response);
       success = true;
     })
     .catch((error) => {
@@ -180,7 +245,6 @@ export const deleteRepository = async (repositoryId) => {
       },
     })
     .then((response) => {
-      console.log(response);
       success = true;
     })
     .catch((error) => {
@@ -195,6 +259,28 @@ export const getRepositoryCollaboratos = async (repositoryId) => {
   await axios
     .request({
       url: `/versioning/repository/${repositoryId}/collaborators/`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositoryCollaborators = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return repositoryCollaborators;
+};
+
+export const searchRepositoryCollaboratos = async (repositoryId, search) => {
+  let repositoryCollaborators;
+  await axios
+    .request({
+      url: `/versioning/repository/${repositoryId}/collaborators/${search}`,
       method: 'get',
       baseURL: 'http://127.0.0.1:8000/',
       headers: { Authorization: 'JWT ' + getToken() },
@@ -297,4 +383,49 @@ export const createCollaboration = async (collaboratorId, repositoryId) => {
     .catch((err) => {
       console.log(err);
     });
+};
+
+export const createVisit = async (uniqueFingerprint, repositoryId, visitDate) => {
+  await axios
+    .request({
+      url: `/versioning/visits/`,
+      method: 'post',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        unique_fingerprint: uniqueFingerprint,
+        repository: repositoryId,
+        visit_date: visitDate,
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const getRepositoryVisits = async (repositoryId) => {
+  let repositoryCollaborators;
+  await axios
+    .request({
+      url: `/versioning/visits/repositoryid/${repositoryId}`,
+      method: 'get',
+      baseURL: 'http://127.0.0.1:8000/',
+      headers: { Authorization: 'JWT ' + getToken() },
+      data: {
+        grant_type: 'client_credentials',
+        scope: 'public',
+      },
+    })
+    .then((response) => {
+      repositoryCollaborators = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return repositoryCollaborators;
 };
