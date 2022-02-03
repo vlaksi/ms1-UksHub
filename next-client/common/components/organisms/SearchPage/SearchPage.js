@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import RepositoryListItem from '../../atoms/RepositoryListItem/RepositoryListItem';
 import SearchIssueListItem from '../../atoms/SearchIssueListItem/SearchIssueListItem';
 import SearchListOfUsers from '../../atoms/SearchListOfUsers/SearchListOfUsers';
+import SearchListOfCommits from '../../atoms/SearchListOfUsers/SearchListOfUsers';
 
 const SearchPage = ({ isSearchInThisUser, isSearchInThisRepo, searchedRepositories, searchedIssues, searchedUsers, commitsToMainBranch }) => {
 
-    console.log('commitsToMainBranch?.data', commitsToMainBranch)
     const router = useRouter();
     const { search } = router.query;
-
+    console.log(searchedIssues, 'searchedIssues')
     return (
         <>
             <Tab.Container id="list-group-tabs-example" defaultActiveKey={isSearchInThisRepo ? "#link3" : "#link2"} >
@@ -23,8 +23,8 @@ const SearchPage = ({ isSearchInThisUser, isSearchInThisRepo, searchedRepositori
                                 Code
                             </ListGroup.Item> */}
                             {isSearchInThisRepo &&
-                                <ListGroup.Item action href="#link3">
-                                    Commits
+                                <ListGroup.Item action href="#link3" >
+                                    Commits <Badge bg="info" text="dark">{commitsToMainBranch?.length}</Badge>
                                 </ListGroup.Item>
                             }
                             <ListGroup.Item action href="#link4">
@@ -59,8 +59,9 @@ const SearchPage = ({ isSearchInThisUser, isSearchInThisRepo, searchedRepositori
                                 <Tab.Pane eventKey="#link3">
                                     <h2>Commits</h2>
                                     {JSON.stringify(commitsToMainBranch) !== '{}' && commitsToMainBranch?.map(item => {
-                                        return item.message.includes(search) ? <h4>{item.message}</h4> : <h4></h4>
+                                        return item.message.includes(search) ? <SearchListOfCommits commit={item} /> : <h4></h4>
                                     })}
+
                                 </Tab.Pane>
                             }
                             <Tab.Pane eventKey="#link4">
