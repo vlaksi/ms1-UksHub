@@ -21,6 +21,7 @@ export const addPullRequest = async (
         base_branch: newBaseBranch,
         compare_branch: newCompareBranch,
         repository: repositoryId,
+        is_opened: true,
         creation_date: new Date(),
         // creation_date: "2021-11-18T17:13:40.948Z",
         grant_type: "client_credentials",

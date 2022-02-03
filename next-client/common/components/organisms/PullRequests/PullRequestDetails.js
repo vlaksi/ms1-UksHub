@@ -218,7 +218,9 @@ const PullRequestDetails = ({ pullRequestId }) => {
           </div>
         </div>
       </h4>
-
+      <div>
+        merge {pullRequest.base_branch} to {pullRequest.compare_branch}
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ width: '65%' }}>
           <CommentPR
@@ -543,6 +545,7 @@ const PullRequestDetails = ({ pullRequestId }) => {
       <div>
         {pullRequest.is_opened === true ? (
           <Button
+            style={{ marginBottom: '5px', width: '186px' }}
             onClick={async () => {
               await updatePullRequestClose(true, pullRequestId);
               setPullRequest(await getPullRequestById(pullRequest.pk));
