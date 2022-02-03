@@ -197,8 +197,11 @@ const RepositoryCode = ({
 										return (
 											<Dropdown.Item
 												key={branch.name}
-												onClick={() => {
+												onClick={async () => {
 													setCurrentBrach(branch);
+													setActiveFiles(
+														await getBranchContent(repository.pk, branch?.name)
+													);
 												}}
 											>
 												{branch.name}
