@@ -41,6 +41,7 @@ class PullRequest(models.Model):
     compare_branch = models.CharField(max_length=200)  
     is_able_to_merge = models.BooleanField(default=False)
     is_merged = models.BooleanField(default=False)
+    is_opened = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     creation_date = models.DateTimeField('creation date')
     title = models.CharField(max_length=200)

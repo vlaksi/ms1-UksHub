@@ -27,7 +27,7 @@ class MilestoneSerializer(serializers.ModelSerializer):
 class PullRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PullRequest
-        fields = [ "pk", "repository", "reviewes", "assigness","base_branch","compare_branch","is_able_to_merge","is_merged","is_approved","creation_date", "title","issues","milestones","labels","author" ]
+        fields = [ "pk", "repository", "reviewes", "assigness","base_branch","compare_branch","is_able_to_merge","is_opened","is_merged","is_approved","creation_date", "title","issues","milestones","labels","author" ]
         extra_kwargs = {
              "reviewes": {"required": False},
              "assigness": {"required": False},

@@ -73,6 +73,23 @@ export const getUserDataForIssueAssigneesSearch = async (repositoryId) => {
 
   return dataForSearch;
 };
+export const getUserDataForPullRequestAssigneesSearch = async (
+  repositoryId
+) => {
+  const users = await getRepositoryCollaboratos(repositoryId);
+  console.log(users);
+
+  let dataForSearch = [];
+  users.map((user) => {
+    dataForSearch.push({
+      title: user.username,
+      pk: user.collaborator_id,
+      type: "user",
+    });
+  });
+
+  return dataForSearch;
+};
 
 export const getUserById = async (authorId) => {
   let user;

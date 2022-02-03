@@ -5,28 +5,31 @@ import {
   updateIssueAssigness,
   updateIssueClose,
   updateIssueLabels,
-} from '../../../services/progresstrackapp/issuesService';
-import { useState, useEffect } from 'react';
-import { Badge, Card, ListGroup, Modal, Button } from 'react-bootstrap';
-import UserSearch from '../../atoms/UserSearch/UserSearch';
-import { getUserDataForIssueAssigneesSearch } from '../../../services/useractivity/userService';
-import { useRouter } from 'next/router';
-import { AiFillDelete } from 'react-icons/ai';
-import { GiConfirmed } from 'react-icons/gi';
-import { getLabelDataForIssueLabellingSearch } from '../../../services/progresstrackapp/labelsService';
-import RepositoryNav from '../../atoms/RepositoryNav/RepositoryNav';
-import Comments from '../../molecules/Comments/Comments';
+} from "../../../services/progresstrackapp/issuesService";
+import { useState, useEffect } from "react";
+import { Badge, Card, ListGroup, Modal, Button } from "react-bootstrap";
+import UserSearch from "../../atoms/UserSearch/UserSearch";
+import { getUserDataForIssueAssigneesSearch } from "../../../services/useractivity/userService";
+import { useRouter } from "next/router";
+import { AiFillDelete } from "react-icons/ai";
+import { GiConfirmed } from "react-icons/gi";
+import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
+import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
+import Comments from "../../molecules/Comments/Comments";
+import { getRepositoryCollaboratos } from "../../../services/versioning/repositoryService";
+import { getParsedToken } from "../../../services/authentication/token";
 
 const IssueDetails = ({ issueId }) => {
-  const [issue, setIssue] = useState('');
+  const [issue, setIssue] = useState("");
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
 
   const [issueAssignees, setIssueAssignees] = useState([]);
-  const [removeCandidate, setRemoveCandidate] = useState('');
+  const [removeCandidate, setRemoveCandidate] = useState("");
   const [issueAddedLabels, setIssueAddedLabels] = useState([]);
-  const [removeLabel, setRemoveLabel] = useState('');
+  const [removeLabel, setRemoveLabel] = useState("");
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteModalClose = () => setShowDeleteModal(false);
@@ -57,7 +60,15 @@ const IssueDetails = ({ issueId }) => {
     setLabelDataForSearch(
       await getLabelDataForIssueLabellingSearch(repository)
     );
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repository));
   }, [repository]);
+
+  const isLoggedInUserCollaborator = () => {
+    let loggedInUserId = getParsedToken().user_id;
+    return repositoryCollaborators.find(
+      (collaborator) => collaborator.collaborator_id == loggedInUserId
+    );
+  };
 
   const isLabelAlreadyAdded = (label) => {
     return issueAddedLabels?.find(
@@ -94,69 +105,72 @@ const IssueDetails = ({ issueId }) => {
         <>
           <RepositoryNav />
           <h4>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: "flex" }}>
               <Badge
                 pill
                 bg="primary"
                 text="light"
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: "10px" }}
               >
                 #{issue.pk}
-              </Badge>{' '}
+              </Badge>{" "}
               {issue.title}
             </div>
           </h4>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '65%' }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ width: "65%" }}>
               <Comments issueId={issueId} authorId={user}></Comments>
             </div>
             <div>
               {/* Assignes Card */}
               <Card>
                 <Card.Header>Assignees</Card.Header>
-                <Card.Body>
-                  <UserSearch
-                    placeholder="Add an assignee..."
-                    data={userDataForSearch.filter(
-                      (user) => !isUserAlreadyAssignee(user)
-                    )}
-                    onSelectItem={async (selectedValue) => {
-                      let currentAssignesIds = getAllAssignesIds();
-                      await updateIssueAssigness(issueId, [
-                        ...currentAssignesIds,
-                        selectedValue.pk,
-                      ]);
-                      setIssueAssignees(await getAllIssueAssignees(issueId));
-                    }}
-                  ></UserSearch>
-                </Card.Body>
+                {isLoggedInUserCollaborator() && (
+                  <Card.Body>
+                    <UserSearch
+                      placeholder="Add an assignee..."
+                      data={userDataForSearch.filter(
+                        (user) => !isUserAlreadyAssignee(user)
+                      )}
+                      onSelectItem={async (selectedValue) => {
+                        let currentAssignesIds = getAllAssignesIds();
+                        await updateIssueAssigness(issueId, [
+                          ...currentAssignesIds,
+                          selectedValue.pk,
+                        ]);
+                        setIssueAssignees(await getAllIssueAssignees(issueId));
+                      }}
+                    ></UserSearch>
+                  </Card.Body>
+                )}
                 <ListGroup variant="flush">
                   {issueAssignees?.map((issueAssignee) => {
                     return (
                       <ListGroup.Item
                         key={issueAssignee.id}
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: "flex" }}>
                           <p> {issueAssignee.username} </p>
                         </div>
                         <div>
-                          {issueAssignees?.length > 0 && (
-                            <AiFillDelete
-                              style={{
-                                cursor: 'pointer',
-                                marginBottom: '15px',
-                              }}
-                              onClick={() => {
-                                setRemoveCandidate(issueAssignee);
-                                handleShowDeleteModal();
-                              }}
-                            />
-                          )}
+                          {issueAssignees?.length > 0 &&
+                            isLoggedInUserCollaborator() && (
+                              <AiFillDelete
+                                style={{
+                                  cursor: "pointer",
+                                  marginBottom: "15px",
+                                }}
+                                onClick={() => {
+                                  setRemoveCandidate(issueAssignee);
+                                  handleShowDeleteModal();
+                                }}
+                              />
+                            )}
                         </div>
                       </ListGroup.Item>
                     );
@@ -165,7 +179,7 @@ const IssueDetails = ({ issueId }) => {
               </Card>
 
               {/* Labels Card */}
-              <Card style={{ marginTop: '25px' }}>
+              <Card style={{ marginTop: "25px" }}>
                 <Card.Header>Labels</Card.Header>
                 <Card.Body>
                   <UserSearch
@@ -189,22 +203,22 @@ const IssueDetails = ({ issueId }) => {
                       <ListGroup.Item
                         key={issueAddedLabel.pk}
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: "flex" }}>
                           <>
-                            {' '}
+                            {" "}
                             <div
                               className="fw-bold"
                               style={{
                                 background: issueAddedLabel.color,
-                                borderRadius: '15px',
-                                padding: '4px',
-                                color: 'white',
-                                display: 'flex',
+                                borderRadius: "15px",
+                                padding: "4px",
+                                color: "white",
+                                display: "flex",
                               }}
                             >
                               {issueAddedLabel.name}
@@ -215,8 +229,8 @@ const IssueDetails = ({ issueId }) => {
                           {issueAddedLabels?.length > 0 && (
                             <AiFillDelete
                               style={{
-                                cursor: 'pointer',
-                                marginBottom: '15px',
+                                cursor: "pointer",
+                                marginBottom: "15px",
                               }}
                               onClick={() => {
                                 setRemoveLabel(issueAddedLabel);
@@ -240,9 +254,9 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Header>
               <Modal.Body
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: ' baseline',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: " baseline",
                 }}
               >
                 <p>
@@ -282,9 +296,9 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Header>
               <Modal.Body
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: ' baseline',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: " baseline",
                 }}
               >
                 <p>Are you sure you want to remove chosen label from issue?</p>
@@ -313,30 +327,32 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Footer>
             </Modal>
           </div>
-          <div style={{ marginTop: '5%' }}>
-            {issue.is_opened === true ? (
-              <Button
-                onClick={async () => {
-                  await updateIssueClose(true, issueId);
-                  setIssue(await getIssueById(issue.pk));
-                }}
-              >
-                <GiConfirmed size={20}></GiConfirmed> Close issue
-              </Button>
-            ) : (
-              <p>
+          {isLoggedInUserCollaborator() && (
+            <div style={{ marginTop: "5%" }}>
+              {issue.is_opened === true ? (
                 <Button
-                  variant="outline-primary"
                   onClick={async () => {
-                    await updateIssueClose(false, issueId);
+                    await updateIssueClose(true, issueId);
                     setIssue(await getIssueById(issue.pk));
                   }}
                 >
-                  <GiConfirmed size={20}></GiConfirmed> Reopen issue
+                  <GiConfirmed size={20}></GiConfirmed> Close issue
                 </Button>
-              </p>
-            )}
-          </div>
+              ) : (
+                <p>
+                  <Button
+                    variant="outline-primary"
+                    onClick={async () => {
+                      await updateIssueClose(false, issueId);
+                      setIssue(await getIssueById(issue.pk));
+                    }}
+                  >
+                    <GiConfirmed size={20}></GiConfirmed> Reopen issue
+                  </Button>
+                </p>
+              )}
+            </div>
+          )}
         </>
       )}
     </>

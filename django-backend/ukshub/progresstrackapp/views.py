@@ -120,3 +120,24 @@ def all_issues_by_milestone_id(request, milestone_id):
     issues = milestone.issues.all()
     serializers = IssueSerializer(issues, many=True)
     return Response(serializers.data)
+
+@api_view(['GET'])
+def all_assignes_by_pull_request_id(request, pull_request_id):
+    pull_request = PullRequest.objects.get(id = pull_request_id)
+    assigness = pull_request.assigness.all()
+    serializers = UserCreateSerializer(assigness, many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def all_labels_by_pull_request_id(request, pull_request_id):
+    pull_request = PullRequest.objects.get(id = pull_request_id)
+    labels = pull_request.labels.all()
+    serializers = LabelSerializer(labels, many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def all_issues_by_pull_request_id(request, pull_request_id):
+    pull_request = PullRequest.objects.get(id = pull_request_id)
+    issues = pull_request.issues.all()
+    serializers = IssueSerializer(issues, many=True)
+    return Response(serializers.data)

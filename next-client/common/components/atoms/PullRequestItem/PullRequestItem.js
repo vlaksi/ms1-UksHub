@@ -55,6 +55,15 @@ const PullRequestItem = ({ pullRequest }) => {
           <Badge pill bg="light" text="dark">
             {author?.username}
           </Badge>
+          {pullRequest.is_opened === true ? (
+            <Badge pill bg="success" text="light">
+              opened
+            </Badge>
+          ) : (
+            <Badge pill bg="danger" text="light">
+              closed
+            </Badge>
+          )}
         </Card.Text>
       </Card.Body>
     </Card>
