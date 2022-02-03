@@ -20,7 +20,7 @@ import time
 
 class RepositoryList(generics.ListCreateAPIView):
     search_fields = ['name']
-    filter_backends = (filters.SearchFilter)
+    filter_backends = (filters.SearchFilter,)
     queryset = Repository.objects.all()
     # permission_classes = [permissions.IsAuthenticated]
     serializer_class = RepositorySerializer

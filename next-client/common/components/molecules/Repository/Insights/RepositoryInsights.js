@@ -34,11 +34,15 @@ const RepositoryInsights = ({
 	Chart.register(LineElement);
 	Chart.register(Filler);
 	Chart.register(...registerables)
+	console.log('commitsToMainBranch', commitsToMainBranch)
 	const getCommitsDates = () => {
 		var commitsDates = [];
-		commitsToMainBranch?.map((item) => {
-			commitsDates.push(item.committed_date?.substring(0, 10));
-		});
+		if (JSON.stringify(commitsToMainBranch) !== '{}') {
+			commitsToMainBranch?.map((item) => {
+				commitsDates.push(item.committed_date?.substring(0, 10));
+			});
+		}
+
 		return commitsDates;
 	};
 
@@ -50,9 +54,11 @@ const RepositoryInsights = ({
 
 	const getCommitsUsers = () => {
 		var commitsUsers = [];
-		commitsToMainBranch?.map((item) => {
-			commitsUsers.push(item.author);
-		});
+		if (JSON.stringify(commitsToMainBranch) !== '{}') {
+			commitsToMainBranch?.map((item) => {
+				commitsUsers.push(item.author);
+			});
+		}
 		return commitsUsers;
 	};
 	const countsUsersCommits = {};

@@ -33,7 +33,7 @@ const UserRepository = ({ userId, repositoryId }) => {
 	const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 	const [repositoryIssues, setRepositoryIssues] = useState([]);
 	const [repositoryPRs, setRepositoryPRs] = useState([]);
-	const [commitsToMainBranch, setCommitsToMainBranch] = useState([]);
+	const [commitsToMainBranch, setCommitsToMainBranch] = useState();
 	const [forksOfRepo, setForksOfRepo] = useState([]);
 	const [visitsOfRepo, setVisitsOfRepo] = useState([]);
 	const [showCommits, setShowCommits] = useState(false);
