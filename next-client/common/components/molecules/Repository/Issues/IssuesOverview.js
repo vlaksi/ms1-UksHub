@@ -11,6 +11,8 @@ import {
   getAllIssues,
 } from "../../../../services/progresstrackapp/issuesService";
 import IssueListItem from "../../../atoms/IssueListItem/IssueListItem";
+import { getParsedToken } from "../../../../services/authentication/token";
+import { getRepositoryCollaboratos } from "../../../../services/versioning/repositoryService";
 
 const IssuesOverview = () => {
   const [newIssueName, setNewIssueName] = useState("");
@@ -19,6 +21,7 @@ const IssuesOverview = () => {
   };
 
   const [issues, setNewIssueList] = useState([]);
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -36,10 +39,15 @@ const IssuesOverview = () => {
     if (!repository) return;
     let issues = await getAllIssues(repository);
     setNewIssueList(issues);
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repository));
   }, [repository]);
 
   const addNewIssue = async () => {
-    let createdIssue = await addIssue(newIssueName, user, repository);
+    let createdIssue = await addIssue(
+      newIssueName,
+      getLoggedInUserId(),
+      repository
+    );
     if (createdIssue) {
       notify();
       handleClose();
@@ -47,6 +55,15 @@ const IssuesOverview = () => {
     } else {
       notifyError();
     }
+  };
+  const isLoggedInUserCollaborator = () => {
+    let loggedInUserId = getParsedToken().user_id;
+    return repositoryCollaborators.find(
+      (collaborator) => collaborator.collaborator_id == loggedInUserId
+    );
+  };
+  const getLoggedInUserId = () => {
+    return getParsedToken().user_id;
   };
 
   return (
@@ -74,15 +91,17 @@ const IssuesOverview = () => {
             </a>
           </Link>
         </Button>
-        <Button
-          style={{ marginLeft: "5px" }}
-          variant="primary"
-          onClick={() => {
-            handleShow();
-          }}
-        >
-          <MdAddCircle size={24} /> Add new issue
-        </Button>
+        {isLoggedInUserCollaborator() && (
+          <Button
+            style={{ marginLeft: "5px" }}
+            variant="primary"
+            onClick={() => {
+              handleShow();
+            }}
+          >
+            <MdAddCircle size={24} /> Add new issue
+          </Button>
+        )}
         <Modal show={show} onHide={handleClose} backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>Add new issue</Modal.Title>

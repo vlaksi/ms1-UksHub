@@ -16,9 +16,12 @@ import { GiConfirmed } from "react-icons/gi";
 import { getLabelDataForIssueLabellingSearch } from "../../../services/progresstrackapp/labelsService";
 import RepositoryNav from "../../atoms/RepositoryNav/RepositoryNav";
 import Comments from "../../molecules/Comments/Comments";
+import { getRepositoryCollaboratos } from "../../../services/versioning/repositoryService";
+import { getParsedToken } from "../../../services/authentication/token";
 
 const IssueDetails = ({ issueId }) => {
   const [issue, setIssue] = useState("");
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const [userDataForSearch, setUserDataForSearch] = useState([]);
   const [labelDataForSearch, setLabelDataForSearch] = useState([]);
@@ -57,7 +60,15 @@ const IssueDetails = ({ issueId }) => {
     setLabelDataForSearch(
       await getLabelDataForIssueLabellingSearch(repository)
     );
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repository));
   }, [repository]);
+
+  const isLoggedInUserCollaborator = () => {
+    let loggedInUserId = getParsedToken().user_id;
+    return repositoryCollaborators.find(
+      (collaborator) => collaborator.collaborator_id == loggedInUserId
+    );
+  };
 
   const isLabelAlreadyAdded = (label) => {
     return issueAddedLabels?.find(
@@ -313,30 +324,32 @@ const IssueDetails = ({ issueId }) => {
               </Modal.Footer>
             </Modal>
           </div>
-          <div style={{ marginTop: "5%" }}>
-            {issue.is_opened === true ? (
-              <Button
-                onClick={async () => {
-                  await updateIssueClose(true, issueId);
-                  setIssue(await getIssueById(issue.pk));
-                }}
-              >
-                <GiConfirmed size={20}></GiConfirmed> Close issue
-              </Button>
-            ) : (
-              <p>
+          {isLoggedInUserCollaborator() && (
+            <div style={{ marginTop: "5%" }}>
+              {issue.is_opened === true ? (
                 <Button
-                  variant="outline-primary"
                   onClick={async () => {
-                    await updateIssueClose(false, issueId);
+                    await updateIssueClose(true, issueId);
                     setIssue(await getIssueById(issue.pk));
                   }}
                 >
-                  <GiConfirmed size={20}></GiConfirmed> Reopen issue
+                  <GiConfirmed size={20}></GiConfirmed> Close issue
                 </Button>
-              </p>
-            )}
-          </div>
+              ) : (
+                <p>
+                  <Button
+                    variant="outline-primary"
+                    onClick={async () => {
+                      await updateIssueClose(false, issueId);
+                      setIssue(await getIssueById(issue.pk));
+                    }}
+                  >
+                    <GiConfirmed size={20}></GiConfirmed> Reopen issue
+                  </Button>
+                </p>
+              )}
+            </div>
+          )}
         </>
       )}
     </>
