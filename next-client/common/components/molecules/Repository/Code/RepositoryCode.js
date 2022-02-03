@@ -100,14 +100,15 @@ const RepositoryCode = ({
   };
 
   useEffect(async () => {
-    let gettedCurrentBranch = repositoryBranches[0];
-    setCurrentBrach(gettedCurrentBranch);
+    let repoDefaultBranchName = repository.default_branch;
+    setCurrentBrach(
+      repositoryBranches.find((branch) => branch.name == repoDefaultBranchName)
+    );
     let branchContent = await getBranchContent(
       repository.pk,
-      gettedCurrentBranch?.name
+      repoDefaultBranchName
     );
     setActiveFiles(branchContent);
-    console.log('branchContent: ', branchContent);
   }, []);
 
   return (
@@ -250,7 +251,7 @@ const RepositoryCode = ({
             <ListGroup>
               {activeFolders?.map((folder) => {
                 return (
-                  <ListGroup.Item key={folder.name} onClick={() => { }}>
+                  <ListGroup.Item key={folder.name} onClick={() => {}}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <BsFillFolderFill style={{ marginRight: '8px' }} />
                       {folder.name}
