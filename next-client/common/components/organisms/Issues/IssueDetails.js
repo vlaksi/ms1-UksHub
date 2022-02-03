@@ -125,22 +125,24 @@ const IssueDetails = ({ issueId }) => {
               {/* Assignes Card */}
               <Card>
                 <Card.Header>Assignees</Card.Header>
-                <Card.Body>
-                  <UserSearch
-                    placeholder="Add an assignee..."
-                    data={userDataForSearch.filter(
-                      (user) => !isUserAlreadyAssignee(user)
-                    )}
-                    onSelectItem={async (selectedValue) => {
-                      let currentAssignesIds = getAllAssignesIds();
-                      await updateIssueAssigness(issueId, [
-                        ...currentAssignesIds,
-                        selectedValue.pk,
-                      ]);
-                      setIssueAssignees(await getAllIssueAssignees(issueId));
-                    }}
-                  ></UserSearch>
-                </Card.Body>
+                {isLoggedInUserCollaborator() && (
+                  <Card.Body>
+                    <UserSearch
+                      placeholder="Add an assignee..."
+                      data={userDataForSearch.filter(
+                        (user) => !isUserAlreadyAssignee(user)
+                      )}
+                      onSelectItem={async (selectedValue) => {
+                        let currentAssignesIds = getAllAssignesIds();
+                        await updateIssueAssigness(issueId, [
+                          ...currentAssignesIds,
+                          selectedValue.pk,
+                        ]);
+                        setIssueAssignees(await getAllIssueAssignees(issueId));
+                      }}
+                    ></UserSearch>
+                  </Card.Body>
+                )}
                 <ListGroup variant="flush">
                   {issueAssignees?.map((issueAssignee) => {
                     return (
@@ -156,18 +158,19 @@ const IssueDetails = ({ issueId }) => {
                           <p> {issueAssignee.username} </p>
                         </div>
                         <div>
-                          {issueAssignees?.length > 0 && (
-                            <AiFillDelete
-                              style={{
-                                cursor: "pointer",
-                                marginBottom: "15px",
-                              }}
-                              onClick={() => {
-                                setRemoveCandidate(issueAssignee);
-                                handleShowDeleteModal();
-                              }}
-                            />
-                          )}
+                          {issueAssignees?.length > 0 &&
+                            isLoggedInUserCollaborator() && (
+                              <AiFillDelete
+                                style={{
+                                  cursor: "pointer",
+                                  marginBottom: "15px",
+                                }}
+                                onClick={() => {
+                                  setRemoveCandidate(issueAssignee);
+                                  handleShowDeleteModal();
+                                }}
+                              />
+                            )}
                         </div>
                       </ListGroup.Item>
                     );

@@ -20,6 +20,8 @@ import { useRouter } from "next/router";
 import { getIssueDataForMilestoneIssueSearch } from "../../../services/progresstrackapp/issuesService";
 import { AiFillDelete } from "react-icons/ai";
 import IssueListItem from "../../atoms/IssueListItem/IssueListItem";
+import { getParsedToken } from "../../../services/authentication/token";
+import { getRepositoryCollaboratos } from "../../../services/versioning/repositoryService";
 
 const MilestoneDetails = ({ milestoneId }) => {
   const [milestone, setMilestone] = useState("");
@@ -35,6 +37,7 @@ const MilestoneDetails = ({ milestoneId }) => {
   const handleShowDeleteModal = () => setShowDeleteModal(true);
 
   const [showPercentage, setShowPercentage] = useState("");
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const getPercents = async () => {
     let allIssuesById = await getAllMilestoneIssues(milestoneId);
@@ -72,6 +75,7 @@ const MilestoneDetails = ({ milestoneId }) => {
     setIssueDataForSearch(
       await getIssueDataForMilestoneIssueSearch(repository)
     );
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repository));
   }, [repository]);
 
   const getAllIssuesIds = () => {
@@ -84,6 +88,12 @@ const MilestoneDetails = ({ milestoneId }) => {
   const isAlreadyAddedIssue = (issue) => {
     return milestonesIssue.find(
       (addedIssue) => addedIssue.title == issue.title
+    );
+  };
+  const isLoggedInUserCollaborator = () => {
+    let loggedInUserId = getParsedToken().user_id;
+    return repositoryCollaborators.find(
+      (collaborator) => collaborator.collaborator_id == loggedInUserId
     );
   };
 
@@ -104,7 +114,6 @@ const MilestoneDetails = ({ milestoneId }) => {
           label={`${showPercentage}%`}
         ></ProgressBar>
       </div>
-
       <div style={{ marginTop: "35px", width: "75%" }}>
         {milestonesIssue?.map((issueItem) => {
           return (
@@ -114,55 +123,57 @@ const MilestoneDetails = ({ milestoneId }) => {
           );
         })}
       </div>
-      <Card style={{ width: "20%", marginLeft: "85%", marginTop: "2px" }}>
-        <Card.Header>Issues</Card.Header>
-        <Card.Body>
-          <UserSearch
-            placeholder="Add an issue..."
-            data={issueDataForSearch.filter(
-              (issue) => !isAlreadyAddedIssue(issue)
-            )}
-            onSelectItem={async (selectedValue) => {
-              let currentIssuesIds = getAllIssuesIds();
-              await updateMilestoneIssues(milestoneId, [
-                ...currentIssuesIds,
-                selectedValue.pk,
-              ]);
-              setMilestonesIssue(await getAllMilestoneIssues(milestoneId));
-              setShowPercentage(await getPercents());
-            }}
-          ></UserSearch>
-        </Card.Body>
-        <ListGroup variant="flush">
-          {milestonesIssue?.map((milestoneIssue) => {
-            return (
-              <ListGroup.Item
-                key={milestoneIssue.pk}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div style={{ display: "flex" }}>
-                  <p> {milestoneIssue.title} </p>
-                </div>
-                <div>
-                  {milestonesIssue.length > 0 && (
-                    <AiFillDelete
-                      style={{ cursor: "pointer", marginBottom: "15px" }}
-                      onClick={() => {
-                        setRemoveIssue(milestoneIssue);
-                        handleShowDeleteModal();
-                      }}
-                    />
-                  )}
-                </div>
-              </ListGroup.Item>
-            );
-          })}
-        </ListGroup>
-      </Card>
+      {isLoggedInUserCollaborator() && (
+        <Card style={{ width: "20%", marginLeft: "85%", marginTop: "2px" }}>
+          <Card.Header>Issues</Card.Header>
+          <Card.Body>
+            <UserSearch
+              placeholder="Add an issue..."
+              data={issueDataForSearch.filter(
+                (issue) => !isAlreadyAddedIssue(issue)
+              )}
+              onSelectItem={async (selectedValue) => {
+                let currentIssuesIds = getAllIssuesIds();
+                await updateMilestoneIssues(milestoneId, [
+                  ...currentIssuesIds,
+                  selectedValue.pk,
+                ]);
+                setMilestonesIssue(await getAllMilestoneIssues(milestoneId));
+                setShowPercentage(await getPercents());
+              }}
+            ></UserSearch>
+          </Card.Body>
+          <ListGroup variant="flush">
+            {milestonesIssue?.map((milestoneIssue) => {
+              return (
+                <ListGroup.Item
+                  key={milestoneIssue.pk}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ display: "flex" }}>
+                    <p> {milestoneIssue.title} </p>
+                  </div>
+                  <div>
+                    {milestonesIssue.length > 0 && (
+                      <AiFillDelete
+                        style={{ cursor: "pointer", marginBottom: "15px" }}
+                        onClick={() => {
+                          setRemoveIssue(milestoneIssue);
+                          handleShowDeleteModal();
+                        }}
+                      />
+                    )}
+                  </div>
+                </ListGroup.Item>
+              );
+            })}
+          </ListGroup>
+        </Card>
+      )}{" "}
       <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Remove confirmation</Modal.Title>
@@ -198,31 +209,32 @@ const MilestoneDetails = ({ milestoneId }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <div>
-        {milestone.is_opened === true ? (
-          <Button
-            onClick={async () => {
-              await updateMilestoneClose(true, milestoneId);
-              setMilestone(await getMilestoneById(milestone.pk));
-            }}
-          >
-            <GiConfirmed size={20}></GiConfirmed> Close milestone
-          </Button>
-        ) : (
-          <p>
+      {isLoggedInUserCollaborator() && (
+        <div>
+          {milestone.is_opened === true ? (
             <Button
-              variant="outline-primary"
               onClick={async () => {
-                await updateMilestoneClose(false, milestoneId);
+                await updateMilestoneClose(true, milestoneId);
                 setMilestone(await getMilestoneById(milestone.pk));
               }}
             >
-              <GiConfirmed size={20}></GiConfirmed> Reopen milestone
+              <GiConfirmed size={20}></GiConfirmed> Close milestone
             </Button>
-          </p>
-        )}
-      </div>
+          ) : (
+            <p>
+              <Button
+                variant="outline-primary"
+                onClick={async () => {
+                  await updateMilestoneClose(false, milestoneId);
+                  setMilestone(await getMilestoneById(milestone.pk));
+                }}
+              >
+                <GiConfirmed size={20}></GiConfirmed> Reopen milestone
+              </Button>
+            </p>
+          )}
+        </div>
+      )}
     </>
   );
 };

@@ -8,6 +8,8 @@ import {
   updateMilestone,
 } from "../../../services/progresstrackapp/milestonesService";
 import Link from "next/link";
+import { getRepositoryCollaboratos } from "../../../services/versioning/repositoryService";
+import { getParsedToken } from "../../../services/authentication/token";
 
 const MilestoneListItem = ({ milestone }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -19,6 +21,7 @@ const MilestoneListItem = ({ milestone }) => {
   const handleClose = () => {
     setShow(false);
   };
+  const [repositoryCollaborators, setRepositoryCollaborators] = useState([]);
 
   const [milestoneName, setMilestoneName] = useState(milestone.title);
   const handleChangingMilestoneName = (milestoneName) => {
@@ -44,6 +47,11 @@ const MilestoneListItem = ({ milestone }) => {
   const router = useRouter();
   const { user, repository } = router.query;
 
+  useEffect(async () => {
+    if (!repository) return;
+    setRepositoryCollaborators(await getRepositoryCollaboratos(repository));
+  }, [repository]);
+
   const deleteChosenMilestone = async () => {
     let isSuccessfulDeleted = await deleteMilestone(milestone.pk);
     if (isSuccessfulDeleted) {
@@ -51,6 +59,7 @@ const MilestoneListItem = ({ milestone }) => {
       notifyDeleted();
     }
   };
+
   const updateNewMilestone = async () => {
     let isSuccessfulUpdated = await updateMilestone(
       milestoneName,
@@ -65,6 +74,12 @@ const MilestoneListItem = ({ milestone }) => {
     } else {
       notifyError();
     }
+  };
+  const isLoggedInUserCollaborator = () => {
+    let loggedInUserId = getParsedToken().user_id;
+    return repositoryCollaborators.find(
+      (collaborator) => collaborator.collaborator_id == loggedInUserId
+    );
   };
   return (
     <ListGroup as="ol">
@@ -105,19 +120,22 @@ const MilestoneListItem = ({ milestone }) => {
         >
           {milestone.description}
         </div>
+
         <div style={{ display: "flex" }}>
-          <Button
-            variant="outline-success"
-            style={{ marginRight: "15px" }}
-            onClick={() => {
-              handleShow();
-            }}
-          >
-            <MdModeEditOutline
-              style={{ marginBottom: "4px" }}
-            ></MdModeEditOutline>
-            Edit milestone
-          </Button>
+          {isLoggedInUserCollaborator() && (
+            <Button
+              variant="outline-success"
+              style={{ marginRight: "15px" }}
+              onClick={() => {
+                handleShow();
+              }}
+            >
+              <MdModeEditOutline
+                style={{ marginBottom: "4px" }}
+              ></MdModeEditOutline>
+              Edit milestone
+            </Button>
+          )}
 
           <Modal show={show} onHide={handleClose} backdrop="static">
             <Modal.Header closeButton>
@@ -174,14 +192,16 @@ const MilestoneListItem = ({ milestone }) => {
               </Button>
             </Modal.Footer>
           </Modal>
-          <Button
-            variant="outline-danger"
-            style={{ marginRight: "15px" }}
-            onClick={handleShowDeleteModal}
-          >
-            <MdDelete style={{ marginBottom: "4px" }}></MdDelete>
-            Delete milestone
-          </Button>
+          {isLoggedInUserCollaborator() && (
+            <Button
+              variant="outline-danger"
+              style={{ marginRight: "15px" }}
+              onClick={handleShowDeleteModal}
+            >
+              <MdDelete style={{ marginBottom: "4px" }}></MdDelete>
+              Delete milestone
+            </Button>
+          )}
           <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
             <Modal.Header closeButton>
               <Modal.Title>Delete confirmation</Modal.Title>
