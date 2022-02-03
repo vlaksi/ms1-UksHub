@@ -51,16 +51,16 @@ const PullRequestsOverview = ({ dbRepository }) => {
 
   const getRepositoryAllBranches = async () => {
     let branches = await getRepositoryBranches(dbRepository.pk);
-    setNewBaseBranch(branches[0]);
-    setNewCompareBranch(branches[0]);
+    setNewBaseBranch(branches[0].name);
+    setNewCompareBranch(branches[0].name);
     setAllBranches(branches);
   };
 
   const addNewPullRequest = async () => {
     let createdPullRequest = await addPullRequest(
       newPullRequestName,
-      newBaseBranch.name,
-      newCompareBranch.name,
+      newBaseBranch,
+      newCompareBranch,
       dbRepository.pk,
       getParsedToken().user_id
     );
