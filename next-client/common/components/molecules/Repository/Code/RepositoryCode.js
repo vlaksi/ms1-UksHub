@@ -1,17 +1,39 @@
 import { useEffect, useState } from 'react';
-import { Button, Modal, Form, Card, Dropdown, ListGroup } from 'react-bootstrap';
+import {
+  Button,
+  Modal,
+  Form,
+  Card,
+  Dropdown,
+  ListGroup,
+} from 'react-bootstrap';
 import { BsFillFolderFill } from 'react-icons/bs';
 import { MdAddCircle } from 'react-icons/md';
 import { AiFillHome, AiOutlineFile } from 'react-icons/ai';
 import { toast } from 'react-toastify';
 import styles from './RepositoryCode.module.scss';
 
-import { getBranchCommits, getBranchLastCommit } from '../../../../services/versioning/repositoryService';
-import { createBranch, deleteBranch, getRepositoryBranches } from '../../../../services/versioning/branchService';
+import {
+  getBranchCommits,
+  getBranchLastCommit,
+} from '../../../../services/versioning/repositoryService';
+import {
+  createBranch,
+  deleteBranch,
+  getBranchContent,
+  getRepositoryBranches,
+} from '../../../../services/versioning/branchService';
 import BranchCommit from '../../../atoms/BranchCommits/BranchCommit';
 
-const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBranches, isLoggedInUserCollaborator }) => {
+const RepositoryCode = ({
+  showCommits,
+  setShowCommits,
+  repository,
+  repositoryBranches,
+  isLoggedInUserCollaborator,
+}) => {
   const [show, setShow] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const [branches, setBranches] = useState(repositoryBranches);
   const [newBranchName, setNewBranchName] = useState('');
   const [deleteBranchId, setDeleteBranch] = useState('');
@@ -21,17 +43,20 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
   const [activeFilesPath, setActiveFilesPath] = useState([]);
   const [commit, setCommit] = useState([]);
   const [commits, setCommits] = useState([]);
+  const [contentTitle, setContentTitle] = useState();
+  const [contentBody, setContentBody] = useState();
 
   const setCurrentBrach = async (branch) => {
     setActiveBranch(branch);
     var commit = await getBranchLastCommit(repository.pk, branch.name);
     setCommit(commit);
     var commits = await getBranchCommits(repository.pk, branch.name);
-    setCommits(commits);
+    if (Object.keys(commits).length > 0) setCommits(commits);
   };
 
   const notify = () => toast.success('Successfully created new branch!');
-  const notifyDeletedBranch = () => toast.success('Successfully deleted branch!');
+  const notifyDeletedBranch = () =>
+    toast.success('Successfully deleted branch!');
   const notifyError = () => toast.error('Check if you entered all fields!');
 
   const showAddBranch = () => {
@@ -41,6 +66,10 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
   const handleClose = () => {
     setShow(false);
     setNewBranchName('');
+  };
+
+  const handleContentClose = () => {
+    setShowContent(false);
   };
 
   const handleBranchNameChange = (newBranchName) => {
@@ -71,11 +100,19 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
   };
 
   useEffect(async () => {
-    setCurrentBrach(repositoryBranches[0]);
+    let gettedCurrentBranch = repositoryBranches[0];
+    setCurrentBrach(gettedCurrentBranch);
+    let branchContent = await getBranchContent(
+      repository.pk,
+      gettedCurrentBranch?.name
+    );
+    setActiveFiles(branchContent);
+    console.log('branchContent: ', branchContent);
   }, []);
 
   return (
     <>
+      {/* Manage branches Modal */}
       <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>Manage branches</Modal.Title>
@@ -163,8 +200,11 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
                     return (
                       <Dropdown.Item
                         key={branch.name}
-                        onClick={() => {
+                        onClick={async () => {
                           setCurrentBrach(branch);
+                          setActiveFiles(
+                            await getBranchContent(repository.pk, branch?.name)
+                          );
                         }}
                       >
                         {branch.name}
@@ -183,16 +223,10 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
                 })}
               </div>
             </div>
-            {isLoggedInUserCollaborator && (
-              <div>
-                <Button variant="outline-primary" onClick={showAddBranch}>
-                  {' '}
-                  <MdAddCircle size={24} /> Manage branches
-                </Button>
-              </div>
-            )}
 
             <div>
+              {/* TMP: Until we enable folder structure */}
+              {/*               
               <AiFillHome
                 onClick={() => {
                   setActiveFolders(activeBranch?.folders);
@@ -205,7 +239,7 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
                   height: '20px',
                   width: '20px',
                 }}
-              />
+              /> */}
             </div>
           </div>
         </Card.Header>
@@ -230,11 +264,14 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
                     action
                     key={file.name}
                     onClick={() => {
-                      alert(file.name);
+                      setShowContent(true);
+                      setContentTitle(file.name);
+                      setContentBody(file.value);
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <AiOutlineFile style={{ marginRight: '8px' }} /> {file.name}
+                      <AiOutlineFile style={{ marginRight: '8px' }} />{' '}
+                      {file.name}
                     </div>
                   </ListGroup.Item>
                 );
@@ -257,6 +294,28 @@ const RepositoryCode = ({ showCommits, setShowCommits, repository, repositoryBra
           </div>
         </Card.Footer>
       </Card>
+
+      {/* Show content of the file Modal */}
+      <Modal
+        size="xl"
+        show={showContent}
+        onHide={handleContentClose}
+        backdrop="static"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title> {contentTitle} </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <pre>
+            <code>{contentBody}</code>
+          </pre>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleContentClose}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
