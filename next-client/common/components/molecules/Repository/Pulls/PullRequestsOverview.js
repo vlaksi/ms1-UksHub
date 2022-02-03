@@ -80,10 +80,13 @@ const PullRequestsOverview = ({ dbRepository }) => {
   }, [dbRepository?.pk]);
 
   const isLoggedInUserCollaborator = () => {
-    let loggedInUserId = getParsedToken().user_id;
-    return repositoryCollaborators.find(
-      (collaborator) => collaborator.collaborator_id == loggedInUserId
-    );
+    if (typeof window !== 'undefined') {
+      let loggedInUserId = getParsedToken().user_id;
+      return repositoryCollaborators.find(
+        (collaborator) => collaborator.collaborator_id == loggedInUserId
+      );
+    }
+    return false;
   };
 
   return (
